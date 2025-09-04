@@ -88,4 +88,5 @@
     <string name="notification_access_required_description">To display notification dots, please allow notification access.\n\nThis allows the app to detect active notifications.\n\nThe app doesn\'t read or collect any notification content during the process.</string>
     <string name="notification_dots">Notification Dots</string>
     <string name="display_a_notification_dot_on_the_home_screen_apps">Display a notification dot on the home screen apps</string>
+    <string name="home_app_spacing">Home App Spacing:</string>
 </resources>

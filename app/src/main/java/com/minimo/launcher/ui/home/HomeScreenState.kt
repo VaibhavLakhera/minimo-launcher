@@ -27,5 +27,6 @@ data class HomeScreenState(
     val drawerSearchBarAtBottom: Boolean = false,
     val applyHomeAppSizeToAllApps: Boolean = false,
     val autoOpenApp: Boolean = false,
-    val hideAppDrawerArrow: Boolean = false
+    val hideAppDrawerArrow: Boolean = false,
+    val homeAppVerticalPadding: Int = Constants.DEFAULT_HOME_VERTICAL_PADDING
 )

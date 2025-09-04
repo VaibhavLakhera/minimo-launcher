@@ -204,13 +204,52 @@ fun CustomisationScreen(
                 steps = 16,
             )
 
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Row(
+                modifier = Modifier.padding(
+                    horizontal = Dimens.APP_HORIZONTAL_SPACING,
+                )
+            ) {
+                Text(
+                    text = stringResource(R.string.home_app_spacing),
+                    fontSize = 20.sp
+                )
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                Text(
+                    text = state.homeAppVerticalPadding.roundToInt().toString(),
+                    fontSize = 20.sp
+                )
+            }
+
             Spacer(modifier = Modifier.height(8.dp))
+
+            Slider(
+                modifier = Modifier
+                    .padding(horizontal = Dimens.APP_HORIZONTAL_SPACING),
+                value = state.homeAppVerticalPadding,
+                onValueChange = {
+                    viewModel.onHomeVerticalPaddingChanged(it.roundToInt())
+                },
+                valueRange = Constants.HOME_VERTICAL_PADDING_RANGE,
+                steps = 7,
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
 
             Text(
                 stringResource(R.string.sample_app),
                 fontSize = state.homeTextSize.sp,
                 lineHeight = state.homeTextSize.sp,
-                modifier = Modifier.padding(horizontal = Dimens.APP_HORIZONTAL_SPACING)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.15f))
+                    .padding(
+                        horizontal = Dimens.APP_HORIZONTAL_SPACING,
+                        vertical = state.homeAppVerticalPadding.dp
+                    )
             )
 
             Spacer(modifier = Modifier.height(8.dp))

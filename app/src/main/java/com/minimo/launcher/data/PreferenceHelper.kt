@@ -46,6 +46,8 @@ class PreferenceHelper @Inject constructor(
         private val KEY_AUTO_OPEN_APP = booleanPreferencesKey("KEY_AUTO_OPEN_APP")
         private val KEY_HIDE_APP_DRAWER_ARROW = booleanPreferencesKey("KEY_HIDE_APP_DRAWER_ARROW")
         private val KEY_NOTIFICATION_DOT = booleanPreferencesKey("KEY_NOTIFICATION_DOT")
+        private val KEY_HOME_APP_VERTICAL_PADDING =
+            intPreferencesKey("KEY_HOME_APP_VERTICAL_PADDING")
     }
 
     suspend fun setIsIntroCompleted(isCompleted: Boolean) {
@@ -295,5 +297,17 @@ class PreferenceHelper @Inject constructor(
 
     fun getNotificationDot(): Flow<Boolean> {
         return preferences.data.map { it[KEY_NOTIFICATION_DOT] ?: false }
+    }
+
+    suspend fun setHomeAppVerticalPadding(padding: Int) {
+        preferences.edit {
+            it[KEY_HOME_APP_VERTICAL_PADDING] = padding
+        }
+    }
+
+    fun getHomeAppVerticalPadding(): Flow<Int> {
+        return preferences.data.map {
+            it[KEY_HOME_APP_VERTICAL_PADDING] ?: Constants.DEFAULT_HOME_VERTICAL_PADDING
+        }
     }
 }

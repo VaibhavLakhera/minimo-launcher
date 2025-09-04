@@ -213,6 +213,16 @@ class CustomisationViewModel @Inject constructor(
                     }
                 }
         }
+
+        viewModelScope.launch {
+            preferenceHelper.getHomeAppVerticalPadding()
+                .distinctUntilChanged()
+                .collect { padding ->
+                    _state.update {
+                        it.copy(homeAppVerticalPadding = padding.toFloat())
+                    }
+                }
+        }
     }
 
     fun onThemeModeChanged(mode: ThemeMode) {
@@ -345,6 +355,12 @@ class CustomisationViewModel @Inject constructor(
     fun onNotificationPermissionNotGrantedOnStarted() {
         viewModelScope.launch {
             preferenceHelper.setNotificationDot(false)
+        }
+    }
+
+    fun onHomeVerticalPaddingChanged(padding: Int) {
+        viewModelScope.launch {
+            preferenceHelper.setHomeAppVerticalPadding(padding)
         }
     }
 }

@@ -256,6 +256,16 @@ class HomeViewModel @Inject constructor(
                 }
         }
 
+        viewModelScope.launch {
+            preferenceHelper.getHomeAppVerticalPadding()
+                .distinctUntilChanged()
+                .collect { padding ->
+                    _state.update {
+                        it.copy(homeAppVerticalPadding = padding)
+                    }
+                }
+        }
+
         listenForHomePressedEvent()
     }
 
