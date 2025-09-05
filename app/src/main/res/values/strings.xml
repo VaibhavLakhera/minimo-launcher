@@ -89,4 +89,8 @@
     <string name="notification_dots">Notification Dots</string>
     <string name="display_a_notification_dot_on_the_home_screen_apps">Display a notification dot on the home screen apps</string>
     <string name="home_app_spacing">Home App Spacing:</string>
+    <string name="update">Update</string>
+    <string name="ignore_special_characters">Ignore Special Characters</string>
+    <string name="enter_characters">Enter characters</string>
+    <string name="these_characters_will_be_ignored_when_searching_for_apps_in_home_screen">These characters will be ignored when searching for apps in home screen</string>
 </resources>

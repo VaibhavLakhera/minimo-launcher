@@ -48,6 +48,8 @@ class PreferenceHelper @Inject constructor(
         private val KEY_NOTIFICATION_DOT = booleanPreferencesKey("KEY_NOTIFICATION_DOT")
         private val KEY_HOME_APP_VERTICAL_PADDING =
             intPreferencesKey("KEY_HOME_APP_VERTICAL_PADDING")
+        private val KEY_IGNORE_SPECIAL_CHARACTERS_IN_SEARCH =
+            stringPreferencesKey("KEY_IGNORE_SPECIAL_CHARACTERS_IN_SEARCH")
     }
 
     suspend fun setIsIntroCompleted(isCompleted: Boolean) {
@@ -308,6 +310,18 @@ class PreferenceHelper @Inject constructor(
     fun getHomeAppVerticalPadding(): Flow<Int> {
         return preferences.data.map {
             it[KEY_HOME_APP_VERTICAL_PADDING] ?: Constants.DEFAULT_HOME_VERTICAL_PADDING
+        }
+    }
+
+    suspend fun setIgnoreSpecialCharacters(characters: String) {
+        preferences.edit {
+            it[KEY_IGNORE_SPECIAL_CHARACTERS_IN_SEARCH] = characters
+        }
+    }
+
+    fun getIgnoreSpecialCharacters(): Flow<String> {
+        return preferences.data.map {
+            it[KEY_IGNORE_SPECIAL_CHARACTERS_IN_SEARCH] ?: ""
         }
     }
 }

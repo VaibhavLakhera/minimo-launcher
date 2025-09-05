@@ -65,7 +65,8 @@ class HomeViewModel @Inject constructor(
                             filteredAllApps = getAppsWithSearch(
                                 searchText = it.searchText,
                                 apps = allApps,
-                                includeHiddenApps = it.showHiddenAppsInSearch
+                                includeHiddenApps = it.showHiddenAppsInSearch,
+                                ignoreSpecialCharacters = it.ignoreSpecialCharacters
                             )
                         )
                     }
@@ -98,7 +99,8 @@ class HomeViewModel @Inject constructor(
                         filteredAllApps = getAppsWithSearch(
                             searchText = it.searchText,
                             apps = allApps,
-                            includeHiddenApps = it.showHiddenAppsInSearch
+                            includeHiddenApps = it.showHiddenAppsInSearch,
+                            ignoreSpecialCharacters = it.ignoreSpecialCharacters
                         ),
                         favouriteApps = favouriteApps
                     )
@@ -266,6 +268,16 @@ class HomeViewModel @Inject constructor(
                 }
         }
 
+        viewModelScope.launch {
+            preferenceHelper.getIgnoreSpecialCharacters()
+                .distinctUntilChanged()
+                .collect { characters ->
+                    _state.update {
+                        it.copy(ignoreSpecialCharacters = characters)
+                    }
+                }
+        }
+
         listenForHomePressedEvent()
     }
 
@@ -354,7 +366,8 @@ class HomeViewModel @Inject constructor(
         val filteredAllApps = getAppsWithSearch(
             searchText = searchText,
             apps = _state.value.allApps,
-            includeHiddenApps = _state.value.showHiddenAppsInSearch
+            includeHiddenApps = _state.value.showHiddenAppsInSearch,
+            ignoreSpecialCharacters = _state.value.ignoreSpecialCharacters
         )
         _state.update {
             it.copy(
@@ -376,7 +389,8 @@ class HomeViewModel @Inject constructor(
     private fun getAppsWithSearch(
         searchText: String,
         apps: List<AppInfo>,
-        includeHiddenApps: Boolean
+        includeHiddenApps: Boolean,
+        ignoreSpecialCharacters: String
     ): List<AppInfo> {
         if (searchText.isBlank()) {
             return apps.filterNot { appInfo ->
@@ -386,12 +400,16 @@ class HomeViewModel @Inject constructor(
 
         if (includeHiddenApps) {
             return apps.filter { appInfo ->
-                appInfo.name.contains(searchText, ignoreCase = true)
+                // Filter out the special characters from the app name before searching
+                val cleanedAppName = appInfo.name.filterNot { ignoreSpecialCharacters.contains(it) }
+                cleanedAppName.contains(searchText, ignoreCase = true)
             }
         }
 
         return apps.filter { appInfo ->
-            !appInfo.isHidden && appInfo.name.contains(searchText, ignoreCase = true)
+            // Filter out the special characters from the app name before searching
+            val cleanedAppName = appInfo.name.filterNot { ignoreSpecialCharacters.contains(it) }
+            !appInfo.isHidden && cleanedAppName.contains(searchText, ignoreCase = true)
         }
     }
 }

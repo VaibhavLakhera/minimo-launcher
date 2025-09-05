@@ -223,6 +223,16 @@ class CustomisationViewModel @Inject constructor(
                     }
                 }
         }
+
+        viewModelScope.launch {
+            preferenceHelper.getIgnoreSpecialCharacters()
+                .distinctUntilChanged()
+                .collect { characters ->
+                    _state.update {
+                        it.copy(ignoreSpecialCharacters = characters)
+                    }
+                }
+        }
     }
 
     fun onThemeModeChanged(mode: ThemeMode) {
@@ -361,6 +371,13 @@ class CustomisationViewModel @Inject constructor(
     fun onHomeVerticalPaddingChanged(padding: Int) {
         viewModelScope.launch {
             preferenceHelper.setHomeAppVerticalPadding(padding)
+        }
+    }
+
+    fun onUpdateIgnoreSpecialCharacters(characters: String) {
+        viewModelScope.launch {
+            val uniqueCharacters = characters.trim().toSet().joinToString("")
+            preferenceHelper.setIgnoreSpecialCharacters(uniqueCharacters)
         }
     }
 }

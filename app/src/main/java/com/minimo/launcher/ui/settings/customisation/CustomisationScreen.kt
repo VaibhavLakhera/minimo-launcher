@@ -2,32 +2,24 @@ package com.minimo.launcher.ui.settings.customisation
 
 import android.os.Build
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Slider
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -40,17 +32,22 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.minimo.launcher.R
-import com.minimo.launcher.ui.components.DropdownView
-import com.minimo.launcher.ui.theme.Dimens
+import com.minimo.launcher.ui.settings.customisation.components.AppSizeSlider
+import com.minimo.launcher.ui.settings.customisation.components.AppsAlignmentDropdown
+import com.minimo.launcher.ui.settings.customisation.components.ClockAlignmentDropdown
+import com.minimo.launcher.ui.settings.customisation.components.ClockModeDropdown
+import com.minimo.launcher.ui.settings.customisation.components.EnableAccessibilityDialog
+import com.minimo.launcher.ui.settings.customisation.components.EnableNotificationsDialog
+import com.minimo.launcher.ui.settings.customisation.components.IgnoreSpecialCharacters
+import com.minimo.launcher.ui.settings.customisation.components.ThemeDropdown
+import com.minimo.launcher.ui.settings.customisation.components.ToggleItem
 import com.minimo.launcher.ui.theme.ThemeMode
 import com.minimo.launcher.utils.AndroidUtils
-import com.minimo.launcher.utils.Constants
 import com.minimo.launcher.utils.HomeAppsAlignment
 import com.minimo.launcher.utils.HomeClockAlignment
 import com.minimo.launcher.utils.HomeClockMode
@@ -60,7 +57,6 @@ import com.minimo.launcher.utils.isNotificationPermissionGranted
 import com.minimo.launcher.utils.openNotificationSettings
 import com.minimo.launcher.utils.removeLockScreenPermission
 import com.minimo.launcher.utils.requestLockScreenPermission
-import kotlin.math.roundToInt
 
 @Composable
 fun CustomisationScreen(
@@ -146,9 +142,7 @@ fun CustomisationScreen(
                         ThemeMode.Light
                     )
                 ),
-                onOptionSelected = { selected ->
-                    viewModel.onThemeModeChanged(selected)
-                }
+                onOptionSelected = viewModel::onThemeModeChanged
             )
 
             ToggleItem(
@@ -173,83 +167,11 @@ fun CustomisationScreen(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            Row(
-                modifier = Modifier.padding(
-                    horizontal = Dimens.APP_HORIZONTAL_SPACING,
-                )
-            ) {
-                Text(
-                    text = stringResource(R.string.home_app_size),
-                    fontSize = 20.sp
-                )
-
-                Spacer(modifier = Modifier.width(8.dp))
-
-                Text(
-                    text = state.homeTextSize.roundToInt().toString(),
-                    fontSize = 20.sp
-                )
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Slider(
-                modifier = Modifier
-                    .padding(horizontal = Dimens.APP_HORIZONTAL_SPACING),
-                value = state.homeTextSize,
-                onValueChange = {
-                    viewModel.onHomeTextSizeChanged(it.roundToInt())
-                },
-                valueRange = Constants.HOME_TEXT_SIZE_RANGE,
-                steps = 16,
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            Row(
-                modifier = Modifier.padding(
-                    horizontal = Dimens.APP_HORIZONTAL_SPACING,
-                )
-            ) {
-                Text(
-                    text = stringResource(R.string.home_app_spacing),
-                    fontSize = 20.sp
-                )
-
-                Spacer(modifier = Modifier.width(8.dp))
-
-                Text(
-                    text = state.homeAppVerticalPadding.roundToInt().toString(),
-                    fontSize = 20.sp
-                )
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Slider(
-                modifier = Modifier
-                    .padding(horizontal = Dimens.APP_HORIZONTAL_SPACING),
-                value = state.homeAppVerticalPadding,
-                onValueChange = {
-                    viewModel.onHomeVerticalPaddingChanged(it.roundToInt())
-                },
-                valueRange = Constants.HOME_VERTICAL_PADDING_RANGE,
-                steps = 7,
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            Text(
-                stringResource(R.string.sample_app),
-                fontSize = state.homeTextSize.sp,
-                lineHeight = state.homeTextSize.sp,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.15f))
-                    .padding(
-                        horizontal = Dimens.APP_HORIZONTAL_SPACING,
-                        vertical = state.homeAppVerticalPadding.dp
-                    )
+            AppSizeSlider(
+                homeTextSize = state.homeTextSize,
+                onHomeTextSizeChanged = viewModel::onHomeTextSizeChanged,
+                homeAppVerticalPadding = state.homeAppVerticalPadding,
+                onHomeVerticalPaddingChanged = viewModel::onHomeVerticalPaddingChanged
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -284,9 +206,7 @@ fun CustomisationScreen(
                         HomeAppsAlignment.End
                     ),
                 ),
-                onOptionSelected = { selected ->
-                    viewModel.onHomeAppsAlignmentChanged(selected)
-                }
+                onOptionSelected = viewModel::onHomeAppsAlignmentChanged
             )
 
             HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
@@ -318,9 +238,7 @@ fun CustomisationScreen(
                             HomeClockAlignment.End
                         ),
                     ),
-                    onOptionSelected = { selected ->
-                        viewModel.onHomeClockAlignmentChanged(selected)
-                    }
+                    onOptionSelected = viewModel::onHomeClockAlignmentChanged
                 )
 
                 Spacer(modifier = Modifier.height(4.dp))
@@ -344,9 +262,7 @@ fun CustomisationScreen(
                             HomeClockMode.DateOnly
                         ),
                     ),
-                    onOptionSelected = { selected ->
-                        viewModel.onHomeClockModeChanged(selected)
-                    }
+                    onOptionSelected = viewModel::onHomeClockModeChanged
                 )
 
                 Spacer(modifier = Modifier.height(4.dp))
@@ -467,6 +383,13 @@ fun CustomisationScreen(
                 }
             )
 
+            HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
+
+            IgnoreSpecialCharacters(
+                currentCharacters = state.ignoreSpecialCharacters,
+                onUpdateCharacters = viewModel::onUpdateIgnoreSpecialCharacters
+            )
+
             Spacer(modifier = Modifier.height(8.dp))
         }
 
@@ -496,228 +419,4 @@ fun CustomisationScreen(
             )
         }
     }
-}
-
-@Composable
-private fun ThemeDropdown(
-    selectedOption: String,
-    options: List<Pair<ThemeMode, String>>,
-    onOptionSelected: (ThemeMode) -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(
-                horizontal = Dimens.APP_HORIZONTAL_SPACING,
-                vertical = 8.dp
-            ),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            stringResource(R.string.theme),
-            modifier = Modifier.weight(1f),
-            fontSize = 20.sp
-        )
-        Spacer(modifier = Modifier.width(16.dp))
-        DropdownView(
-            selectedOption = selectedOption,
-            options = options.map { it.second },
-            onOptionSelected = { selected ->
-                onOptionSelected(options.first { it.second == selected }.first)
-            }
-        )
-    }
-}
-
-@Composable
-private fun AppsAlignmentDropdown(
-    selectedOption: String,
-    options: List<Pair<HomeAppsAlignment, String>>,
-    onOptionSelected: (HomeAppsAlignment) -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(
-                horizontal = Dimens.APP_HORIZONTAL_SPACING,
-                vertical = 8.dp
-            ),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            stringResource(R.string.home_apps_alignment),
-            modifier = Modifier.weight(1f),
-            fontSize = 20.sp
-        )
-        Spacer(modifier = Modifier.width(16.dp))
-        DropdownView(
-            selectedOption = selectedOption,
-            options = options.map { it.second },
-            onOptionSelected = { selected ->
-                onOptionSelected(options.first { it.second == selected }.first)
-            }
-        )
-    }
-}
-
-@Composable
-private fun ClockAlignmentDropdown(
-    selectedOption: String,
-    options: List<Pair<HomeClockAlignment, String>>,
-    onOptionSelected: (HomeClockAlignment) -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(
-                horizontal = Dimens.APP_HORIZONTAL_SPACING,
-                vertical = 8.dp
-            ),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            stringResource(R.string.clock_alignment),
-            modifier = Modifier.weight(1f),
-            fontSize = 20.sp
-        )
-        Spacer(modifier = Modifier.width(16.dp))
-        DropdownView(
-            selectedOption = selectedOption,
-            options = options.map { it.second },
-            onOptionSelected = { selected ->
-                onOptionSelected(options.first { it.second == selected }.first)
-            }
-        )
-    }
-}
-
-@Composable
-private fun ToggleItem(
-    title: String,
-    subtitle: String? = null,
-    isChecked: Boolean,
-    onToggleClick: () -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .clickable(onClick = onToggleClick)
-            .padding(horizontal = Dimens.APP_HORIZONTAL_SPACING, vertical = 4.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Column(
-            modifier = Modifier.weight(1f)
-        ) {
-            Text(
-                text = title,
-                fontSize = 20.sp
-            )
-            if (!subtitle.isNullOrBlank()) {
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = subtitle
-                )
-            }
-        }
-        Spacer(modifier = Modifier.width(16.dp))
-        Switch(
-            checked = isChecked,
-            onCheckedChange = {
-                onToggleClick()
-            }
-        )
-    }
-}
-
-@Composable
-private fun ClockModeDropdown(
-    selectedOption: String,
-    options: List<Pair<HomeClockMode, String>>,
-    onOptionSelected: (HomeClockMode) -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(
-                horizontal = Dimens.APP_HORIZONTAL_SPACING,
-                vertical = 8.dp
-            ),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            stringResource(R.string.clock_mode),
-            modifier = Modifier.weight(1f),
-            fontSize = 20.sp
-        )
-        Spacer(modifier = Modifier.width(16.dp))
-        DropdownView(
-            selectedOption = selectedOption,
-            options = options.map { it.second },
-            onOptionSelected = { selected ->
-                onOptionSelected(options.first { it.second == selected }.first)
-            }
-        )
-    }
-}
-
-@Composable
-private fun EnableAccessibilityDialog(
-    onConfirm: () -> Unit,
-    onDismiss: () -> Unit,
-) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text(text = stringResource(R.string.enable_accessibility_dialog_title)) },
-        text = {
-            Text(
-                text = stringResource(
-                    R.string.enable_accessibility_dialog_message,
-                    stringResource(id = R.string.app_name)
-                )
-            )
-        },
-        confirmButton = {
-            Button(
-                onClick = onConfirm
-            ) {
-                Text(text = stringResource(R.string.open_settings))
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = onDismiss
-            ) {
-                Text(text = stringResource(id = R.string.dismiss))
-            }
-        }
-    )
-}
-
-@Composable
-fun EnableNotificationsDialog(
-    onConfirm: () -> Unit,
-    onDismiss: () -> Unit
-) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text(stringResource(R.string.notification_access_required)) },
-        text = {
-            Text(
-                stringResource(R.string.notification_access_required_description)
-            )
-        },
-        confirmButton = {
-            Button(onClick = onConfirm) {
-                Text(
-                    stringResource(R.string.open_settings)
-                )
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text(
-                    stringResource(R.string.dismiss)
-                )
-            }
-        }
-    )
 }
