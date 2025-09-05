@@ -1,6 +1,5 @@
-package com.minimo.launcher.ui.components
+package com.minimo.launcher.ui.settings.customisation.components
 
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
@@ -17,49 +16,45 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
-import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.TextFieldValue
 import com.minimo.launcher.R
 import kotlinx.coroutines.android.awaitFrame
 
 @Composable
-fun RenameAppDialog(
-    originalName: String,
-    currentName: String,
-    onRenameClick: (String) -> Unit,
+fun IgnoreSpecialCharactersDialog(
+    currentCharacters: String,
+    onUpdateClick: (String) -> Unit,
     onCancelClick: () -> Unit
 ) {
     val focusRequester = remember { FocusRequester() }
 
-    var newName by remember {
+    var newCharacters by remember {
         mutableStateOf(
             TextFieldValue(
-                text = currentName,
-                selection = TextRange(currentName.length)
+                text = currentCharacters,
+                selection = TextRange(currentCharacters.length)
             )
         )
     }
     AlertDialog(
         onDismissRequest = onCancelClick,
-        title = { Text(stringResource(R.string.rename_app)) },
+        title = { Text(stringResource(R.string.ignore_special_characters)) },
         text = {
             OutlinedTextField(
                 modifier = Modifier.focusRequester(focusRequester),
-                value = newName,
+                value = newCharacters,
                 onValueChange = { newValue ->
                     if (newValue.text.length <= 30) {
-                        newName = newValue
+                        newCharacters = newValue
                     }
                 },
                 singleLine = true,
-                label = { Text(stringResource(R.string.app_name_label)) },
-                placeholder = { Text(originalName) },
-                keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences)
+                label = { Text(stringResource(R.string.enter_characters)) }
             )
         },
         confirmButton = {
-            Button(onClick = { onRenameClick(newName.text.trim()) }) {
-                Text(stringResource(R.string.rename))
+            Button(onClick = { onUpdateClick(newCharacters.text.trim()) }) {
+                Text(stringResource(R.string.update))
             }
         },
         dismissButton = {

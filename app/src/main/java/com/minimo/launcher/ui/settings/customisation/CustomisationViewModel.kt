@@ -213,6 +213,26 @@ class CustomisationViewModel @Inject constructor(
                     }
                 }
         }
+
+        viewModelScope.launch {
+            preferenceHelper.getHomeAppVerticalPadding()
+                .distinctUntilChanged()
+                .collect { padding ->
+                    _state.update {
+                        it.copy(homeAppVerticalPadding = padding.toFloat())
+                    }
+                }
+        }
+
+        viewModelScope.launch {
+            preferenceHelper.getIgnoreSpecialCharacters()
+                .distinctUntilChanged()
+                .collect { characters ->
+                    _state.update {
+                        it.copy(ignoreSpecialCharacters = characters)
+                    }
+                }
+        }
     }
 
     fun onThemeModeChanged(mode: ThemeMode) {
@@ -345,6 +365,19 @@ class CustomisationViewModel @Inject constructor(
     fun onNotificationPermissionNotGrantedOnStarted() {
         viewModelScope.launch {
             preferenceHelper.setNotificationDot(false)
+        }
+    }
+
+    fun onHomeVerticalPaddingChanged(padding: Int) {
+        viewModelScope.launch {
+            preferenceHelper.setHomeAppVerticalPadding(padding)
+        }
+    }
+
+    fun onUpdateIgnoreSpecialCharacters(characters: String) {
+        viewModelScope.launch {
+            val uniqueCharacters = characters.trim().toSet().joinToString("")
+            preferenceHelper.setIgnoreSpecialCharacters(uniqueCharacters)
         }
     }
 }

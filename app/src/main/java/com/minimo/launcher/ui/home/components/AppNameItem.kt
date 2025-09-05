@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import com.minimo.launcher.R
@@ -44,7 +45,8 @@ fun AppNameItem(
     onToggleHideClick: () -> Unit,
     onAppInfoClick: () -> Unit,
     onLongClick: () -> Unit = { },
-    onUninstallClick: () -> Unit
+    onUninstallClick: () -> Unit,
+    verticalPadding: Dp = 16.dp
 ) {
     var appBottomSheetVisible by remember { mutableStateOf(false) }
     val lineHeight by remember { derivedStateOf { textSize * 1.2 } }
@@ -54,11 +56,11 @@ fun AppNameItem(
             PaddingValues(
                 start = if (isWorkProfile) 0.dp else Dimens.APP_HORIZONTAL_SPACING,
                 end = if (showNotificationDot) 0.dp else Dimens.APP_HORIZONTAL_SPACING,
-                top = 16.dp,
-                bottom = 16.dp
+                top = verticalPadding,
+                bottom = verticalPadding
             )
         } else {
-            PaddingValues(horizontal = Dimens.APP_HORIZONTAL_SPACING, vertical = 16.dp)
+            PaddingValues(horizontal = Dimens.APP_HORIZONTAL_SPACING, vertical = verticalPadding)
         }
     }
 

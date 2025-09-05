@@ -284,7 +284,8 @@ fun HomeScreen(
                             onLongClick = ::hideKeyboardWithClearFocus,
                             onUninstallClick = { context.uninstallApp(appInfo) },
                             textSize = if (state.applyHomeAppSizeToAllApps) state.homeTextSize.sp else 20.sp,
-                            showNotificationDot = appInfo.showNotificationDot
+                            showNotificationDot = appInfo.showNotificationDot,
+                            verticalPadding = state.homeAppVerticalPadding.dp
                         )
                     }
                 }
@@ -367,7 +368,8 @@ fun HomeScreen(
                                 appsArrangement = state.appsArrangement,
                                 textSize = state.homeTextSize.sp,
                                 onUninstallClick = { context.uninstallApp(appInfo) },
-                                showNotificationDot = appInfo.showNotificationDot
+                                showNotificationDot = appInfo.showNotificationDot,
+                                verticalPadding = state.homeAppVerticalPadding.dp
                             )
                         }
                     }
