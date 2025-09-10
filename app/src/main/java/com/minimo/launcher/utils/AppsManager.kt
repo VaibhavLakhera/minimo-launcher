@@ -129,20 +129,6 @@ class AppsManager @Inject constructor(
         }
     }
 
-    override fun onPackagesSuspended(packageNames: Array<out String>?, user: UserHandle?) {
-        if (packageNames == null || user == null) return
-        coroutineScope.launch {
-            mutex.withLock {
-                packageNames.forEach { packageName ->
-                    removeAppsUseCase.invoke(
-                        packageName = packageName,
-                        userHandle = user.hashCode()
-                    )
-                }
-            }
-        }
-    }
-
     override fun onPackagesUnsuspended(packageNames: Array<out String>?, user: UserHandle?) {
         if (packageNames == null || user == null) return
         coroutineScope.launch {
