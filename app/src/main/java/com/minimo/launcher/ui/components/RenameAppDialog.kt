@@ -47,7 +47,7 @@ fun RenameAppDialog(
                 modifier = Modifier.focusRequester(focusRequester),
                 value = newName,
                 onValueChange = { newValue ->
-                    if (newValue.text.length <= 30) {
+                    if (newValue.text.length <= 100) {
                         newName = newValue
                     }
                 },
