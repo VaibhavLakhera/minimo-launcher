@@ -6,7 +6,7 @@ import com.minimo.launcher.data.entities.AppInfoEntity
 
 @Database(
     entities = [AppInfoEntity::class],
-    version = 2
+    version = 3
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun appInfoDao(): AppInfoDao

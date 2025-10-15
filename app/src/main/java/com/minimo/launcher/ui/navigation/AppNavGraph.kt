@@ -8,6 +8,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.minimo.launcher.ui.favourite_apps.FavouriteAppsScreen
+import com.minimo.launcher.ui.favourite_apps.reorder_apps.ReorderAppsScreen
 import com.minimo.launcher.ui.hidden_apps.HiddenAppsScreen
 import com.minimo.launcher.ui.home.HomeScreen
 import com.minimo.launcher.ui.intro.IntroScreen
@@ -23,6 +24,7 @@ object Routes {
     const val SETTINGS_CUSTOMISATION = "SETTINGS_CUSTOMISATION"
     const val HIDDEN_APPS = "HIDDEN_APPS"
     const val FAVOURITE_APPS = "FAVOURITE_APPS"
+    const val SETTINGS_REORDER_APPS = "SETTINGS_REORDER_APPS"
 }
 
 @Composable
@@ -102,7 +104,16 @@ fun AppNavGraph(
         composable(route = Routes.FAVOURITE_APPS) {
             FavouriteAppsScreen(
                 viewModel = hiltViewModel(it),
-                onBackClick = onBackPressed
+                onBackClick = onBackPressed,
+                onReorderClick = {
+                    navController.navigate(Routes.SETTINGS_REORDER_APPS)
+                }
+            )
+        }
+        composable(route = Routes.SETTINGS_REORDER_APPS) {
+            ReorderAppsScreen(
+                viewModel = hiltViewModel(it),
+                onBackClick = onBackPressed,
             )
         }
     }

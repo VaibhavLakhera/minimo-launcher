@@ -1,8 +1,10 @@
 package com.minimo.launcher.data
 
+import android.content.ContentValues
 import android.content.Context
 import android.content.pm.LauncherActivityInfo
 import android.content.pm.LauncherApps
+import android.database.sqlite.SQLiteDatabase
 import android.os.Process
 import android.os.UserManager
 import androidx.room.migration.Migration
@@ -96,6 +98,52 @@ object DatabaseMigrations {
 
             // Rename new table to original name
             db.execSQL("ALTER TABLE `appInfoEntity_new` RENAME TO `appInfoEntity`")
+        }
+    }
+
+    // Add a new column 'order_index' to the 'appInfoEntity' table.
+    val MIGRATION_2_3 = object : Migration(2, 3) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            // Add the new 'order_index' column to the table.
+            // It's an INTEGER NOT NULL, and defaults to 0.
+            db.execSQL("ALTER TABLE appInfoEntity ADD COLUMN order_index INTEGER NOT NULL DEFAULT 0")
+
+            // Fetch existing favourite apps in their current sorted order.
+            val favouritesCursor =
+                db.query("SELECT * FROM appInfoEntity WHERE is_favourite = 1 ORDER BY COALESCE(NULLIF(alternate_app_name, ''), app_name) COLLATE NOCASE")
+
+            if (favouritesCursor.moveToFirst()) {
+                // Get column indices once to use in the loop.
+                val packageNameIndex = favouritesCursor.getColumnIndex("package_name")
+                val classNameIndex = favouritesCursor.getColumnIndex("class_name")
+                val userHandleIndex = favouritesCursor.getColumnIndex("user_handle")
+
+                // Start the current order index at 1.
+                var currentOrderIndex = 1
+
+                do {
+                    // For each favourite app, update its 'order_index'.
+                    val packageName = favouritesCursor.getString(packageNameIndex)
+                    val className = favouritesCursor.getString(classNameIndex)
+                    val userHandle = favouritesCursor.getInt(userHandleIndex)
+
+                    val contentValues = ContentValues().apply {
+                        put("order_index", currentOrderIndex)
+                    }
+
+                    db.update(
+                        "appInfoEntity",
+                        SQLiteDatabase.CONFLICT_NONE,
+                        contentValues,
+                        "package_name = ? AND class_name = ? AND user_handle = ?",
+                        arrayOf(packageName, className, userHandle.toString())
+                    )
+
+                    currentOrderIndex++
+                } while (favouritesCursor.moveToNext())
+            }
+
+            favouritesCursor.close()
         }
     }
 }

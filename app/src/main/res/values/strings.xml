@@ -93,4 +93,7 @@
     <string name="ignore_special_characters">Ignore Special Characters</string>
     <string name="enter_characters">Enter characters</string>
     <string name="these_characters_will_be_ignored_when_searching_for_apps_in_home_screen">These characters will be ignored when searching for apps in home screen</string>
+    <string name="search_app">Search app</string>
+    <string name="get_started">Get Started</string>
+    <string name="reorder_favourites">Reorder Favourites</string>
 </resources>

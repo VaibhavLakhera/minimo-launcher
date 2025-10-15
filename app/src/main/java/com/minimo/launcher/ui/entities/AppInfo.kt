@@ -10,6 +10,7 @@ data class AppInfo(
     val isHidden: Boolean,
     val isWorkProfile: Boolean,
     val showNotificationDot: Boolean,
+    val orderIndex: Int,
 ) {
     val name: String
         get() = alternateAppName.ifEmpty { appName }

@@ -25,7 +25,10 @@ data class AppInfoEntity(
     val isFavourite: Boolean,
 
     @ColumnInfo(name = "is_hidden", defaultValue = "0")
-    val isHidden: Boolean
+    val isHidden: Boolean,
+
+    @ColumnInfo(name = "order_index", defaultValue = "0")
+    val orderIndex: Int
 ) {
     @get:Ignore
     val id: String

@@ -8,5 +8,6 @@ data class FavouriteAppsState(
     val filteredAllApps: List<AppInfo> = emptyList(),
     val searchText: String = "",
     val showAppBarMorePopup: Boolean = false,
-    val showFavouritesOnly: Boolean = false
+    val showFavouritesOnly: Boolean = false,
+    val showReorderButton: Boolean = false
 )

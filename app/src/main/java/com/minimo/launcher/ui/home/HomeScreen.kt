@@ -242,11 +242,11 @@ fun HomeScreen(
     ) {
         BottomSheetScaffold(
             scaffoldState = bottomSheetScaffoldState,
-            sheetDragHandle = {
-                SheetDragHandle(isExpanded = state.isBottomSheetExpanded)
-            },
+            sheetDragHandle = null,
             sheetShadowElevation = 0.dp,
             sheetContent = {
+                SheetDragHandle(isExpanded = state.isBottomSheetExpanded)
+
                 if (!state.drawerSearchBarAtBottom) {
                     AppDrawerSearch(
                         focusRequester = focusRequester,

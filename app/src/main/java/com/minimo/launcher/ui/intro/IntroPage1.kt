@@ -49,7 +49,7 @@ internal fun IntroPage1(
             )
         }
         IntroBottomButton(
-            text = "Get Started",
+            text = stringResource(R.string.get_started),
             onClick = onContinueClick
         )
     }

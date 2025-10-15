@@ -116,7 +116,8 @@ class AppUtils @Inject constructor(
             isFavourite = isFavourite,
             isHidden = isHidden,
             isWorkProfile = userHandle != myUserHandle,
-            showNotificationDot = showNotificationDot
+            showNotificationDot = showNotificationDot,
+            orderIndex = orderIndex
         )
     }
 

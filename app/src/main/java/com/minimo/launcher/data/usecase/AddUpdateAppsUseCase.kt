@@ -23,12 +23,8 @@ class AddUpdateAppsUseCase @Inject constructor(
         // This could happen if any component was disabled or removed
         val installedAppIds = installedApps.map { it.id }
         val removedApps = dbApps.filterNot { installedAppIds.contains(it.id) }
-        for (removedApp in removedApps) {
-            appInfoDao.deleteAppByClassAndPackage(
-                className = removedApp.className,
-                packageName = removedApp.packageName,
-                userHandle = removedApp.userHandle
-            )
+        if (removedApps.isNotEmpty()) {
+            appInfoDao.deleteAppsTransaction(removedApps)
         }
     }
 
@@ -57,6 +53,7 @@ class AddUpdateAppsUseCase @Inject constructor(
                         alternateAppName = "",
                         isFavourite = false,
                         isHidden = false,
+                        orderIndex = 0
                     )
                 )
             }

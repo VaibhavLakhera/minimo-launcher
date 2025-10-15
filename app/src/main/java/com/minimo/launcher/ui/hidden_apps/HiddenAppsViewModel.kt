@@ -55,10 +55,11 @@ class HiddenAppsViewModel @Inject constructor(
                     appInfo.userHandle
                 )
             } else {
-                appInfoDao.addAppToHidden(
+                appInfoDao.addAppToHiddenTransaction(
                     appInfo.className,
                     appInfo.packageName,
-                    appInfo.userHandle
+                    appInfo.userHandle,
+                    appInfo.orderIndex
                 )
             }
         }
