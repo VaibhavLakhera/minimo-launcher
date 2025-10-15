@@ -312,9 +312,21 @@ class HomeViewModel @Inject constructor(
     fun onToggleFavouriteAppClick(app: AppInfo) {
         viewModelScope.launch {
             if (app.isFavourite) {
-                appInfoDao.removeAppFromFavourite(app.className, app.packageName, app.userHandle)
+                appInfoDao.removeAppFromFavouriteTransaction(
+                    app.className,
+                    app.packageName,
+                    app.userHandle,
+                    app.orderIndex
+                )
             } else {
-                appInfoDao.addAppToFavourite(app.className, app.packageName, app.userHandle)
+                val newOrderIndex =
+                    (_state.value.favouriteApps.maxOfOrNull { it.orderIndex } ?: 0) + 1
+                appInfoDao.addAppToFavourite(
+                    app.className,
+                    app.packageName,
+                    app.userHandle,
+                    newOrderIndex
+                )
             }
         }
     }
@@ -330,7 +342,12 @@ class HomeViewModel @Inject constructor(
             if (app.isHidden) {
                 appInfoDao.removeAppFromHidden(app.className, app.packageName, app.userHandle)
             } else {
-                appInfoDao.addAppToHidden(app.className, app.packageName, app.userHandle)
+                appInfoDao.addAppToHiddenTransaction(
+                    app.className,
+                    app.packageName,
+                    app.userHandle,
+                    app.orderIndex
+                )
             }
         }
     }

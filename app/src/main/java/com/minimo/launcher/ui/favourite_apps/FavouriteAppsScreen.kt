@@ -1,5 +1,10 @@
 package com.minimo.launcher.ui.favourite_apps
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,14 +38,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.minimo.launcher.R
+import com.minimo.launcher.ui.components.AppButton
 import com.minimo.launcher.ui.components.ToggleAppItem
 import com.minimo.launcher.ui.home.components.SearchItem
+import com.minimo.launcher.ui.theme.Dimens
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FavouriteAppsScreen(
     viewModel: FavouriteAppsViewModel,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    onReorderClick: () -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -123,6 +131,25 @@ fun FavouriteAppsScreen(
                         onToggleClick = { viewModel.onToggleFavouriteAppClick(appInfo) }
                     )
                 }
+            }
+
+            AnimatedVisibility(
+                state.showReorderButton,
+                enter = fadeIn() + slideInVertically(initialOffsetY = { it }),
+                exit = fadeOut() + slideOutVertically(targetOffsetY = { it })
+            ) {
+                AppButton(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            top = 16.dp,
+                            bottom = 8.dp,
+                            start = Dimens.APP_HORIZONTAL_SPACING,
+                            end = Dimens.APP_HORIZONTAL_SPACING
+                        ),
+                    onClick = onReorderClick,
+                    text = stringResource(R.string.reorder_favourites)
+                )
             }
         }
     }

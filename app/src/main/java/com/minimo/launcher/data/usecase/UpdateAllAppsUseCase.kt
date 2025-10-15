@@ -54,12 +54,8 @@ class UpdateAllAppsUseCase @Inject constructor(
             appInfoDao.addApps(addApps)
         }
 
-        for (deleteApp in deleteApps) {
-            appInfoDao.deleteAppByClassAndPackage(
-                className = deleteApp.className,
-                packageName = deleteApp.packageName,
-                userHandle = deleteApp.userHandle
-            )
+        if (deleteApps.isNotEmpty()) {
+            appInfoDao.deleteAppsTransaction(deleteApps)
         }
     }
 
@@ -80,7 +76,8 @@ class UpdateAllAppsUseCase @Inject constructor(
                         appName = installedApp.appName,
                         alternateAppName = "",
                         isFavourite = false,
-                        isHidden = false
+                        isHidden = false,
+                        orderIndex = 0
                     )
                 )
             }

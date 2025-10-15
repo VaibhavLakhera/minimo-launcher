@@ -26,6 +26,7 @@ class FavouriteAppsViewModel @Inject constructor(
                 .collect { appInfoList ->
                     val allApps = appUtils.mapToAppInfo(appInfoList)
                     val favouriteApps = allApps.filter { it.isFavourite }
+                    val showReorderButton = favouriteApps.size > 1
                     val currentAllApps = if (_state.value.showFavouritesOnly) {
                         favouriteApps
                     } else {
@@ -40,6 +41,7 @@ class FavouriteAppsViewModel @Inject constructor(
                                 searchText = it.searchText,
                                 apps = currentAllApps
                             ),
+                            showReorderButton = showReorderButton
                         )
                     }
                 }
@@ -49,16 +51,20 @@ class FavouriteAppsViewModel @Inject constructor(
     fun onToggleFavouriteAppClick(appInfo: AppInfo) {
         viewModelScope.launch {
             if (appInfo.isFavourite) {
-                appInfoDao.removeAppFromFavourite(
+                appInfoDao.removeAppFromFavouriteTransaction(
                     appInfo.className,
                     appInfo.packageName,
-                    appInfo.userHandle
+                    appInfo.userHandle,
+                    appInfo.orderIndex
                 )
             } else {
+                val newOrderIndex =
+                    (_state.value.favouriteApps.maxOfOrNull { it.orderIndex } ?: 0) + 1
                 appInfoDao.addAppToFavourite(
                     appInfo.className,
                     appInfo.packageName,
-                    appInfo.userHandle
+                    appInfo.userHandle,
+                    newOrderIndex
                 )
             }
         }

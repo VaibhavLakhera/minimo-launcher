@@ -46,7 +46,8 @@ fun AppNameItem(
     onAppInfoClick: () -> Unit,
     onLongClick: () -> Unit = { },
     onUninstallClick: () -> Unit,
-    verticalPadding: Dp = 16.dp
+    verticalPadding: Dp = 16.dp,
+    clickEnabled: Boolean = true
 ) {
     var appBottomSheetVisible by remember { mutableStateOf(false) }
     val lineHeight by remember { derivedStateOf { textSize * 1.2 } }
@@ -68,6 +69,7 @@ fun AppNameItem(
         modifier = modifier
             .fillMaxWidth()
             .combinedClickable(
+                enabled = clickEnabled,
                 onClick = onClick,
                 onLongClick = {
                     onLongClick()

@@ -30,7 +30,10 @@ class DataModule {
             AppDatabase::class.java, "minimo-launcher-db"
         )
             .fallbackToDestructiveMigration(true)
-            .addMigrations(DatabaseMigrations.MIGRATION_1_2(application))
+            .addMigrations(
+                DatabaseMigrations.MIGRATION_1_2(application),
+                DatabaseMigrations.MIGRATION_2_3
+            )
             .build()
 
     @Singleton

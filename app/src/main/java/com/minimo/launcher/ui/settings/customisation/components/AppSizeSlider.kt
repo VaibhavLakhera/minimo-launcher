@@ -99,7 +99,7 @@ fun AppSizeSlider(
         lineHeight = homeTextSize.sp,
         modifier = Modifier
             .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.15f))
+            .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.10f))
             .padding(
                 horizontal = Dimens.APP_HORIZONTAL_SPACING,
                 vertical = homeAppVerticalPadding.dp

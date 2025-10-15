@@ -54,16 +54,20 @@ class IntroViewModel @Inject constructor(
     fun onToggleFavouriteAppClick(appInfo: AppInfo) {
         viewModelScope.launch {
             if (appInfo.isFavourite) {
-                appInfoDao.removeAppFromFavourite(
+                appInfoDao.removeAppFromFavouriteTransaction(
                     appInfo.className,
                     appInfo.packageName,
-                    appInfo.userHandle
+                    appInfo.userHandle,
+                    appInfo.orderIndex
                 )
             } else {
+                val favouriteApps = _state.value.allApps.filter { it.isFavourite }
+                val newOrderIndex = (favouriteApps.maxOfOrNull { it.orderIndex } ?: 0) + 1
                 appInfoDao.addAppToFavourite(
                     appInfo.className,
                     appInfo.packageName,
-                    appInfo.userHandle
+                    appInfo.userHandle,
+                    newOrderIndex
                 )
             }
         }

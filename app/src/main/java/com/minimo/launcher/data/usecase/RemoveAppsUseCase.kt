@@ -9,6 +9,9 @@ class RemoveAppsUseCase @Inject constructor(
     private val appInfoDao: AppInfoDao
 ) {
     suspend operator fun invoke(packageName: String, userHandle: Int) {
-        appInfoDao.deleteAppByPackage(packageName, userHandle)
+        val dbApps = appInfoDao.getAppsByPackageName(packageName, userHandle)
+        if (dbApps.isNotEmpty()) {
+            appInfoDao.deleteAppsTransaction(dbApps)
+        }
     }
 }
