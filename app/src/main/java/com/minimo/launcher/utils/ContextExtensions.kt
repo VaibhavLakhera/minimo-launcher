@@ -277,6 +277,15 @@ private fun Context.openDefaultCalendarOption2() {
     }
 }
 
+fun Context.openPowerUsageSummary() {
+    try {
+        val intent = Intent(Intent.ACTION_POWER_USAGE_SUMMARY)
+        startActivity(intent)
+    } catch (exception: Exception) {
+        Timber.e(exception)
+    }
+}
+
 fun Context.isNotificationPermissionGranted(): Boolean {
     return NotificationManagerCompat.getEnabledListenerPackages(this).contains(packageName)
 }
