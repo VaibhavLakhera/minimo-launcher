@@ -95,6 +95,23 @@ fun Context.openPlayStorePage(id: String = packageName) {
     }
 }
 
+fun Context.isInstalledFromPlayStore(): Boolean {
+    val playStorePackageName = "com.android.vending"
+    return try {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            val info = packageManager.getInstallSourceInfo(packageName)
+            info.installingPackageName == playStorePackageName ||
+                    info.initiatingPackageName == playStorePackageName
+        } else {
+            @Suppress("DEPRECATION")
+            packageManager.getInstallerPackageName(packageName) == playStorePackageName
+        }
+    } catch (exception: Exception) {
+        Timber.e(exception)
+        false
+    }
+}
+
 fun Context.openSeniorLauncherPlayStorePage() {
     openPlayStorePage(id = "com.eldo.launcher")
 }
@@ -271,6 +288,15 @@ private fun Context.openDefaultCalendarOption2() {
                 Intent.CATEGORY_APP_CALENDAR
             )
         )
+        startActivity(intent)
+    } catch (exception: Exception) {
+        Timber.e(exception)
+    }
+}
+
+fun Context.openPowerUsageSummary() {
+    try {
+        val intent = Intent(Intent.ACTION_POWER_USAGE_SUMMARY)
         startActivity(intent)
     } catch (exception: Exception) {
         Timber.e(exception)

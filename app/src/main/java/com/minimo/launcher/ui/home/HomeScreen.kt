@@ -203,15 +203,11 @@ fun HomeScreen(
     val systemNavigationHeight =
         WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
 
-    val sheetPeekHeight by remember {
-        derivedStateOf {
-            // Don't peek the bottom sheet if either the hideAppDrawerArrow or enableWallpaper is true
-            if (state.hideAppDrawerArrow || state.enableWallpaper) {
-                0.dp
-            } else {
-                56.dp + systemNavigationHeight
-            }
-        }
+    val sheetPeekHeight = if (state.hideAppDrawerArrow || state.enableWallpaper) {
+        // Don't peek the bottom sheet if either the hideAppDrawerArrow or enableWallpaper is true
+        0.dp
+    } else {
+        56.dp + systemNavigationHeight
     }
 
     val safeDrawingTop =
@@ -219,7 +215,7 @@ fun HomeScreen(
 
     val surfaceColor = MaterialTheme.colorScheme.surface
 
-    val boxBackgroundColor = remember(state.enableWallpaper, state.dimWallpaper) {
+    val boxBackgroundColor = remember(state.enableWallpaper, state.dimWallpaper, surfaceColor) {
         if (state.enableWallpaper) {
             if (state.dimWallpaper) {
                 Color.Black.copy(alpha = 0.20f)
@@ -231,7 +227,7 @@ fun HomeScreen(
         }
     }
 
-    val scaffoldContainerColor = remember(state.enableWallpaper) {
+    val scaffoldContainerColor = remember(state.enableWallpaper, surfaceColor) {
         if (state.enableWallpaper) {
             Color.Transparent
         } else {
