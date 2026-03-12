@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.minimo.launcher.R
 import com.minimo.launcher.ui.theme.Dimens
+import com.minimo.launcher.utils.isInstalledFromPlayStore
 import com.minimo.launcher.utils.openHomeSettings
 import com.minimo.launcher.utils.openPlayStorePage
 import com.minimo.launcher.utils.openSeniorLauncherPlayStorePage
@@ -87,10 +88,12 @@ fun SettingsScreen(
                 name = stringResource(R.string.send_feedback),
                 onClick = context::sendFeedback
             )
-            SettingsItem(
-                name = stringResource(R.string.rate_application),
-                onClick = context::openPlayStorePage
-            )
+            if (context.isInstalledFromPlayStore()) {
+                SettingsItem(
+                    name = stringResource(R.string.rate_application),
+                    onClick = context::openPlayStorePage
+                )
+            }
             HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
             Text(
                 text = stringResource(id = R.string.discover_my_other_app),
