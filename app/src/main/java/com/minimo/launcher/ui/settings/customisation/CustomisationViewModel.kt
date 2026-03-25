@@ -2,6 +2,7 @@ package com.minimo.launcher.ui.settings.customisation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.minimo.launcher.data.AppInfoDao
 import com.minimo.launcher.data.PreferenceHelper
 import com.minimo.launcher.ui.theme.ThemeMode
 import com.minimo.launcher.utils.HomeAppsAlignmentHorizontal
@@ -19,7 +20,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CustomisationViewModel @Inject constructor(
-    private val preferenceHelper: PreferenceHelper
+    private val preferenceHelper: PreferenceHelper,
+    private val appInfoDao: AppInfoDao
 ) : ViewModel() {
     private val _state = MutableStateFlow(CustomisationState())
     val state: StateFlow<CustomisationState> = _state
@@ -304,6 +306,76 @@ class CustomisationViewModel @Inject constructor(
                     }
                 }
         }
+
+        viewModelScope.launch {
+            preferenceHelper.getClockAppPreference()
+                .distinctUntilChanged()
+                .collect { pref ->
+                    val appName = getAppNameFromPref(pref)
+                    _state.update {
+                        it.copy(clockAppPreference = pref, clockAppName = appName)
+                    }
+                }
+        }
+
+        viewModelScope.launch {
+            preferenceHelper.getCalendarAppPreference()
+                .distinctUntilChanged()
+                .collect { pref ->
+                    val appName = getAppNameFromPref(pref)
+                    _state.update {
+                        it.copy(calendarAppPreference = pref, calendarAppName = appName)
+                    }
+                }
+        }
+
+        viewModelScope.launch {
+            preferenceHelper.getScreenTimeAppPreference()
+                .distinctUntilChanged()
+                .collect { pref ->
+                    val appName = getAppNameFromPref(pref)
+                    _state.update {
+                        it.copy(screenTimeAppPreference = pref, screenTimeAppName = appName)
+                    }
+                }
+        }
+
+        viewModelScope.launch {
+            preferenceHelper.getSwipeLeftAppPreference()
+                .distinctUntilChanged()
+                .collect { pref ->
+                    val appName = getAppNameFromPref(pref)
+                    _state.update {
+                        it.copy(swipeLeftAppPreference = pref, swipeLeftAppName = appName)
+                    }
+                }
+        }
+
+        viewModelScope.launch {
+            preferenceHelper.getSwipeRightAppPreference()
+                .distinctUntilChanged()
+                .collect { pref ->
+                    val appName = getAppNameFromPref(pref)
+                    _state.update {
+                        it.copy(swipeRightAppPreference = pref, swipeRightAppName = appName)
+                    }
+                }
+        }
+    }
+
+    private suspend fun getAppNameFromPref(pref: String): String {
+        if (pref.isBlank()) return ""
+        val parts = pref.split("|")
+        if (parts.size == 3) {
+            val packageName = parts[0]
+            val className = parts[1]
+            val userHandle = parts[2].toIntOrNull() ?: return ""
+            val entity = appInfoDao.getApp(className, packageName, userHandle)
+            if (entity != null) {
+                return entity.alternateAppName.ifEmpty { entity.appName }
+            }
+        }
+        return ""
     }
 
     fun onThemeModeChanged(mode: ThemeMode) {
@@ -497,6 +569,36 @@ class CustomisationViewModel @Inject constructor(
     fun onAppUsagePermissionNotGrantedOnStarted() {
         viewModelScope.launch {
             preferenceHelper.showScreenTimeWidget(false)
+        }
+    }
+
+    fun onClockAppChanged(appData: String) {
+        viewModelScope.launch {
+            preferenceHelper.setClockAppPreference(appData)
+        }
+    }
+
+    fun onCalendarAppChanged(appData: String) {
+        viewModelScope.launch {
+            preferenceHelper.setCalendarAppPreference(appData)
+        }
+    }
+
+    fun onScreenTimeAppChanged(appData: String) {
+        viewModelScope.launch {
+            preferenceHelper.setScreenTimeAppPreference(appData)
+        }
+    }
+
+    fun onSwipeLeftAppChanged(appData: String) {
+        viewModelScope.launch {
+            preferenceHelper.setSwipeLeftAppPreference(appData)
+        }
+    }
+
+    fun onSwipeRightAppChanged(appData: String) {
+        viewModelScope.launch {
+            preferenceHelper.setSwipeRightAppPreference(appData)
         }
     }
 }

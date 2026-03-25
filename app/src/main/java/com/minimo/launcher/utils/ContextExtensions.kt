@@ -45,6 +45,24 @@ fun Context.launchApp(packageName: String, className: String, userHandleHashCode
     }
 }
 
+fun Context.launchAppFromPreference(pref: String, fallback: () -> Unit = {}) {
+    if (pref.isBlank()) {
+        fallback()
+        return
+    }
+    val parts = pref.split("|")
+    if (parts.size == 3) {
+        val packageName = parts[0]
+        val className = parts[1]
+        val userHandle = parts[2].toIntOrNull()
+        if (userHandle != null) {
+            launchApp(packageName, className, userHandle)
+            return
+        }
+    }
+    fallback()
+}
+
 fun Context.uninstallApp(appInfo: AppInfo) {
     try {
         val userManager = getSystemService(Context.USER_SERVICE) as UserManager

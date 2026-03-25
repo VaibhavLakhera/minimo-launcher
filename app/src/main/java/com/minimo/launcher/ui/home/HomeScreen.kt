@@ -54,11 +54,11 @@ import com.minimo.launcher.ui.home.components.AppDrawerSheet
 import com.minimo.launcher.ui.home.components.EmptyHomeBody
 import com.minimo.launcher.ui.home.components.HomeBody
 import com.minimo.launcher.utils.launchApp
+import com.minimo.launcher.utils.launchAppFromPreference
 import com.minimo.launcher.utils.lockScreen
 import com.minimo.launcher.utils.showNotificationDrawer
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -262,11 +262,9 @@ fun HomeScreen(
                     onDragStart = { swipeXAccumulator = 0f },
                     onDragEnd = {
                         if (swipeXAccumulator > swipeRightThreshold) {
-                            // TODO: Implement swipe right action
-                            Timber.i("Swipe right detected")
+                            context.launchAppFromPreference(state.swipeRightAppPreference)
                         } else if (swipeXAccumulator < swipeLeftThreshold) {
-                            // TODO: Implement swipe left action
-                            Timber.i("Swipe left detected")
+                            context.launchAppFromPreference(state.swipeLeftAppPreference)
                         }
                         swipeXAccumulator = 0f
                     },

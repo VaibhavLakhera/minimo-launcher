@@ -23,6 +23,9 @@ interface AppInfoDao {
     @Query("SELECT * FROM appInfoEntity WHERE package_name = :packageName AND user_handle = :userHandle")
     suspend fun getAppsByPackageName(packageName: String, userHandle: Int): List<AppInfoEntity>
 
+    @Query("SELECT * FROM appInfoEntity WHERE class_name = :className AND package_name = :packageName AND user_handle = :userHandle")
+    suspend fun getApp(className: String, packageName: String, userHandle: Int): AppInfoEntity?
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addApps(apps: List<AppInfoEntity>)
 
