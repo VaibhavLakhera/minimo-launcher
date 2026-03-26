@@ -359,6 +359,56 @@ class HomeViewModel @Inject constructor(
                 }
         }
 
+        viewModelScope.launch {
+            preferenceHelper.getClockAppPreference()
+                .distinctUntilChanged()
+                .collect { pref ->
+                    _state.update {
+                        it.copy(clockAppPreference = pref)
+                    }
+                }
+        }
+
+        viewModelScope.launch {
+            preferenceHelper.getCalendarAppPreference()
+                .distinctUntilChanged()
+                .collect { pref ->
+                    _state.update {
+                        it.copy(calendarAppPreference = pref)
+                    }
+                }
+        }
+
+        viewModelScope.launch {
+            preferenceHelper.getScreenTimeAppPreference()
+                .distinctUntilChanged()
+                .collect { pref ->
+                    _state.update {
+                        it.copy(screenTimeAppPreference = pref)
+                    }
+                }
+        }
+
+        viewModelScope.launch {
+            preferenceHelper.getSwipeLeftAppPreference()
+                .distinctUntilChanged()
+                .collect { pref ->
+                    _state.update {
+                        it.copy(swipeLeftAppPreference = pref)
+                    }
+                }
+        }
+
+        viewModelScope.launch {
+            preferenceHelper.getSwipeRightAppPreference()
+                .distinctUntilChanged()
+                .collect { pref ->
+                    _state.update {
+                        it.copy(swipeRightAppPreference = pref)
+                    }
+                }
+        }
+
         listenForHomePressedEvent()
     }
 
@@ -481,8 +531,8 @@ class HomeViewModel @Inject constructor(
     /**
      * If searchText is blank, then it should always exclude the favourite and hidden apps from the list.
      *
-     * If searchText is not blank, then it should use the "showHiddenApps" flag to decide whether or
-     * not to include the hidden apps in the result.
+     * If searchText is not blank, then it should use the "showHiddenApps" flag to decide whether
+     * to include the hidden apps in the result.
      * */
     private fun getAppsWithSearch(
         searchText: String,

@@ -9,8 +9,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -50,11 +55,27 @@ fun ColumnScope.AppDrawerSheet(
         )
     }
 
+    val nestedScrollConnection = remember(allAppsLazyListState) {
+        object : NestedScrollConnection {
+            override fun onPostScroll(
+                consumed: Offset,
+                available: Offset,
+                source: NestedScrollSource
+            ): Offset {
+                if (available.y > 0 && allAppsLazyListState.canScrollBackward) {
+                    return Offset(0f, available.y)
+                }
+                return Offset.Zero
+            }
+        }
+    }
+
     LazyColumn(
         state = allAppsLazyListState,
         modifier = Modifier
             .fillMaxSize()
-            .weight(1f),
+            .weight(1f)
+            .nestedScroll(nestedScrollConnection),
         contentPadding = PaddingValues(top = 16.dp, bottom = systemNavigationHeight)
     ) {
         if (state.hideAppDrawerSearch && !state.drawerSearchBarAtBottom) {

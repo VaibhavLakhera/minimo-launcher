@@ -62,6 +62,15 @@ class PreferenceHelper @Inject constructor(
         private val KEY_HIDE_APP_DRAWER_SEARCH = booleanPreferencesKey("KEY_HIDE_APP_DRAWER_SEARCH")
         private val KEY_SHOW_SCREEN_TIME_WIDGET =
             booleanPreferencesKey("KEY_SHOW_SCREEN_TIME_WIDGET")
+        private val KEY_CLOCK_APP_PREFERENCE = stringPreferencesKey("KEY_CLOCK_APP_PREFERENCE")
+        private val KEY_CALENDAR_APP_PREFERENCE =
+            stringPreferencesKey("KEY_CALENDAR_APP_PREFERENCE")
+        private val KEY_SCREEN_TIME_APP_PREFERENCE =
+            stringPreferencesKey("KEY_SCREEN_TIME_APP_PREFERENCE")
+        private val KEY_SWIPE_LEFT_APP_PREFERENCE =
+            stringPreferencesKey("KEY_SWIPE_LEFT_APP_PREFERENCE")
+        private val KEY_SWIPE_RIGHT_APP_PREFERENCE =
+            stringPreferencesKey("KEY_SWIPE_RIGHT_APP_PREFERENCE")
     }
 
     suspend fun setIsIntroCompleted(isCompleted: Boolean) {
@@ -414,5 +423,55 @@ class PreferenceHelper @Inject constructor(
 
     fun getShowScreenTimeWidget(): Flow<Boolean> {
         return preferences.data.map { it[KEY_SHOW_SCREEN_TIME_WIDGET] ?: false }
+    }
+
+    suspend fun setClockAppPreference(appData: String) {
+        preferences.edit {
+            it[KEY_CLOCK_APP_PREFERENCE] = appData
+        }
+    }
+
+    fun getClockAppPreference(): Flow<String> {
+        return preferences.data.map { it[KEY_CLOCK_APP_PREFERENCE] ?: "" }
+    }
+
+    suspend fun setCalendarAppPreference(appData: String) {
+        preferences.edit {
+            it[KEY_CALENDAR_APP_PREFERENCE] = appData
+        }
+    }
+
+    fun getCalendarAppPreference(): Flow<String> {
+        return preferences.data.map { it[KEY_CALENDAR_APP_PREFERENCE] ?: "" }
+    }
+
+    suspend fun setScreenTimeAppPreference(appData: String) {
+        preferences.edit {
+            it[KEY_SCREEN_TIME_APP_PREFERENCE] = appData
+        }
+    }
+
+    fun getScreenTimeAppPreference(): Flow<String> {
+        return preferences.data.map { it[KEY_SCREEN_TIME_APP_PREFERENCE] ?: "" }
+    }
+
+    suspend fun setSwipeLeftAppPreference(appData: String) {
+        preferences.edit {
+            it[KEY_SWIPE_LEFT_APP_PREFERENCE] = appData
+        }
+    }
+
+    fun getSwipeLeftAppPreference(): Flow<String> {
+        return preferences.data.map { it[KEY_SWIPE_LEFT_APP_PREFERENCE] ?: "" }
+    }
+
+    suspend fun setSwipeRightAppPreference(appData: String) {
+        preferences.edit {
+            it[KEY_SWIPE_RIGHT_APP_PREFERENCE] = appData
+        }
+    }
+
+    fun getSwipeRightAppPreference(): Flow<String> {
+        return preferences.data.map { it[KEY_SWIPE_RIGHT_APP_PREFERENCE] ?: "" }
     }
 }

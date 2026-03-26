@@ -28,7 +28,10 @@ import com.minimo.launcher.ui.components.TimeAndDateView
 import com.minimo.launcher.ui.home.HomeScreenState
 import com.minimo.launcher.ui.home.HomeViewModel
 import com.minimo.launcher.ui.theme.Dimens
+import com.minimo.launcher.utils.launchAppFromPreference
 import com.minimo.launcher.utils.launchAppInfo
+import com.minimo.launcher.utils.openDefaultCalendarApp
+import com.minimo.launcher.utils.openDefaultClockApp
 import com.minimo.launcher.utils.openDigitalWellbeing
 import com.minimo.launcher.utils.uninstallApp
 
@@ -84,7 +87,17 @@ fun HomeBody(
                         twentyFourHourFormat = state.twentyFourHourFormat,
                         showBatteryLevel = state.showBatteryLevel,
                         textColor = textColor,
-                        textShadow = textShadow
+                        textShadow = textShadow,
+                        onClockClick = {
+                            context.launchAppFromPreference(state.clockAppPreference) {
+                                context.openDefaultClockApp()
+                            }
+                        },
+                        onDateClick = {
+                            context.launchAppFromPreference(state.calendarAppPreference) {
+                                context.openDefaultCalendarApp()
+                            }
+                        }
                     )
                 }
 
@@ -97,7 +110,11 @@ fun HomeBody(
                         horizontalAlignment = state.homeClockAlignment,
                         screenTime = state.screenTime,
                         refreshScreenTime = viewModel::refreshScreenTime,
-                        onClick = context::openDigitalWellbeing,
+                        onClick = {
+                            context.launchAppFromPreference(state.screenTimeAppPreference) {
+                                context.openDigitalWellbeing()
+                            }
+                        },
                         textColor = textColor,
                         textShadow = textShadow
                     )

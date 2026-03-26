@@ -111,4 +111,13 @@
     <string name="dim_wallpaper">Dim Wallpaper</string>
     <string name="light_text_on_wallpaper">Light Text on Wallpaper</string>
     <string name="set_wallpaper_to_theme_color_dialog_message">Are you sure you want to enable this? The phone\'s wallpaper will automatically be set to the current theme\'s colour.</string>
+    <string name="select_app">Select App</string>
+    <string name="clock_app">Clock App</string>
+    <string name="calendar_app">Calendar App</string>
+    <string name="default_app">Default</string>
+    <string name="choose">Choose</string>
+    <string name="screen_time_app">Screen Time App</string>
+    <string name="home_swipe_left_app">Home Swipe Left App</string>
+    <string name="home_swipe_right_app">Home Swipe Right App</string>
+    <string name="none">None</string>
 </resources>

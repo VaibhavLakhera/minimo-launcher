@@ -37,4 +37,9 @@ data class HomeScreenState(
     val enableWallpaper: Boolean = false,
     val lightTextOnWallpaper: Boolean = true,
     val dimWallpaper: Boolean = false,
+    val clockAppPreference: String = "",
+    val calendarAppPreference: String = "",
+    val screenTimeAppPreference: String = "",
+    val swipeLeftAppPreference: String = "",
+    val swipeRightAppPreference: String = "",
 )

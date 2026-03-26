@@ -18,7 +18,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -26,8 +25,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.currentStateAsState
 import com.minimo.launcher.utils.HomeClockMode
-import com.minimo.launcher.utils.openDefaultCalendarApp
-import com.minimo.launcher.utils.openDefaultClockApp
 import kotlinx.coroutines.delay
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -40,10 +37,10 @@ fun TimeAndDateView(
     twentyFourHourFormat: Boolean,
     showBatteryLevel: Boolean,
     textColor: Color,
-    textShadow: Shadow?
+    textShadow: Shadow?,
+    onClockClick: () -> Unit,
+    onDateClick: () -> Unit
 ) {
-    val context = LocalContext.current
-
     var currentDateTime by remember { mutableStateOf(LocalDateTime.now()) }
 
     val timeFormatter = remember(twentyFourHourFormat) {
@@ -75,7 +72,7 @@ fun TimeAndDateView(
     ) {
         if (clockMode != HomeClockMode.DateOnly) {
             Text(
-                modifier = Modifier.clickable(onClick = context::openDefaultClockApp),
+                modifier = Modifier.clickable(onClick = onClockClick),
                 text = currentDateTime.format(timeFormatter).uppercase(),
                 fontSize = 30.sp,
                 fontWeight = FontWeight.Bold,
@@ -87,7 +84,7 @@ fun TimeAndDateView(
             Spacer(modifier = Modifier.height(4.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    modifier = Modifier.clickable(onClick = context::openDefaultCalendarApp),
+                    modifier = Modifier.clickable(onClick = onDateClick),
                     text = currentDateTime.format(dateFormatter),
                     fontSize = dateFontSize,
                     fontWeight = dateFontWeight,
