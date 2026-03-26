@@ -312,8 +312,12 @@ class CustomisationViewModel @Inject constructor(
                 .distinctUntilChanged()
                 .collect { pref ->
                     val appName = getAppNameFromPref(pref)
-                    _state.update {
-                        it.copy(clockAppPreference = pref, clockAppName = appName)
+                    if (pref.isNotBlank() && appName.isEmpty()) {
+                        preferenceHelper.setClockAppPreference("")
+                    } else {
+                        _state.update {
+                            it.copy(clockAppPreference = pref, clockAppName = appName)
+                        }
                     }
                 }
         }
@@ -323,8 +327,12 @@ class CustomisationViewModel @Inject constructor(
                 .distinctUntilChanged()
                 .collect { pref ->
                     val appName = getAppNameFromPref(pref)
-                    _state.update {
-                        it.copy(calendarAppPreference = pref, calendarAppName = appName)
+                    if (pref.isNotBlank() && appName.isEmpty()) {
+                        preferenceHelper.setCalendarAppPreference("")
+                    } else {
+                        _state.update {
+                            it.copy(calendarAppPreference = pref, calendarAppName = appName)
+                        }
                     }
                 }
         }
@@ -334,8 +342,12 @@ class CustomisationViewModel @Inject constructor(
                 .distinctUntilChanged()
                 .collect { pref ->
                     val appName = getAppNameFromPref(pref)
-                    _state.update {
-                        it.copy(screenTimeAppPreference = pref, screenTimeAppName = appName)
+                    if (pref.isNotBlank() && appName.isEmpty()) {
+                        preferenceHelper.setScreenTimeAppPreference("")
+                    } else {
+                        _state.update {
+                            it.copy(screenTimeAppPreference = pref, screenTimeAppName = appName)
+                        }
                     }
                 }
         }
@@ -345,8 +357,12 @@ class CustomisationViewModel @Inject constructor(
                 .distinctUntilChanged()
                 .collect { pref ->
                     val appName = getAppNameFromPref(pref)
-                    _state.update {
-                        it.copy(swipeLeftAppPreference = pref, swipeLeftAppName = appName)
+                    if (pref.isNotBlank() && appName.isEmpty()) {
+                        preferenceHelper.setSwipeLeftAppPreference("")
+                    } else {
+                        _state.update {
+                            it.copy(swipeLeftAppPreference = pref, swipeLeftAppName = appName)
+                        }
                     }
                 }
         }
@@ -356,8 +372,12 @@ class CustomisationViewModel @Inject constructor(
                 .distinctUntilChanged()
                 .collect { pref ->
                     val appName = getAppNameFromPref(pref)
-                    _state.update {
-                        it.copy(swipeRightAppPreference = pref, swipeRightAppName = appName)
+                    if (pref.isNotBlank() && appName.isEmpty()) {
+                        preferenceHelper.setSwipeRightAppPreference("")
+                    } else {
+                        _state.update {
+                            it.copy(swipeRightAppPreference = pref, swipeRightAppName = appName)
+                        }
                     }
                 }
         }

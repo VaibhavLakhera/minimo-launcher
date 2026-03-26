@@ -15,7 +15,7 @@ android {
         applicationId = "com.minimo.launcher"
         minSdk = 26
         targetSdk = 35
-        versionCode = 72
+        versionCode = 73
         versionName = "1.24.0"
     }
 
