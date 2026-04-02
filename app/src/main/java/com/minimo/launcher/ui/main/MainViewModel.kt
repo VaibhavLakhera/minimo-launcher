@@ -32,6 +32,16 @@ class MainViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
+            preferenceHelper.getFontPreference()
+                .distinctUntilChanged()
+                .collect { font ->
+                    _state.update {
+                        it.copy(fontPreference = font)
+                    }
+                }
+        }
+
+        viewModelScope.launch {
             preferenceHelper.getShowStatusBar()
                 .distinctUntilChanged()
                 .collect { visible ->

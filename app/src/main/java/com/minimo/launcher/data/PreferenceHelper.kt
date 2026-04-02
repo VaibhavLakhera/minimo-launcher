@@ -71,6 +71,7 @@ class PreferenceHelper @Inject constructor(
             stringPreferencesKey("KEY_SWIPE_LEFT_APP_PREFERENCE")
         private val KEY_SWIPE_RIGHT_APP_PREFERENCE =
             stringPreferencesKey("KEY_SWIPE_RIGHT_APP_PREFERENCE")
+        private val KEY_FONT_PREFERENCE = stringPreferencesKey("KEY_FONT_PREFERENCE")
     }
 
     suspend fun setIsIntroCompleted(isCompleted: Boolean) {
@@ -473,5 +474,15 @@ class PreferenceHelper @Inject constructor(
 
     fun getSwipeRightAppPreference(): Flow<String> {
         return preferences.data.map { it[KEY_SWIPE_RIGHT_APP_PREFERENCE] ?: "" }
+    }
+
+    suspend fun setFontPreference(font: String) {
+        preferences.edit {
+            it[KEY_FONT_PREFERENCE] = font
+        }
+    }
+
+    fun getFontPreference(): Flow<String> {
+        return preferences.data.map { it[KEY_FONT_PREFERENCE] ?: "" }
     }
 }

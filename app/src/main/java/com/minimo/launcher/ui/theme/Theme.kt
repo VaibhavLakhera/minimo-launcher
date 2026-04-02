@@ -46,6 +46,7 @@ fun AppTheme(
     enableWallpaper: Boolean,
     isHomeScreen: Boolean,
     lightTextOnWallpaper: Boolean,
+    fontPreference: String = "",
     content: @Composable () -> Unit
 ) {
     val context = LocalContext.current
@@ -137,7 +138,7 @@ fun AppTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = Typography,
+        typography = getTypographyForFont(fontPreference),
         content = content
     )
 }

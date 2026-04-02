@@ -120,4 +120,5 @@
     <string name="home_swipe_left_app">Home Swipe Left App</string>
     <string name="home_swipe_right_app">Home Swipe Right App</string>
     <string name="none">None</string>
+    <string name="font">Font</string>
 </resources>

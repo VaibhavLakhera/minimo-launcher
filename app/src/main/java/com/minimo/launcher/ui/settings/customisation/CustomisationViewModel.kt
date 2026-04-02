@@ -38,6 +38,16 @@ class CustomisationViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
+            preferenceHelper.getFontPreference()
+                .distinctUntilChanged()
+                .collect { font ->
+                    _state.update {
+                        it.copy(fontPreference = font)
+                    }
+                }
+        }
+
+        viewModelScope.launch {
             preferenceHelper.getHomeAppsAlignmentHorizontal()
                 .distinctUntilChanged()
                 .collect { alignment ->
@@ -401,6 +411,12 @@ class CustomisationViewModel @Inject constructor(
     fun onThemeModeChanged(mode: ThemeMode) {
         viewModelScope.launch {
             preferenceHelper.setThemeMode(mode)
+        }
+    }
+
+    fun onFontPreferenceChanged(font: String) {
+        viewModelScope.launch {
+            preferenceHelper.setFontPreference(font)
         }
     }
 
