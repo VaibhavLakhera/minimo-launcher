@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.sp
 import com.minimo.launcher.ui.components.SheetDragHandle
 import com.minimo.launcher.ui.home.HomeScreenState
 import com.minimo.launcher.ui.home.HomeViewModel
+import com.minimo.launcher.utils.Constants
 import com.minimo.launcher.utils.launchAppInfo
 import com.minimo.launcher.utils.uninstallApp
 
@@ -78,8 +79,8 @@ fun ColumnScope.AppDrawerSheet(
             .nestedScroll(nestedScrollConnection),
         contentPadding = PaddingValues(top = 16.dp, bottom = systemNavigationHeight)
     ) {
-        if (state.hideAppDrawerSearch && !state.drawerSearchBarAtBottom) {
-            item(key = "minimo_settings") {
+        items(items = state.filteredAllApps, key = { it.id }) { appInfo ->
+            if (appInfo.packageName == Constants.MINIMO_SETTINGS_PACKAGE) {
                 MinimoSettingsItem(
                     modifier = Modifier.animateItem(),
                     horizontalArrangement = state.appsArrangementHorizontal,
@@ -90,42 +91,25 @@ fun ColumnScope.AppDrawerSheet(
                     },
                     verticalPadding = state.homeAppVerticalPadding.dp
                 )
-            }
-        }
-
-        items(items = state.filteredAllApps, key = { it.id }) { appInfo ->
-            AppNameItem(
-                modifier = Modifier.animateItem(),
-                appName = appInfo.name,
-                isFavourite = appInfo.isFavourite,
-                isHidden = appInfo.isHidden,
-                isWorkProfile = appInfo.isWorkProfile,
-                onClick = {
-                    viewModel.onLaunchAppClick(appInfo)
-                },
-                onToggleFavouriteClick = { viewModel.onToggleFavouriteAppClick(appInfo) },
-                onRenameClick = { viewModel.onRenameAppClick(appInfo) },
-                onToggleHideClick = { viewModel.onToggleHideClick(appInfo) },
-                onAppInfoClick = { context.launchAppInfo(appInfo) },
-                appsArrangement = state.appsArrangementHorizontal,
-                onLongClick = hideKeyboardWithClearFocus,
-                onUninstallClick = { context.uninstallApp(appInfo) },
-                textSize = if (state.applyHomeAppSizeToAllApps) state.homeTextSize.sp else 20.sp,
-                showNotificationDot = appInfo.showNotificationDot,
-                verticalPadding = state.homeAppVerticalPadding.dp
-            )
-        }
-
-        if (state.hideAppDrawerSearch && state.drawerSearchBarAtBottom) {
-            item(key = "minimo_settings") {
-                MinimoSettingsItem(
+            } else {
+                AppNameItem(
                     modifier = Modifier.animateItem(),
-                    horizontalArrangement = state.appsArrangementHorizontal,
-                    textSize = if (state.applyHomeAppSizeToAllApps) state.homeTextSize.sp else 20.sp,
+                    appName = appInfo.name,
+                    isFavourite = appInfo.isFavourite,
+                    isHidden = appInfo.isHidden,
+                    isWorkProfile = appInfo.isWorkProfile,
                     onClick = {
-                        hideKeyboardWithClearFocus()
-                        onSettingsClick()
+                        viewModel.onLaunchAppClick(appInfo)
                     },
+                    onToggleFavouriteClick = { viewModel.onToggleFavouriteAppClick(appInfo) },
+                    onRenameClick = { viewModel.onRenameAppClick(appInfo) },
+                    onToggleHideClick = { viewModel.onToggleHideClick(appInfo) },
+                    onAppInfoClick = { context.launchAppInfo(appInfo) },
+                    appsArrangement = state.appsArrangementHorizontal,
+                    onLongClick = hideKeyboardWithClearFocus,
+                    onUninstallClick = { context.uninstallApp(appInfo) },
+                    textSize = if (state.applyHomeAppSizeToAllApps) state.homeTextSize.sp else 20.sp,
+                    showNotificationDot = appInfo.showNotificationDot,
                     verticalPadding = state.homeAppVerticalPadding.dp
                 )
             }

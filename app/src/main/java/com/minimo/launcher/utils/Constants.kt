@@ -8,6 +8,9 @@ object Constants {
 
     const val DEFAULT_HOME_VERTICAL_PADDING = 16
     val HOME_VERTICAL_PADDING_RANGE by lazy { 4f..20f }
+
+    // A dummy package used to show "Minimo Settings" in the app drawer when "Hide App Drawer Search" toggle is on.
+    const val MINIMO_SETTINGS_PACKAGE = "APP::com.minimo.launcher.settings"
 }
 
 enum class HomeAppsAlignmentHorizontal {
