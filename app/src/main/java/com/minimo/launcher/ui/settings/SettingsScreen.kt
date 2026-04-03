@@ -1,12 +1,9 @@
 package com.minimo.launcher.ui.settings
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -14,7 +11,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -24,7 +20,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.minimo.launcher.R
@@ -32,7 +27,6 @@ import com.minimo.launcher.ui.theme.Dimens
 import com.minimo.launcher.utils.isInstalledFromPlayStore
 import com.minimo.launcher.utils.openHomeSettings
 import com.minimo.launcher.utils.openPlayStorePage
-import com.minimo.launcher.utils.openSeniorLauncherPlayStorePage
 import com.minimo.launcher.utils.sendFeedback
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -41,7 +35,8 @@ fun SettingsScreen(
     onBackClick: () -> Unit,
     onFavouriteAppsClick: () -> Unit,
     onHiddenAppsClick: () -> Unit,
-    onCustomisationClick: () -> Unit
+    onCustomisationClick: () -> Unit,
+    onSupporterClick: () -> Unit
 ) {
     val context = LocalContext.current
 
@@ -94,34 +89,10 @@ fun SettingsScreen(
                     onClick = context::openPlayStorePage
                 )
             }
-            HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
-            Text(
-                text = stringResource(id = R.string.discover_my_other_app),
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        start = Dimens.APP_HORIZONTAL_SPACING,
-                        top = 20.dp,
-                        end = Dimens.APP_HORIZONTAL_SPACING,
-                        bottom = 8.dp
-                    )
+            SettingsItem(
+                name = stringResource(R.string.become_a_supporter),
+                onClick = onSupporterClick
             )
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { context.openSeniorLauncherPlayStorePage() }
-                    .padding(horizontal = Dimens.APP_HORIZONTAL_SPACING, vertical = 16.dp)) {
-                Text(
-                    text = stringResource(R.string.senior_launcher),
-                    fontSize = 20.sp,
-                    lineHeight = 24.sp
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = stringResource(R.string.senior_launcher_description)
-                )
-            }
 
         }
     }
