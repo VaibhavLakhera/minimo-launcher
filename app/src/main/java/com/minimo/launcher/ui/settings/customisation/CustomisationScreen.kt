@@ -684,11 +684,12 @@ fun AppSelectionItem(
     ) {
         Text(
             text = title,
+            modifier = Modifier.weight(0.65f),
             fontSize = 20.sp
         )
         Spacer(modifier = Modifier.width(16.dp))
         Box(
-            modifier = Modifier.weight(1f),
+            modifier = Modifier.weight(0.35f),
             contentAlignment = Alignment.CenterEnd
         ) {
             Box {
