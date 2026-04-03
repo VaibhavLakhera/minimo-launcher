@@ -54,6 +54,7 @@ import com.minimo.launcher.ui.settings.customisation.components.EnableAccessibil
 import com.minimo.launcher.ui.settings.customisation.components.EnableAppUsageDialog
 import com.minimo.launcher.ui.settings.customisation.components.EnableNotificationsDialog
 import com.minimo.launcher.ui.settings.customisation.components.EnableSetWallpaperToThemeColorDialog
+import com.minimo.launcher.ui.settings.customisation.components.FontDropdown
 import com.minimo.launcher.ui.settings.customisation.components.IgnoreSpecialCharacters
 import com.minimo.launcher.ui.settings.customisation.components.ThemeDropdown
 import com.minimo.launcher.ui.settings.customisation.components.ToggleItem
@@ -151,6 +152,11 @@ fun CustomisationScreen(
                 .fillMaxSize()
                 .padding(paddingValues),
         ) {
+            FontDropdown(
+                selectedFont = state.fontPreference,
+                onFontSelected = viewModel::onFontPreferenceChanged
+            )
+            
             ThemeDropdown(
                 selectedOption = StringUtils.themeModeText(
                     context = context,
@@ -678,11 +684,12 @@ fun AppSelectionItem(
     ) {
         Text(
             text = title,
+            modifier = Modifier.weight(0.65f),
             fontSize = 20.sp
         )
         Spacer(modifier = Modifier.width(16.dp))
         Box(
-            modifier = Modifier.weight(1f),
+            modifier = Modifier.weight(0.35f),
             contentAlignment = Alignment.CenterEnd
         ) {
             Box {

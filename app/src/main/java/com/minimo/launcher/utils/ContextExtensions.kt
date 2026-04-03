@@ -130,8 +130,26 @@ fun Context.isInstalledFromPlayStore(): Boolean {
     }
 }
 
-fun Context.openSeniorLauncherPlayStorePage() {
-    openPlayStorePage(id = "com.eldo.launcher")
+fun Context.openDeveloperPlayStorePage() {
+    try {
+        val intent = Intent(Intent.ACTION_VIEW).apply {
+            data = "https://play.google.com/store/apps/developer?id=Vaibhav+Lakhera".toUri()
+        }
+        startActivity(intent)
+    } catch (exception: Exception) {
+        Timber.e(exception)
+    }
+}
+
+fun Context.openKoFiPage() {
+    try {
+        val intent = Intent(Intent.ACTION_VIEW).apply {
+            data = "https://ko-fi.com/vaibhavlakhera".toUri()
+        }
+        startActivity(intent)
+    } catch (exception: Exception) {
+        Timber.e(exception)
+    }
 }
 
 fun Context.sendFeedback() {

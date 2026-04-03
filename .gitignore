@@ -28,3 +28,6 @@ render.experimental.xml
 
 # Android Profiling
 *.hprof
+
+app/foss
+app/playStore

@@ -6,11 +6,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.ui.Alignment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.minimo.launcher.R
 import com.minimo.launcher.data.AppInfoDao
 import com.minimo.launcher.data.PreferenceHelper
 import com.minimo.launcher.data.usecase.UpdateAllAppsUseCase
 import com.minimo.launcher.ui.entities.AppInfo
 import com.minimo.launcher.utils.AppUtils
+import com.minimo.launcher.utils.Constants
 import com.minimo.launcher.utils.HomeAppsAlignmentHorizontal
 import com.minimo.launcher.utils.HomeAppsAlignmentVertical
 import com.minimo.launcher.utils.HomeClockAlignment
@@ -68,18 +70,25 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             appInfoDao.getAllAppsFlow()
                 .collect { appInfoList ->
-                    val allApps = appUtils.mapToAppInfo(
+                    val dbApps = appUtils.mapToAppInfo(
                         entities = appInfoList,
                         notificationDots = notificationDotsNotifier.getNotificationDots()
                     )
-                    _state.update {
-                        it.copy(
+
+                    _state.update { state ->
+                        val allApps = if (state.hideAppDrawerSearch) {
+                            (dbApps + createMinimoSettingsApp()).sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.name })
+                        } else {
+                            dbApps
+                        }
+
+                        state.copy(
                             allApps = allApps,
                             filteredAllApps = getAppsWithSearch(
-                                searchText = it.searchText,
+                                searchText = state.searchText,
                                 apps = allApps,
-                                includeHiddenApps = it.showHiddenAppsInSearch,
-                                ignoreSpecialCharacters = it.ignoreSpecialCharacters
+                                includeHiddenApps = state.showHiddenAppsInSearch,
+                                ignoreSpecialCharacters = state.ignoreSpecialCharacters
                             )
                         )
                     }
@@ -310,8 +319,26 @@ class HomeViewModel @Inject constructor(
             preferenceHelper.getHideAppDrawerSearch()
                 .distinctUntilChanged()
                 .collect { enable ->
-                    _state.update {
-                        it.copy(hideAppDrawerSearch = enable)
+                    _state.update { state ->
+                        val dbApps =
+                            state.allApps.filterNot { it.packageName == Constants.MINIMO_SETTINGS_PACKAGE }
+                        val allApps = if (enable) {
+                            (dbApps + createMinimoSettingsApp()).sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.name })
+                        } else {
+                            dbApps
+                        }
+
+                        state.copy(
+                            hideAppDrawerSearch = enable,
+                            allApps = allApps,
+                            searchText = "",    // To clear any search result
+                            filteredAllApps = getAppsWithSearch(
+                                searchText = "",
+                                apps = allApps,
+                                includeHiddenApps = state.showHiddenAppsInSearch,
+                                ignoreSpecialCharacters = state.ignoreSpecialCharacters
+                            )
+                        )
                     }
                 }
         }
@@ -410,6 +437,21 @@ class HomeViewModel @Inject constructor(
         }
 
         listenForHomePressedEvent()
+    }
+
+    private fun createMinimoSettingsApp(): AppInfo {
+        return AppInfo(
+            packageName = Constants.MINIMO_SETTINGS_PACKAGE,
+            className = "",
+            userHandle = 0,
+            appName = applicationContext.getString(R.string.minimo_settings),
+            alternateAppName = "",
+            isFavourite = false,
+            isHidden = false,
+            isWorkProfile = false,
+            showNotificationDot = false,
+            orderIndex = 0
+        )
     }
 
     private fun listenForHomePressedEvent() {

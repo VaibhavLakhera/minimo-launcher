@@ -37,7 +37,6 @@ fun EmptyScreenView(
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = subTitle,
-                fontWeight = FontWeight.Light,
                 textAlign = TextAlign.Center
             )
         }

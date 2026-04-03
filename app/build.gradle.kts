@@ -15,12 +15,22 @@ android {
         applicationId = "com.minimo.launcher"
         minSdk = 26
         targetSdk = 35
-        versionCode = 73
-        versionName = "1.24.0"
+        versionCode = 80
+        versionName = "1.25.0"
     }
 
     buildFeatures {
         compose = true
+    }
+
+    flavorDimensions += "store"
+    productFlavors {
+        create("foss") {
+            dimension = "store"
+        }
+        create("playStore") {
+            dimension = "store"
+        }
     }
 
     composeOptions {
@@ -98,4 +108,7 @@ dependencies {
     implementation("androidx.datastore:datastore-preferences:1.1.4")
 
     implementation("com.jakewharton.timber:timber:5.0.1")
+
+    "playStoreImplementation"("com.android.billingclient:billing-ktx:7.1.1")
+    "playStoreImplementation"("com.google.android.play:review-ktx:2.0.2")
 }

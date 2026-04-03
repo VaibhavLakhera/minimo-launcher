@@ -54,7 +54,8 @@ class MainActivity : ComponentActivity() {
                 setWallpaperToThemeColor = state.setWallpaperToThemeColor,
                 enableWallpaper = state.enableWallpaper,
                 isHomeScreen = isHomeScreen,
-                lightTextOnWallpaper = state.lightTextOnWallpaper
+                lightTextOnWallpaper = state.lightTextOnWallpaper,
+                fontPreference = state.fontPreference
             ) {
                 AppNavGraph(
                     navController = navController,
