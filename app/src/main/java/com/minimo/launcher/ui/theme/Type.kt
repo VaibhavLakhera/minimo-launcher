@@ -6,7 +6,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import com.minimo.launcher.R
 
-val AvailableFonts = listOf("DynaPuff", "Inter", "Lexend", "NotoSans", "Poppins")
+val AvailableFonts = listOf("DynaPuff", "Inter", "Lexend", "Nunito", "Poppins")
 
 val InterFontFamily by lazy {
     FontFamily(
@@ -40,11 +40,11 @@ val DynaPuffFontFamily by lazy {
     )
 }
 
-val NotoSansFontFamily by lazy {
+val NunitoFontFamily by lazy {
     FontFamily(
-        Font(R.font.notosans_regular, FontWeight.Normal),
-        Font(R.font.notosans_semibold, FontWeight.SemiBold),
-        Font(R.font.notosans_bold, FontWeight.Bold)
+        Font(R.font.nunito_regular, FontWeight.Normal),
+        Font(R.font.nunito_semibold, FontWeight.SemiBold),
+        Font(R.font.nunito_bold, FontWeight.Bold)
     )
 }
 
@@ -79,7 +79,7 @@ fun getFontFamily(fontName: String): FontFamily? {
         "Lexend" -> LexendFontFamily
         "Poppins" -> PoppinsFontFamily
         "DynaPuff" -> DynaPuffFontFamily
-        "NotoSans" -> NotoSansFontFamily
+        "Nunito" -> NunitoFontFamily
         else -> null
     }
 }
