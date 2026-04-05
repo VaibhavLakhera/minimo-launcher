@@ -135,7 +135,7 @@
     <string name="about_app">Über die App</string>
     <string name="about_app_description">Minimo ist ein komplett kostenloser und Open-Source-Launcher. Entwickelt für diejenigen, die ihren Startbildschirm aufräumen möchten, bietet er eine saubere, minimalistische Benutzeroberfläche ohne Ablenkungen.</string>
     <string name="version">Version</string>
-    <string name="discord">Discord</string>
+    <string name="join_discord_channel">Discord-Kanal beitreten</string>
     <string name="github">GitHub</string>
     <string name="links">Links</string>
 </resources>

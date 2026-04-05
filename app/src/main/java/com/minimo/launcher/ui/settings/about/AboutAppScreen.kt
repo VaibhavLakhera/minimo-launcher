@@ -128,7 +128,7 @@ fun AboutAppScreen(
             }
 
             AboutItem(
-                name = stringResource(R.string.discord),
+                name = stringResource(R.string.join_discord_channel),
                 onClick = context::openDiscordLink
             )
 
