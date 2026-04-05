@@ -99,6 +99,8 @@
     <string name="hide_app_drawer_search">Hide App Drawer Search</string>
     <string name="hide_app_drawer_search_description">When the app drawer search is hidden, the Minimo Settings is shown in the app drawer list</string>
     <string name="minimo_settings">Minimo Settings</string>
+    <string name="minimo_settings_position">Minimo Settings Position</string>
+    <string name="auto">Auto</string>
     <string name="show_screen_time">Show Screen Time</string>
     <string name="show_screen_time_description">Show daily screen time widget on the home screen</string>
     <string name="app_usage_access">App Usage Access</string>

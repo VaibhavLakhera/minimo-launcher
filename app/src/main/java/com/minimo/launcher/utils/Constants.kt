@@ -28,3 +28,7 @@ enum class HomeClockAlignment {
 enum class HomeClockMode {
     Full, TimeOnly, DateOnly
 }
+
+enum class MinimoSettingsPosition {
+    Auto, Top, Bottom
+}

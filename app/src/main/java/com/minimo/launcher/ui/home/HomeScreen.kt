@@ -103,6 +103,7 @@ fun HomeScreen(
             if (bottomSheetScaffoldState.bottomSheetState.currentValue != SheetValue.PartiallyExpanded) {
                 bottomSheetScaffoldState.bottomSheetState.partialExpand()
             } else {
+                allAppsLazyListState.scrollToItem(0)
                 bottomSheetScaffoldState.bottomSheetState.expand()
             }
         }
@@ -142,7 +143,6 @@ fun HomeScreen(
             else -> {
                 viewModel.setBottomSheetExpanded(false)
                 focusManager.clearFocus()
-                allAppsLazyListState.scrollToItem(0)
             }
         }
     }
@@ -188,6 +188,7 @@ fun HomeScreen(
                     context.showNotificationDrawer()
                 } else if (swipeYAccumulator < swipeUpThreshold) {
                     coroutineScope.launch {
+                        allAppsLazyListState.scrollToItem(0)
                         bottomSheetScaffoldState.bottomSheetState.expand()
                     }
                 } else {
@@ -195,6 +196,7 @@ fun HomeScreen(
                         context.showNotificationDrawer()
                     } else if (available.y < -1000f && !homeLazyListState.canScrollForward) {
                         coroutineScope.launch {
+                            allAppsLazyListState.scrollToItem(0)
                             bottomSheetScaffoldState.bottomSheetState.expand()
                         }
                     }

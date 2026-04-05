@@ -5,6 +5,7 @@ import androidx.compose.ui.Alignment
 import com.minimo.launcher.ui.entities.AppInfo
 import com.minimo.launcher.utils.Constants
 import com.minimo.launcher.utils.HomeClockMode
+import com.minimo.launcher.utils.MinimoSettingsPosition
 
 data class HomeScreenState(
     val initialLoaded: Boolean = false,
@@ -42,4 +43,5 @@ data class HomeScreenState(
     val screenTimeAppPreference: String = "",
     val swipeLeftAppPreference: String = "",
     val swipeRightAppPreference: String = "",
+    val minimoSettingsPosition: MinimoSettingsPosition = MinimoSettingsPosition.Auto
 )

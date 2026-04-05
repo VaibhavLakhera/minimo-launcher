@@ -308,6 +308,16 @@ class CustomisationViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
+            preferenceHelper.getMinimoSettingsPosition()
+                .distinctUntilChanged()
+                .collect { position ->
+                    _state.update {
+                        it.copy(minimoSettingsPosition = position)
+                    }
+                }
+        }
+
+        viewModelScope.launch {
             preferenceHelper.getShowScreenTimeWidget()
                 .distinctUntilChanged()
                 .collect { enable ->
@@ -635,6 +645,12 @@ class CustomisationViewModel @Inject constructor(
     fun onSwipeRightAppChanged(appData: String) {
         viewModelScope.launch {
             preferenceHelper.setSwipeRightAppPreference(appData)
+        }
+    }
+
+    fun onMinimoSettingsPositionChanged(position: com.minimo.launcher.utils.MinimoSettingsPosition) {
+        viewModelScope.launch {
+            preferenceHelper.setMinimoSettingsPosition(position)
         }
     }
 }

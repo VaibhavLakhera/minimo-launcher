@@ -6,6 +6,7 @@ import com.minimo.launcher.utils.HomeAppsAlignmentHorizontal
 import com.minimo.launcher.utils.HomeAppsAlignmentVertical
 import com.minimo.launcher.utils.HomeClockAlignment
 import com.minimo.launcher.utils.HomeClockMode
+import com.minimo.launcher.utils.MinimoSettingsPosition
 
 data class CustomisationState(
     val themeMode: ThemeMode? = null,
@@ -47,4 +48,5 @@ data class CustomisationState(
     val swipeLeftAppName: String = "",
     val swipeRightAppPreference: String = "",
     val swipeRightAppName: String = "",
+    val minimoSettingsPosition: MinimoSettingsPosition = MinimoSettingsPosition.Auto,
 )

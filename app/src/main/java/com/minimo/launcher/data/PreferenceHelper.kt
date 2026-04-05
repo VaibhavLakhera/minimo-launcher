@@ -12,6 +12,7 @@ import com.minimo.launcher.utils.HomeAppsAlignmentHorizontal
 import com.minimo.launcher.utils.HomeAppsAlignmentVertical
 import com.minimo.launcher.utils.HomeClockAlignment
 import com.minimo.launcher.utils.HomeClockMode
+import com.minimo.launcher.utils.MinimoSettingsPosition
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -72,6 +73,8 @@ class PreferenceHelper @Inject constructor(
         private val KEY_SWIPE_RIGHT_APP_PREFERENCE =
             stringPreferencesKey("KEY_SWIPE_RIGHT_APP_PREFERENCE")
         private val KEY_FONT_PREFERENCE = stringPreferencesKey("KEY_FONT_PREFERENCE")
+        private val KEY_MINIMO_SETTINGS_POSITION =
+            stringPreferencesKey("KEY_MINIMO_SETTINGS_POSITION")
     }
 
     suspend fun setIsIntroCompleted(isCompleted: Boolean) {
@@ -484,5 +487,24 @@ class PreferenceHelper @Inject constructor(
 
     fun getFontPreference(): Flow<String> {
         return preferences.data.map { it[KEY_FONT_PREFERENCE] ?: "" }
+    }
+
+    suspend fun setMinimoSettingsPosition(position: MinimoSettingsPosition) {
+        preferences.edit {
+            it[KEY_MINIMO_SETTINGS_POSITION] = position.name
+        }
+    }
+
+    fun getMinimoSettingsPosition(): Flow<MinimoSettingsPosition> {
+        return preferences.data.map {
+            val position = it[KEY_MINIMO_SETTINGS_POSITION]
+            if (!position.isNullOrBlank()
+                && MinimoSettingsPosition.entries.any { entry -> entry.name == position }
+            ) {
+                MinimoSettingsPosition.valueOf(position)
+            } else {
+                MinimoSettingsPosition.Auto
+            }
+        }
     }
 }

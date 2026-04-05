@@ -100,6 +100,8 @@
     <string name="hide_app_drawer_search">Nascondi ricerca nel drawer</string>
     <string name="hide_app_drawer_search_description">Quando la ricerca nel drawer è nascosta, le Impostazioni di Minimo vengono mostrate nell\'elenco del drawer</string>
     <string name="minimo_settings">Impostazioni Minimo</string>
+    <string name="minimo_settings_position">Posizione Impostazioni Minimo</string>
+    <string name="auto">Automatico</string>
     <string name="show_screen_time">Mostra tempo di utilizzo</string>
     <string name="show_screen_time_description">Mostra il widget del tempo di utilizzo giornaliero nella schermata home</string>
     <string name="app_usage_access">Accesso all\'utilizzo delle app</string>

@@ -55,4 +55,15 @@ object StringUtils {
             else -> ""
         }
     }
+
+    fun minimoSettingsPositionText(
+        context: Context,
+        position: MinimoSettingsPosition
+    ): String {
+        return when (position) {
+            MinimoSettingsPosition.Auto -> context.getString(R.string.auto)
+            MinimoSettingsPosition.Top -> context.getString(R.string.top)
+            MinimoSettingsPosition.Bottom -> context.getString(R.string.bottom)
+        }
+    }
 }

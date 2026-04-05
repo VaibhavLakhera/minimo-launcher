@@ -17,6 +17,7 @@ import com.minimo.launcher.utils.HomeAppsAlignmentHorizontal
 import com.minimo.launcher.utils.HomeAppsAlignmentVertical
 import com.minimo.launcher.utils.HomeClockAlignment
 import com.minimo.launcher.utils.HomePressedNotifier
+import com.minimo.launcher.utils.MinimoSettingsPosition
 import com.minimo.launcher.utils.NotificationDotsNotifier
 import com.minimo.launcher.utils.ScreenTimeHelper
 import com.minimo.launcher.utils.isAppUsagePermissionGranted
@@ -76,11 +77,11 @@ class HomeViewModel @Inject constructor(
                     )
 
                     _state.update { state ->
-                        val allApps = if (state.hideAppDrawerSearch) {
-                            (dbApps + createMinimoSettingsApp()).sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.name })
-                        } else {
-                            dbApps
-                        }
+                        val allApps = getCombinedAllApps(
+                            dbApps = dbApps,
+                            hideAppDrawerSearch = state.hideAppDrawerSearch,
+                            minimoSettingsPosition = state.minimoSettingsPosition
+                        )
 
                         state.copy(
                             allApps = allApps,
@@ -322,11 +323,11 @@ class HomeViewModel @Inject constructor(
                     _state.update { state ->
                         val dbApps =
                             state.allApps.filterNot { it.packageName == Constants.MINIMO_SETTINGS_PACKAGE }
-                        val allApps = if (enable) {
-                            (dbApps + createMinimoSettingsApp()).sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.name })
-                        } else {
-                            dbApps
-                        }
+                        val allApps = getCombinedAllApps(
+                            dbApps = dbApps,
+                            hideAppDrawerSearch = enable,
+                            minimoSettingsPosition = state.minimoSettingsPosition
+                        )
 
                         state.copy(
                             hideAppDrawerSearch = enable,
@@ -334,6 +335,33 @@ class HomeViewModel @Inject constructor(
                             searchText = "",    // To clear any search result
                             filteredAllApps = getAppsWithSearch(
                                 searchText = "",
+                                apps = allApps,
+                                includeHiddenApps = state.showHiddenAppsInSearch,
+                                ignoreSpecialCharacters = state.ignoreSpecialCharacters
+                            )
+                        )
+                    }
+                }
+        }
+
+        viewModelScope.launch {
+            preferenceHelper.getMinimoSettingsPosition()
+                .distinctUntilChanged()
+                .collect { position ->
+                    _state.update { state ->
+                        val dbApps =
+                            state.allApps.filterNot { it.packageName == Constants.MINIMO_SETTINGS_PACKAGE }
+                        val allApps = getCombinedAllApps(
+                            dbApps = dbApps,
+                            hideAppDrawerSearch = state.hideAppDrawerSearch,
+                            minimoSettingsPosition = position
+                        )
+
+                        state.copy(
+                            minimoSettingsPosition = position,
+                            allApps = allApps,
+                            filteredAllApps = getAppsWithSearch(
+                                searchText = state.searchText,
                                 apps = allApps,
                                 includeHiddenApps = state.showHiddenAppsInSearch,
                                 ignoreSpecialCharacters = state.ignoreSpecialCharacters
@@ -439,19 +467,33 @@ class HomeViewModel @Inject constructor(
         listenForHomePressedEvent()
     }
 
-    private fun createMinimoSettingsApp(): AppInfo {
-        return AppInfo(
-            packageName = Constants.MINIMO_SETTINGS_PACKAGE,
-            className = "",
-            userHandle = 0,
-            appName = applicationContext.getString(R.string.minimo_settings),
-            alternateAppName = "",
-            isFavourite = false,
-            isHidden = false,
-            isWorkProfile = false,
-            showNotificationDot = false,
-            orderIndex = 0
-        )
+    private fun getCombinedAllApps(
+        dbApps: List<AppInfo>,
+        hideAppDrawerSearch: Boolean,
+        minimoSettingsPosition: MinimoSettingsPosition
+    ): List<AppInfo> {
+        return if (hideAppDrawerSearch) {
+            val settingsAppInfo = AppInfo(
+                packageName = Constants.MINIMO_SETTINGS_PACKAGE,
+                className = "",
+                userHandle = 0,
+                appName = applicationContext.getString(R.string.minimo_settings),
+                alternateAppName = "",
+                isFavourite = false,
+                isHidden = false,
+                isWorkProfile = false,
+                showNotificationDot = false,
+                orderIndex = 0
+            )
+            when (minimoSettingsPosition) {
+                MinimoSettingsPosition.Top -> listOf(settingsAppInfo) + dbApps
+                MinimoSettingsPosition.Bottom -> dbApps + listOf(settingsAppInfo)
+                MinimoSettingsPosition.Auto -> (dbApps + settingsAppInfo).sortedWith(
+                    compareBy(String.CASE_INSENSITIVE_ORDER) { it.name })
+            }
+        } else {
+            dbApps
+        }
     }
 
     private fun listenForHomePressedEvent() {
