@@ -99,6 +99,8 @@
     <string name="hide_app_drawer_search">Hide App Drawer Search</string>
     <string name="hide_app_drawer_search_description">When the app drawer search is hidden, the Minimo Settings is shown in the app drawer list</string>
     <string name="minimo_settings">Minimo Settings</string>
+    <string name="minimo_settings_position">Minimo Settings Position</string>
+    <string name="auto">Auto</string>
     <string name="show_screen_time">Show Screen Time</string>
     <string name="show_screen_time_description">Show daily screen time widget on the home screen</string>
     <string name="app_usage_access">App Usage Access</string>
@@ -126,7 +128,13 @@
     <string name="one_time_support">One-Time Support</string>
     <string name="thank_you">Thank You!</string>
     <string name="thank_you_support_message">Thank you for supporting Minimo Launcher</string>
-    <string name="loading">Loading...</string>
+    <string name="loading">Loading…</string>
     <string name="support_via_review">You can also support by leaving a review on the Play Store.</string>
     <string name="open_play_store">Open Play Store</string>
+    <string name="about_app">About App</string>
+    <string name="about_app_description">Minimo is a completely free and open-source launcher. Designed for those who want to de-clutter their home screen, it offers a clean, minimalist interface without distractions.</string>
+    <string name="version">Version</string>
+    <string name="join_discord_channel">Join Discord Channel</string>
+    <string name="github">GitHub</string>
+    <string name="links">Links</string>
 </resources>

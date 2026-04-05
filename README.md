@@ -55,7 +55,8 @@ height="80">](https://apt.izzysoft.de/fdroid/index/apk/com.minimo.launcher)
   - [Hilt](https://dagger.dev/hilt/)
 - [Timber](https://github.com/JakeWharton/timber)
 
-## My socials:
+## Socials:
 
-[X/Twitter](https://x.com/VaibhavLakhera)
-[LinkedIn](https://www.linkedin.com/in/vaibhav-lakhera/)
+- [Join Discord Channel](https://discord.gg/f4wpPppCDk)
+- [X/Twitter](https://x.com/VaibhavLakhera)
+- [LinkedIn](https://www.linkedin.com/in/vaibhav-lakhera/)

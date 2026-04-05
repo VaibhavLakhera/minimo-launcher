@@ -26,6 +26,7 @@ import com.minimo.launcher.ui.intro.IntroScreen
 import com.minimo.launcher.ui.launch.LaunchScreen
 import com.minimo.launcher.ui.settings.SettingsScreen
 import com.minimo.launcher.ui.settings.SupporterScreen
+import com.minimo.launcher.ui.settings.about.AboutAppScreen
 import com.minimo.launcher.ui.settings.customisation.CustomisationScreen
 
 object Routes {
@@ -38,6 +39,7 @@ object Routes {
     const val FAVOURITE_APPS = "FAVOURITE_APPS"
     const val SETTINGS_REORDER_APPS = "SETTINGS_REORDER_APPS"
     const val SUPPORTER = "SUPPORTER"
+    const val ABOUT_APP = "ABOUT_APP"
 }
 
 @Composable
@@ -107,7 +109,17 @@ fun AppNavGraph(
                     },
                     onSupporterClick = {
                         navController.navigate(Routes.SUPPORTER)
+                    },
+                    onAboutAppClick = {
+                        navController.navigate(Routes.ABOUT_APP)
                     }
+                )
+            }
+        }
+        composable(route = Routes.ABOUT_APP) {
+            SolidScreenWrapper {
+                AboutAppScreen(
+                    onBackClick = onBackPressed
                 )
             }
         }

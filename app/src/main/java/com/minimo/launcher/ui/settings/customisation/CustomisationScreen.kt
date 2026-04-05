@@ -56,6 +56,7 @@ import com.minimo.launcher.ui.settings.customisation.components.EnableNotificati
 import com.minimo.launcher.ui.settings.customisation.components.EnableSetWallpaperToThemeColorDialog
 import com.minimo.launcher.ui.settings.customisation.components.FontDropdown
 import com.minimo.launcher.ui.settings.customisation.components.IgnoreSpecialCharacters
+import com.minimo.launcher.ui.settings.customisation.components.MinimoSettingsPositionDropdown
 import com.minimo.launcher.ui.settings.customisation.components.ThemeDropdown
 import com.minimo.launcher.ui.settings.customisation.components.ToggleItem
 import com.minimo.launcher.ui.theme.Dimens
@@ -65,6 +66,7 @@ import com.minimo.launcher.utils.HomeAppsAlignmentHorizontal
 import com.minimo.launcher.utils.HomeAppsAlignmentVertical
 import com.minimo.launcher.utils.HomeClockAlignment
 import com.minimo.launcher.utils.HomeClockMode
+import com.minimo.launcher.utils.MinimoSettingsPosition
 import com.minimo.launcher.utils.StringUtils
 import com.minimo.launcher.utils.hasLockScreenPermission
 import com.minimo.launcher.utils.isAppUsagePermissionGranted
@@ -504,6 +506,30 @@ fun CustomisationScreen(
                 isChecked = state.hideAppDrawerSearch,
                 onToggleClick = viewModel::onToggleHideAppDrawerSearch
             )
+
+            if (state.hideAppDrawerSearch) {
+                MinimoSettingsPositionDropdown(
+                    selectedOption = StringUtils.minimoSettingsPositionText(
+                        context = context,
+                        position = state.minimoSettingsPosition
+                    ),
+                    options = listOf(
+                        MinimoSettingsPosition.Auto to StringUtils.minimoSettingsPositionText(
+                            context,
+                            MinimoSettingsPosition.Auto
+                        ),
+                        MinimoSettingsPosition.Top to StringUtils.minimoSettingsPositionText(
+                            context,
+                            MinimoSettingsPosition.Top
+                        ),
+                        MinimoSettingsPosition.Bottom to StringUtils.minimoSettingsPositionText(
+                            context,
+                            MinimoSettingsPosition.Bottom
+                        )
+                    ),
+                    onOptionSelected = viewModel::onMinimoSettingsPositionChanged
+                )
+            }
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))

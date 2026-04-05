@@ -141,6 +141,28 @@ fun Context.openDeveloperPlayStorePage() {
     }
 }
 
+fun Context.openDiscordLink() {
+    try {
+        val intent = Intent(Intent.ACTION_VIEW).apply {
+            data = "https://discord.gg/f4wpPppCDk".toUri()
+        }
+        startActivity(intent)
+    } catch (exception: Exception) {
+        Timber.e(exception)
+    }
+}
+
+fun Context.openGithubLink() {
+    try {
+        val intent = Intent(Intent.ACTION_VIEW).apply {
+            data = "https://github.com/VaibhavLakhera/minimo-launcher".toUri()
+        }
+        startActivity(intent)
+    } catch (exception: Exception) {
+        Timber.e(exception)
+    }
+}
+
 fun Context.openKoFiPage() {
     try {
         val intent = Intent(Intent.ACTION_VIEW).apply {
