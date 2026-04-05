@@ -24,10 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.minimo.launcher.R
 import com.minimo.launcher.ui.theme.Dimens
-import com.minimo.launcher.utils.isInstalledFromPlayStore
 import com.minimo.launcher.utils.openHomeSettings
-import com.minimo.launcher.utils.openPlayStorePage
-import com.minimo.launcher.utils.sendFeedback
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -36,7 +33,8 @@ fun SettingsScreen(
     onFavouriteAppsClick: () -> Unit,
     onHiddenAppsClick: () -> Unit,
     onCustomisationClick: () -> Unit,
-    onSupporterClick: () -> Unit
+    onSupporterClick: () -> Unit,
+    onAboutAppClick: () -> Unit
 ) {
     val context = LocalContext.current
 
@@ -80,15 +78,9 @@ fun SettingsScreen(
                 onClick = context::openHomeSettings
             )
             SettingsItem(
-                name = stringResource(R.string.send_feedback),
-                onClick = context::sendFeedback
+                name = stringResource(R.string.about_app),
+                onClick = onAboutAppClick
             )
-            if (context.isInstalledFromPlayStore()) {
-                SettingsItem(
-                    name = stringResource(R.string.rate_application),
-                    onClick = context::openPlayStorePage
-                )
-            }
             SettingsItem(
                 name = stringResource(R.string.become_a_supporter),
                 onClick = onSupporterClick
