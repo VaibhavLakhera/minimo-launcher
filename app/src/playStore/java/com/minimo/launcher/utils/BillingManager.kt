@@ -7,15 +7,14 @@ import com.android.billingclient.api.BillingClient
 import com.android.billingclient.api.BillingClientStateListener
 import com.android.billingclient.api.BillingFlowParams
 import com.android.billingclient.api.BillingResult
+import com.android.billingclient.api.ConsumeParams
 import com.android.billingclient.api.PendingPurchasesParams
 import com.android.billingclient.api.ProductDetails
 import com.android.billingclient.api.Purchase
 import com.android.billingclient.api.Purchase.PurchaseState
 import com.android.billingclient.api.PurchasesUpdatedListener
 import com.android.billingclient.api.QueryProductDetailsParams
-import com.android.billingclient.api.QueryPurchasesParams
 import com.android.billingclient.api.queryProductDetails
-import com.android.billingclient.api.queryPurchasesAsync
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -63,12 +62,14 @@ class BillingManager @Inject constructor(
     private fun handlePurchase(purchase: Purchase) {
         val isConsumable = purchase.products.any { it in ONE_TIME_PRODUCTS }
         if (isConsumable) {
-            val consumeParams = com.android.billingclient.api.ConsumeParams.newBuilder()
+            val consumeParams = ConsumeParams
+                .newBuilder()
                 .setPurchaseToken(purchase.purchaseToken)
                 .build()
             billingClient.consumeAsync(consumeParams) { billingResult, _ ->
                 if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
                     // Consume complete
+                    Timber.d("BillingClient: Consume complete")
                 }
             }
         } else {
@@ -80,6 +81,7 @@ class BillingManager @Inject constructor(
             billingClient.acknowledgePurchase(acknowledgePurchaseParams) { billingResult ->
                 if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
                     // Acknowledgement complete
+                    Timber.d("BillingClient: Acknowledgement complete")
                 }
             }
         }
@@ -90,6 +92,7 @@ class BillingManager @Inject constructor(
         .enablePendingPurchases(
             PendingPurchasesParams.newBuilder().enableOneTimeProducts().build()
         )
+        .enableAutoServiceReconnection()
         .build()
 
     fun startBillingConnection(callback: BillingManagerCallback) {

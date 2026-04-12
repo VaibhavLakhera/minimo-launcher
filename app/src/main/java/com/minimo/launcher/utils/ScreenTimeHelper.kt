@@ -1,367 +1,123 @@
 package com.minimo.launcher.utils
 
-import android.app.ActivityManager
 import android.app.usage.UsageEvents
 import android.app.usage.UsageStatsManager
 import android.content.Context
-import android.icu.util.Calendar
 import dagger.hilt.android.qualifiers.ApplicationContext
 import timber.log.Timber
-import java.util.concurrent.TimeUnit
-import java.util.function.BiConsumer
+import java.util.Calendar
 import javax.inject.Inject
+import kotlin.math.max
 import kotlin.math.min
 
-/*
-* Thanks to Olauncher:
-* https://github.com/tanujnotes/Olauncher/blob/master/app/src/main/java/app/olauncher/helper/usageStats/EventLogWrapper.kt
-* */
 class ScreenTimeHelper @Inject constructor(
-    @ApplicationContext
-    private val context: Context
+    @ApplicationContext private val context: Context
 ) {
-    private val usageStatsManager by lazy { context.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager }
-    private val guardian = UnmatchedCloseEventGuardian(usageStatsManager)
-
-    /**
-     * Collects event information from system to calculate and aggregate precise
-     * foreground time statistics for the specified period.
-     *
-     * Comments refer to the cases from
-     * [the documentation.](https://codeberg.org/fynngodau/usageDirect/wiki/Event-log-wrapper-scenarios)
-     *
-     * @param start First point in time to include in results
-     * @param end   Last point in time to include in results
-     * @return A list of foreground stats for the specified period
-     */
-    private fun getForegroundStatsByTimestamps(
-        start: Long,
-        end: Long
-    ): List<ComponentForegroundStat> {
-        var queryStart = start // Can be mutated by DEVICE_STARTUP event
-
-        /*
-         * Because sometimes, open events do not have close events when they should, as a hack / workaround,
-         * we query the apps currently in the foreground and match them against the apps that are currently
-         * in the foreground if the query start date is very recent or in the future. Thus, we are using this
-         * to tell apart True from Faulty unmatched open events.
-         *
-         * We query processes in the beginning of this method call in case querying the event log takes a
-         * little longer.
-         */
-        val foregroundProcesses = mutableListOf<String>()
-        if (end >= System.currentTimeMillis() - 1500) {
-            val activityManager =
-                context.getSystemService(Context.ACTIVITY_SERVICE) as? ActivityManager
-            activityManager?.runningAppProcesses?.forEach { appProcess ->
-                if (appProcess.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND ||
-                    appProcess.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_VISIBLE
-                ) {
-                    if (context.packageName != appProcess.processName) {
-                        foregroundProcesses.add(appProcess.processName)
-                    }
-                }
-            }
-        }
-
-        // Assumption: events are ordered chronologically
-        val events = usageStatsManager.queryEvents(queryStart, end)
-
-        /* …except that sometimes, the events that are close to each other are swapped in a way that
-         * breaks the assumption that all end times which do not have a matching start time have
-         * started before start. We handle those as Duplicate close event and Duplicate open event.
-         * Therefore, we keep null entries in our moveToForegroundMap instead of removing the entries
-         * to prevent apps that had been opened previously in a period from being counted as "opened
-         * before start" (as they are not a True unmatched close event).
-         */
-        // Map components to the last moveToForeground event. Null value means it was closed.
-        val moveToForegroundMap = mutableMapOf<AppClass, Long?>()
-        val componentForegroundStats = mutableListOf<ComponentForegroundStat>()
-
-        // Iterate over events
-        val event = UsageEvents.Event()
-
-        while (events.hasNextEvent()) {
-            events.getNextEvent(event)
-            if (context.packageName == event.packageName) continue
-
-            val appClass = AppClass(event.packageName, event.className)
-
-            when (event.eventType) {
-                /*
-                 * "An event type denoting that an android.app.Activity moved to the foreground."
-                 * (old definition: "An event type denoting that a component moved to the foreground.")
-                 */
-                UsageEvents.Event.ACTIVITY_RESUMED,
-                    /*
-                     * public static final int android.app.usage.UsageEvents.Event.CONTINUE_PREVIOUS_DAY = 4;
-                     * (annotated as @hide)
-                     * "An event type denoting that a component was in the foreground the previous day.
-                     * This is effectively treated as a MOVE_TO_FOREGROUND."
-                     */
-                4 -> {
-                    // Store open timestamp in map, overwriting earlier timestamps in case of Duplicate open event
-                    moveToForegroundMap[appClass] = event.timeStamp
-                }
-
-                /*
-                 * "An event type denoting that an android.app.Activity moved to the background."
-                 * (old definition: "An event type denoting that a component moved to the background.")
-                 */
-                UsageEvents.Event.ACTIVITY_PAUSED,
-                    /*
-                     * "An activity becomes invisible on the UI, corresponding to Activity.onStop()
-                     * of the activity's lifecycle."
-                     */
-                UsageEvents.Event.ACTIVITY_STOPPED,
-                    /*
-                     * public static final int android.app.usage.UsageEvents.Event.END_OF_DAY = 3;
-                     * (annotated as @hide)
-                     * "An event type denoting that a component was in the foreground when the stats
-                     * rolled-over. This is effectively treated as a {@link #MOVE_TO_BACKGROUND}."
-                     */
-                3 -> {
-                    val eventBeginTime: Long? = moveToForegroundMap[appClass]?.also {
-                        // Open and close events in order. Mark as closed.
-                        moveToForegroundMap[appClass] = null
-                    } ?: if (
-                    // App has not been in this query yet (test for Duplicate close event)
-                        moveToForegroundMap.keys.none { it.packageName == event.packageName } &&
-                        // Test if this unmatched close event is True by asking the Guardian to scan for it
-                        guardian.test(event, queryStart)
-                    ) {
-                        // Identified as True unmatched close event. Take start as a starting timestamp.
-                        queryStart
-                    } else {
-                        null // Ignore Faulty unmatched close event
-                    }
-
-                    if (eventBeginTime != null) {
-                        // Check if another of the app's components have moved to the foreground in the meantime
-                        val endTime = moveToForegroundMap.entries
-                            .filter { (key, value) -> key.packageName == event.packageName && value != null }
-                            .mapNotNull { it.value }
-                            .minOrNull() ?: event.timeStamp
-
-                        componentForegroundStats.add(
-                            ComponentForegroundStat(eventBeginTime, endTime, event.packageName)
-                        )
-                    }
-                }
-
-                /*
-                 * "An event type denoting that the Android runtime underwent a shutdown process..."
-                 */
-                UsageEvents.Event.DEVICE_SHUTDOWN -> {
-                    // Per docs: iterate over remaining start events and treat them as closed
-                    moveToForegroundMap.forEach { (key, value) ->
-                        if (value != null) { // If it's a remaining start event
-                            componentForegroundStats.add(
-                                ComponentForegroundStat(value, event.timeStamp, key.packageName)
-                            )
-                            // Set entire app to closed
-                            moveToForegroundMap.keys
-                                .filter { it.packageName == key.packageName }
-                                .forEach { samePackageKey ->
-                                    moveToForegroundMap[samePackageKey] = null
-                                }
-                        }
-                    }
-                }
-
-                /*
-                 * "An event type denoting that the Android runtime started up..."
-                 */
-                UsageEvents.Event.DEVICE_STARTUP -> {
-                    // Per docs: remove pending open events
-                    moveToForegroundMap.clear()
-
-                    /* No package could be open longer than a reboot. Thus, we set the `start`
-                     * timestamp to the boot event's timestamp in case we later assume that a
-                     * package has been open "since the start of the period". It is not logical
-                     * that this would happen but we can never know with this API.
-                     */
-                    queryStart = event.timeStamp
-                }
-            }
-        }
-
-        // Iterate over remaining start events
-        moveToForegroundMap.forEach { (key, value) ->
-            if (value != null) { // If it's a remaining start event
-                // Test if it's a foreground app (True unmatched open event)
-                if (foregroundProcesses.any { it.contains(key.packageName) }) {
-                    componentForegroundStats.add(
-                        ComponentForegroundStat(
-                            value,
-                            min(System.currentTimeMillis(), end),
-                            key.packageName
-                        )
-                    )
-                }
-                // If app is not in foreground, drop event (Assume Faulty unmatched open event)
-            }
-        }
-
-        /* If nothing happened during the timespan but there is an app in the foreground,
-         * then this app was used the whole period time and there was No event for it.
-         * Because the foreground applications API call is documented as not to be used
-         * for purposes like this, we first query whether the process name is a valid
-         * package name and if not, we drop it.
-         */
-        if (moveToForegroundMap.isEmpty()) {
-            val packageManager = context.packageManager
-            foregroundProcesses.forEach { foregroundProcess ->
-                if (packageManager.getLaunchIntentForPackage(foregroundProcess) != null) {
-                    componentForegroundStats.add(
-                        ComponentForegroundStat(
-                            queryStart,
-                            min(System.currentTimeMillis(), end),
-                            foregroundProcess
-                        )
-                    )
-                    Timber.d("Assuming that application $foregroundProcess has been used the whole query time")
-                }
-            }
-        }
-
-        return componentForegroundStats
-    }
-
-    /**
-     * Takes a list of foreground stats and aggregates them to usage stats.
-     * Assumes all provided usage stats to be on the same day.
-     *
-     * @param endConsumer Consumer that accepts ending times of component
-     *                    foreground stats with their package name
-     */
-    @JvmOverloads
-    fun aggregateForegroundStats(
-        foregroundStats: List<ComponentForegroundStat>,
-        endConsumer: BiConsumer<String, Long>? = null
-    ): List<SimpleUsageStat> {
-        if (foregroundStats.isEmpty()) return emptyList()
-
-        // Group by package name and sum the duration for each
-        val applicationTotalTime = foregroundStats
-            .groupBy { it.packageName }
-            .mapValues { (_, stats) -> stats.sumOf { it.endTime - it.beginTime } }
-
-        val firstBeginTime = foregroundStats.first().beginTime
-        val timeZoneOffset = Calendar.getInstance().timeZone.getOffset(firstBeginTime)
-        val day = TimeUnit.MILLISECONDS.toDays(firstBeginTime + timeZoneOffset)
-
-        // Optionally consume end times
-        endConsumer?.let { consumer ->
-            foregroundStats.forEach { consumer.accept(it.packageName, it.endTime) }
-        }
-
-        // Map the aggregated times to SimpleUsageStat objects
-        return applicationTotalTime.map { (packageName, totalTime) ->
-            SimpleUsageStat(day, totalTime, packageName)
-        }
-    }
-
-    private fun aggregateSimpleUsageStats(usageStats: List<SimpleUsageStat>): Long {
-        return usageStats.sumOf { it.timeUsed }
-    }
 
     fun getTodayScreenTimeMillis(): Long {
         try {
+            val usageStatsManager =
+                context.getSystemService(Context.USAGE_STATS_SERVICE) as? UsageStatsManager
+                    ?: return 0L
+
             val calendar = Calendar.getInstance().apply {
                 set(Calendar.HOUR_OF_DAY, 0)
                 set(Calendar.MINUTE, 0)
                 set(Calendar.SECOND, 0)
                 set(Calendar.MILLISECOND, 0)
             }
-            val startTime = calendar.timeInMillis
-            val endTime = System.currentTimeMillis()
+            val startTimestamp = calendar.timeInMillis
+            val endTimestamp = System.currentTimeMillis()
 
-            return aggregateSimpleUsageStats(
-                aggregateForegroundStats(
-                    getForegroundStatsByTimestamps(startTime, endTime)
-                )
-            )
+            return getScreenTimeMillis(usageStatsManager, startTimestamp, endTimestamp)
         } catch (exception: Exception) {
             Timber.e(exception)
-            return 0
+            return 0L
         }
     }
 
-    /**
-     * Stores a class name and its corresponding package.
-     */
-    private data class AppClass(val packageName: String, val className: String?)
-}
+    private fun getScreenTimeMillis(
+        usageStatsManager: UsageStatsManager,
+        startTimestamp: Long,
+        endTimestamp: Long
+    ): Long {
+        val usageIntervals = mutableListOf<Pair<Long, Long>>()
+        val usageEvents = usageStatsManager.queryEvents(startTimestamp, endTimestamp) ?: return 0L
 
-/**
- * “…a diminutive Guardian who traveled backward through time…”
- *
- * Guards [ScreenTimeHelper] against Faulty unmatched close events (per
- * [the documentation](https://codeberg.org/fynngodau/usageDirect/wiki/Event-log-wrapper-scenarios))
- * by seeking backwards through time and scanning for the open event.
- */
-class UnmatchedCloseEventGuardian(private val usageStatsManager: UsageStatsManager) {
-    companion object {
-        private const val SCAN_INTERVAL = 1000L * 60 * 60 * 24 // 24 hours
-    }
+        val resumedPackages = mutableMapOf<String, Pair<String, Long>>()
 
-    /**
-     * @param event      Event to validate
-     * @param queryStart Timestamp at which original query o
-     * @return True if the event is valid, false otherwise
-     */
-    fun test(event: UsageEvents.Event, queryStart: Long): Boolean {
-        val events = usageStatsManager.queryEvents(queryStart - SCAN_INTERVAL, queryStart)
+        var lastLauncherResumeTime: Long? = null
 
-        // Reusable event object for iteration
-        val e = UsageEvents.Event()
+        while (usageEvents.hasNextEvent()) {
+            val event = UsageEvents.Event()
+            if (usageEvents.getNextEvent(event)) {
+                val eventPackageName = event.packageName ?: continue
 
-        // Track whether the package is currently in foreground or background
-        var open = false // Not open until opened
+                if (eventPackageName == context.packageName) {
+                    if (event.eventType == UsageEvents.Event.ACTIVITY_RESUMED) {
+                        lastLauncherResumeTime = event.timeStamp
+                    }
+                    continue
+                }
 
-        while (events.hasNextEvent()) {
-            events.getNextEvent(e)
+                val packageClassName = event.className ?: eventPackageName
 
-            if (e.eventType == UsageEvents.Event.DEVICE_STARTUP) {
-                // Consider all apps closed after startup according to docs
-                open = false
-            }
-
-            // Only consider events concerning our package otherwise
-            if (event.packageName == e.packageName) {
-                when (e.eventType) {
-                    // see EventLogWrapper
-                    UsageEvents.Event.ACTIVITY_RESUMED, 4 -> {
-                        open = true
+                when (event.eventType) {
+                    UsageEvents.Event.ACTIVITY_RESUMED -> {
+                        resumedPackages[packageClassName] = eventPackageName to event.timeStamp
                     }
 
-                    UsageEvents.Event.ACTIVITY_PAUSED, 3 -> {
-                        if (e.timeStamp != event.timeStamp) {
-                            // Don't flip to 'false' if we're looking at the original event itself
-                            open = false
+                    UsageEvents.Event.ACTIVITY_PAUSED, UsageEvents.Event.ACTIVITY_STOPPED -> {
+                        resumedPackages[packageClassName]?.let { resumedPackage ->
+                            usageIntervals.add(resumedPackage.second to event.timeStamp)
+                            resumedPackages.remove(packageClassName)
                         }
                     }
                 }
             }
         }
 
-        val result = if (open) "True" else "Faulty"
-        Timber.d("Scanned for package ${event.packageName} and determined event to be $result")
+        resumedPackages.maxByOrNull {
+            it.value.second
+        }?.value?.let { lastResumedPackage ->
+            // If the launcher was resumed AFTER this background app, then this app isn't actually in the foreground anymore.
+            // So we shouldn't extend its duration to the end of the day.
+            // If lastLauncherResumeTime is null or happened before the last app resume, it's safe to extend.
+            val launcherTookOver =
+                lastLauncherResumeTime != null && lastLauncherResumeTime > lastResumedPackage.second
 
-        // Event is valid if it was previously opened (within SCAN_INTERVAL)
-        return open
+            if (!launcherTookOver) {
+                usageIntervals.add(lastResumedPackage.second to endTimestamp)
+            }
+        }
+
+        val mergedIntervals = mergeOverlappingIntervals(usageIntervals)
+        return mergedIntervals.sumOf { interval ->
+            val start = max(interval.first, startTimestamp)
+            val end = min(interval.second, endTimestamp)
+            max(0L, end - start)
+        }
+    }
+
+    private fun mergeOverlappingIntervals(intervals: List<Pair<Long, Long>>): List<Pair<Long, Long>> {
+        if (intervals.isEmpty()) return emptyList()
+        val sortedIntervals = intervals.sortedBy { it.first }
+        val mergedIntervals = mutableListOf<Pair<Long, Long>>()
+        var currentInterval = sortedIntervals[0]
+
+        for (i in 1 until sortedIntervals.size) {
+            val nextInterval = sortedIntervals[i]
+            if (currentInterval.second >= nextInterval.first) {
+                currentInterval = Pair(
+                    currentInterval.first,
+                    max(currentInterval.second, nextInterval.second)
+                )
+            } else {
+                mergedIntervals.add(currentInterval)
+                currentInterval = nextInterval
+            }
+        }
+        mergedIntervals.add(currentInterval)
+        return mergedIntervals
     }
 }
-
-data class ComponentForegroundStat(
-    val beginTime: Long,
-    val endTime: Long,
-    val packageName: String
-)
-
-data class SimpleUsageStat(
-    val day: Long,
-    val timeUsed: Long,
-    val packageName: String
-)
