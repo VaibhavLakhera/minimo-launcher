@@ -28,376 +28,84 @@ class CustomisationViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            preferenceHelper.getThemeMode()
+            preferenceHelper.getCustomisationPreferencesFlow()
                 .distinctUntilChanged()
-                .collect { mode ->
-                    _state.update {
-                        it.copy(themeMode = mode)
+                .collect { prefs ->
+                    _state.update { state ->
+                        state.copy(
+                            themeMode = prefs.themeMode,
+                            fontPreference = prefs.fontPreference,
+                            homeAppsAlignmentHorizontal = prefs.homeAppsAlignmentHorizontal,
+                            homeAppsAlignmentVertical = prefs.homeAppsAlignmentVertical,
+                            homeClockAlignment = prefs.homeClockAlignment,
+                            showHomeClock = prefs.showHomeClock,
+                            showStatusBar = prefs.showStatusBar,
+                            homeTextSize = prefs.homeTextSize.toFloat(),
+                            autoOpenKeyboardAllApps = prefs.autoOpenKeyboardAllApps,
+                            dynamicTheme = prefs.dynamicTheme,
+                            homeClockMode = prefs.homeClockMode,
+                            doubleTapToLock = prefs.doubleTapToLock,
+                            twentyFourHourFormat = prefs.twentyFourHourFormat,
+                            showBatteryLevel = prefs.showBatteryLevel,
+                            showHiddenAppsInSearch = prefs.showHiddenAppsInSearch,
+                            drawerSearchBarAtBottom = prefs.drawerSearchBarAtBottom,
+                            applyHomeAppSizeToAllApps = prefs.applyHomeAppSizeToAllApps,
+                            blackTheme = prefs.blackTheme,
+                            setWallpaperToThemeColor = prefs.setWallpaperToThemeColor,
+                            enableWallpaper = prefs.enableWallpaper,
+                            lightTextOnWallpaper = prefs.lightTextOnWallpaper,
+                            dimWallpaper = prefs.dimWallpaper,
+                            autoOpenApp = prefs.autoOpenApp,
+                            hideAppDrawerArrow = prefs.hideAppDrawerArrow,
+                            notificationDot = prefs.notificationDot,
+                            homeAppVerticalPadding = prefs.homeAppVerticalPadding.toFloat(),
+                            ignoreSpecialCharacters = prefs.ignoreSpecialCharacters,
+                            hideAppDrawerSearch = prefs.hideAppDrawerSearch,
+                            minimoSettingsPosition = prefs.minimoSettingsPosition,
+                            showScreenTimeWidget = prefs.showScreenTimeWidget,
+                            clockAppPreference = prefs.clockAppPreference,
+                            calendarAppPreference = prefs.calendarAppPreference,
+                            screenTimeAppPreference = prefs.screenTimeAppPreference,
+                            swipeLeftAppPreference = prefs.swipeLeftAppPreference,
+                            swipeRightAppPreference = prefs.swipeRightAppPreference
+                        )
                     }
-                }
-        }
 
-        viewModelScope.launch {
-            preferenceHelper.getFontPreference()
-                .distinctUntilChanged()
-                .collect { font ->
-                    _state.update {
-                        it.copy(fontPreference = font)
-                    }
-                }
-        }
-
-        viewModelScope.launch {
-            preferenceHelper.getHomeAppsAlignmentHorizontal()
-                .distinctUntilChanged()
-                .collect { alignment ->
-                    _state.update {
-                        it.copy(homeAppsAlignmentHorizontal = alignment)
-                    }
-                }
-        }
-
-        viewModelScope.launch {
-            preferenceHelper.getHomeAppsAlignmentVertical()
-                .distinctUntilChanged()
-                .collect { alignment ->
-                    _state.update {
-                        it.copy(homeAppsAlignmentVertical = alignment)
-                    }
-                }
-        }
-
-        viewModelScope.launch {
-            preferenceHelper.getHomeClockAlignment()
-                .distinctUntilChanged()
-                .collect { alignment ->
-                    _state.update {
-                        it.copy(homeClockAlignment = alignment)
-                    }
-                }
-        }
-
-        viewModelScope.launch {
-            preferenceHelper.getShowHomeClock()
-                .distinctUntilChanged()
-                .collect { show ->
-                    _state.update {
-                        it.copy(showHomeClock = show)
-                    }
-                }
-        }
-
-        viewModelScope.launch {
-            preferenceHelper.getShowStatusBar()
-                .distinctUntilChanged()
-                .collect { show ->
-                    _state.update {
-                        it.copy(showStatusBar = show)
-                    }
-                }
-        }
-
-        viewModelScope.launch {
-            preferenceHelper.getHomeTextSizeFlow()
-                .distinctUntilChanged()
-                .collect { size ->
-                    _state.update {
-                        it.copy(homeTextSize = size.toFloat())
-                    }
-                }
-        }
-
-        viewModelScope.launch {
-            preferenceHelper.getAutoOpenKeyboardAllApps()
-                .distinctUntilChanged()
-                .collect { open ->
-                    _state.update {
-                        it.copy(autoOpenKeyboardAllApps = open)
-                    }
-                }
-        }
-
-        viewModelScope.launch {
-            preferenceHelper.getDynamicTheme()
-                .distinctUntilChanged()
-                .collect { enable ->
-                    _state.update {
-                        it.copy(dynamicTheme = enable)
-                    }
-                }
-        }
-
-        viewModelScope.launch {
-            preferenceHelper.getHomeClockMode()
-                .distinctUntilChanged()
-                .collect { mode ->
-                    _state.update {
-                        it.copy(homeClockMode = mode)
-                    }
-                }
-        }
-
-        viewModelScope.launch {
-            preferenceHelper.getDoubleTapToLock()
-                .distinctUntilChanged()
-                .collect { enable ->
-                    _state.update {
-                        it.copy(doubleTapToLock = enable)
-                    }
-                }
-        }
-
-        viewModelScope.launch {
-            preferenceHelper.getTwentyFourHourFormat()
-                .distinctUntilChanged()
-                .collect { enable ->
-                    _state.update {
-                        it.copy(twentyFourHourFormat = enable)
-                    }
-                }
-        }
-
-        viewModelScope.launch {
-            preferenceHelper.getShowBatteryLevel()
-                .distinctUntilChanged()
-                .collect { enable ->
-                    _state.update {
-                        it.copy(showBatteryLevel = enable)
-                    }
-                }
-        }
-
-        viewModelScope.launch {
-            preferenceHelper.getShowHiddenAppsInSearch()
-                .distinctUntilChanged()
-                .collect { enable ->
-                    _state.update {
-                        it.copy(showHiddenAppsInSearch = enable)
-                    }
-                }
-        }
-
-        viewModelScope.launch {
-            preferenceHelper.getDrawerSearchBarAtBottom()
-                .distinctUntilChanged()
-                .collect { enable ->
-                    _state.update {
-                        it.copy(drawerSearchBarAtBottom = enable)
-                    }
-                }
-        }
-
-        viewModelScope.launch {
-            preferenceHelper.getHomeAppSizeToAllApps()
-                .distinctUntilChanged()
-                .collect { enable ->
-                    _state.update {
-                        it.copy(applyHomeAppSizeToAllApps = enable)
-                    }
-                }
-        }
-
-        viewModelScope.launch {
-            preferenceHelper.getBlackTheme()
-                .distinctUntilChanged()
-                .collect { enable ->
-                    _state.update {
-                        it.copy(blackTheme = enable)
-                    }
-                }
-        }
-
-        viewModelScope.launch {
-            preferenceHelper.getSetWallpaperToThemeColor()
-                .distinctUntilChanged()
-                .collect { enable ->
-                    _state.update {
-                        it.copy(setWallpaperToThemeColor = enable)
-                    }
-                }
-        }
-
-        viewModelScope.launch {
-            preferenceHelper.getEnableWallpaper()
-                .distinctUntilChanged()
-                .collect { enable ->
-                    _state.update {
-                        it.copy(enableWallpaper = enable)
-                    }
-                }
-        }
-
-        viewModelScope.launch {
-            preferenceHelper.getLightTextOnWallpaper()
-                .distinctUntilChanged()
-                .collect { enable ->
-                    _state.update {
-                        it.copy(lightTextOnWallpaper = enable)
-                    }
-                }
-        }
-
-        viewModelScope.launch {
-            preferenceHelper.getDimWallpaper()
-                .distinctUntilChanged()
-                .collect { enable ->
-                    _state.update {
-                        it.copy(dimWallpaper = enable)
-                    }
-                }
-        }
-
-        viewModelScope.launch {
-            preferenceHelper.getAutoOpenApp()
-                .distinctUntilChanged()
-                .collect { enable ->
-                    _state.update {
-                        it.copy(autoOpenApp = enable)
-                    }
-                }
-        }
-
-        viewModelScope.launch {
-            preferenceHelper.getHideAppDrawerArrow()
-                .distinctUntilChanged()
-                .collect { enable ->
-                    _state.update {
-                        it.copy(hideAppDrawerArrow = enable)
-                    }
-                }
-        }
-
-        viewModelScope.launch {
-            preferenceHelper.getNotificationDot()
-                .distinctUntilChanged()
-                .collect { enable ->
-                    _state.update {
-                        it.copy(notificationDot = enable)
-                    }
-                }
-        }
-
-        viewModelScope.launch {
-            preferenceHelper.getHomeAppVerticalPadding()
-                .distinctUntilChanged()
-                .collect { padding ->
-                    _state.update {
-                        it.copy(homeAppVerticalPadding = padding.toFloat())
-                    }
-                }
-        }
-
-        viewModelScope.launch {
-            preferenceHelper.getIgnoreSpecialCharacters()
-                .distinctUntilChanged()
-                .collect { characters ->
-                    _state.update {
-                        it.copy(ignoreSpecialCharacters = characters)
-                    }
-                }
-        }
-
-        viewModelScope.launch {
-            preferenceHelper.getHideAppDrawerSearch()
-                .distinctUntilChanged()
-                .collect { enable ->
-                    _state.update {
-                        it.copy(hideAppDrawerSearch = enable)
-                    }
-                }
-        }
-
-        viewModelScope.launch {
-            preferenceHelper.getMinimoSettingsPosition()
-                .distinctUntilChanged()
-                .collect { position ->
-                    _state.update {
-                        it.copy(minimoSettingsPosition = position)
-                    }
-                }
-        }
-
-        viewModelScope.launch {
-            preferenceHelper.getShowScreenTimeWidget()
-                .distinctUntilChanged()
-                .collect { enable ->
-                    _state.update {
-                        it.copy(showScreenTimeWidget = enable)
-                    }
-                }
-        }
-
-        viewModelScope.launch {
-            preferenceHelper.getClockAppPreference()
-                .distinctUntilChanged()
-                .collect { pref ->
-                    val appName = getAppNameFromPref(pref)
-                    if (pref.isNotBlank() && appName.isEmpty()) {
+                    // Special checks for custom apps.
+                    // If preference value exist, we app doesn't exist in DB then clear the preference value
+                    val clockAppName = getAppNameFromPref(prefs.clockAppPreference)
+                    if (prefs.clockAppPreference.isNotBlank() && clockAppName.isEmpty()) {
                         preferenceHelper.setClockAppPreference("")
                     } else {
-                        _state.update {
-                            it.copy(clockAppPreference = pref, clockAppName = appName)
-                        }
+                        _state.update { it.copy(clockAppName = clockAppName) }
                     }
-                }
-        }
 
-        viewModelScope.launch {
-            preferenceHelper.getCalendarAppPreference()
-                .distinctUntilChanged()
-                .collect { pref ->
-                    val appName = getAppNameFromPref(pref)
-                    if (pref.isNotBlank() && appName.isEmpty()) {
+                    val calendarAppName = getAppNameFromPref(prefs.calendarAppPreference)
+                    if (prefs.calendarAppPreference.isNotBlank() && calendarAppName.isEmpty()) {
                         preferenceHelper.setCalendarAppPreference("")
                     } else {
-                        _state.update {
-                            it.copy(calendarAppPreference = pref, calendarAppName = appName)
-                        }
+                        _state.update { it.copy(calendarAppName = calendarAppName) }
                     }
-                }
-        }
 
-        viewModelScope.launch {
-            preferenceHelper.getScreenTimeAppPreference()
-                .distinctUntilChanged()
-                .collect { pref ->
-                    val appName = getAppNameFromPref(pref)
-                    if (pref.isNotBlank() && appName.isEmpty()) {
+                    val screenTimeAppName = getAppNameFromPref(prefs.screenTimeAppPreference)
+                    if (prefs.screenTimeAppPreference.isNotBlank() && screenTimeAppName.isEmpty()) {
                         preferenceHelper.setScreenTimeAppPreference("")
                     } else {
-                        _state.update {
-                            it.copy(screenTimeAppPreference = pref, screenTimeAppName = appName)
-                        }
+                        _state.update { it.copy(screenTimeAppName = screenTimeAppName) }
                     }
-                }
-        }
 
-        viewModelScope.launch {
-            preferenceHelper.getSwipeLeftAppPreference()
-                .distinctUntilChanged()
-                .collect { pref ->
-                    val appName = getAppNameFromPref(pref)
-                    if (pref.isNotBlank() && appName.isEmpty()) {
+                    val swipeLeftAppName = getAppNameFromPref(prefs.swipeLeftAppPreference)
+                    if (prefs.swipeLeftAppPreference.isNotBlank() && swipeLeftAppName.isEmpty()) {
                         preferenceHelper.setSwipeLeftAppPreference("")
                     } else {
-                        _state.update {
-                            it.copy(swipeLeftAppPreference = pref, swipeLeftAppName = appName)
-                        }
+                        _state.update { it.copy(swipeLeftAppName = swipeLeftAppName) }
                     }
-                }
-        }
 
-        viewModelScope.launch {
-            preferenceHelper.getSwipeRightAppPreference()
-                .distinctUntilChanged()
-                .collect { pref ->
-                    val appName = getAppNameFromPref(pref)
-                    if (pref.isNotBlank() && appName.isEmpty()) {
+                    val swipeRightAppName = getAppNameFromPref(prefs.swipeRightAppPreference)
+                    if (prefs.swipeRightAppPreference.isNotBlank() && swipeRightAppName.isEmpty()) {
                         preferenceHelper.setSwipeRightAppPreference("")
                     } else {
-                        _state.update {
-                            it.copy(swipeRightAppPreference = pref, swipeRightAppName = appName)
-                        }
+                        _state.update { it.copy(swipeRightAppName = swipeRightAppName) }
                     }
                 }
         }

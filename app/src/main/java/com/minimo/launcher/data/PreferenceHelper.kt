@@ -93,38 +93,9 @@ class PreferenceHelper @Inject constructor(
         }
     }
 
-    fun getThemeMode(): Flow<ThemeMode> {
-        return preferences.data.map {
-            val mode = it[KEY_THEME_MODE]
-            // Added mode check of "Black" for backward compatibility. Previously "Black" theme was part of ThemeMode.
-            if (mode == "Black") {
-                ThemeMode.Dark
-            } else if (!mode.isNullOrBlank()
-                && ThemeMode.entries.any { entry -> entry.name == mode }
-            ) {
-                ThemeMode.valueOf(mode)
-            } else {
-                ThemeMode.System
-            }
-        }
-    }
-
     suspend fun setHomeAppsAlignmentHorizontal(alignment: HomeAppsAlignmentHorizontal) {
         preferences.edit {
             it[KEY_HOME_APPS_ALIGN_HORIZONTAL] = alignment.name
-        }
-    }
-
-    fun getHomeAppsAlignmentHorizontal(): Flow<HomeAppsAlignmentHorizontal> {
-        return preferences.data.map {
-            val alignment = it[KEY_HOME_APPS_ALIGN_HORIZONTAL]
-            if (!alignment.isNullOrBlank()
-                && HomeAppsAlignmentHorizontal.entries.any { entry -> entry.name == alignment }
-            ) {
-                HomeAppsAlignmentHorizontal.valueOf(alignment)
-            } else {
-                HomeAppsAlignmentHorizontal.Start
-            }
         }
     }
 
@@ -134,35 +105,9 @@ class PreferenceHelper @Inject constructor(
         }
     }
 
-    fun getHomeAppsAlignmentVertical(): Flow<HomeAppsAlignmentVertical> {
-        return preferences.data.map {
-            val alignment = it[KEY_HOME_APPS_ALIGN_VERTICAL]
-            if (!alignment.isNullOrBlank()
-                && HomeAppsAlignmentVertical.entries.any { entry -> entry.name == alignment }
-            ) {
-                HomeAppsAlignmentVertical.valueOf(alignment)
-            } else {
-                HomeAppsAlignmentVertical.Center
-            }
-        }
-    }
-
     suspend fun setHomeClockAlignment(alignment: HomeClockAlignment) {
         preferences.edit {
             it[KEY_HOME_CLOCK_ALIGNMENT] = alignment.name
-        }
-    }
-
-    fun getHomeClockAlignment(): Flow<HomeClockAlignment> {
-        return preferences.data.map {
-            val alignment = it[KEY_HOME_CLOCK_ALIGNMENT]
-            if (!alignment.isNullOrBlank()
-                && HomeClockAlignment.entries.any { entry -> entry.name == alignment }
-            ) {
-                HomeClockAlignment.valueOf(alignment)
-            } else {
-                HomeClockAlignment.Start
-            }
         }
     }
 
@@ -172,29 +117,15 @@ class PreferenceHelper @Inject constructor(
         }
     }
 
-    fun getShowHomeClock(): Flow<Boolean> {
-        return preferences.data.map { it[KEY_SHOW_HOME_CLOCK] ?: false }
-    }
-
     suspend fun setShowStatusBar(show: Boolean) {
         preferences.edit {
             it[KEY_SHOW_STATUS_BAR] = show
         }
     }
 
-    fun getShowStatusBar(): Flow<Boolean> {
-        return preferences.data.map { it[KEY_SHOW_STATUS_BAR] ?: true }
-    }
-
     suspend fun setHomeTextSize(size: Int) {
         preferences.edit { preferences ->
             preferences[KEY_HOME_TEXT_SIZE] = size
-        }
-    }
-
-    fun getHomeTextSizeFlow(): Flow<Int> {
-        return preferences.data.map {
-            it[KEY_HOME_TEXT_SIZE] ?: Constants.DEFAULT_HOME_TEXT_SIZE
         }
     }
 
@@ -204,36 +135,15 @@ class PreferenceHelper @Inject constructor(
         }
     }
 
-    fun getAutoOpenKeyboardAllApps(): Flow<Boolean> {
-        return preferences.data.map { it[KEY_AUTO_OPEN_KEYBOARD_ALL_APPS] ?: false }
-    }
-
     suspend fun setDynamicTheme(enable: Boolean) {
         preferences.edit {
             it[KEY_DYNAMIC_THEME] = enable
         }
     }
 
-    fun getDynamicTheme(): Flow<Boolean> {
-        return preferences.data.map { it[KEY_DYNAMIC_THEME] ?: false }
-    }
-
     suspend fun setHomeClockMode(mode: HomeClockMode) {
         preferences.edit {
             it[KEY_HOME_CLOCK_MODE] = mode.name
-        }
-    }
-
-    fun getHomeClockMode(): Flow<HomeClockMode> {
-        return preferences.data.map {
-            val mode = it[KEY_HOME_CLOCK_MODE]
-            if (!mode.isNullOrBlank()
-                && HomeClockMode.entries.any { entry -> entry.name == mode }
-            ) {
-                HomeClockMode.valueOf(mode)
-            } else {
-                HomeClockMode.Full
-            }
         }
     }
 
@@ -253,18 +163,10 @@ class PreferenceHelper @Inject constructor(
         }
     }
 
-    fun getTwentyFourHourFormat(): Flow<Boolean> {
-        return preferences.data.map { it[KEY_TWENTY_FOUR_HOUR_FORMAT] ?: false }
-    }
-
     suspend fun setShowBatteryLevel(enable: Boolean) {
         preferences.edit {
             it[KEY_SHOW_BATTERY_LEVEL] = enable
         }
-    }
-
-    fun getShowBatteryLevel(): Flow<Boolean> {
-        return preferences.data.map { it[KEY_SHOW_BATTERY_LEVEL] ?: false }
     }
 
     suspend fun setShowHiddenAppsInSearch(enable: Boolean) {
@@ -273,18 +175,10 @@ class PreferenceHelper @Inject constructor(
         }
     }
 
-    fun getShowHiddenAppsInSearch(): Flow<Boolean> {
-        return preferences.data.map { it[KEY_SHOW_HIDDEN_APPS_IN_SEARCH] ?: true }
-    }
-
     suspend fun setDrawerSearchBarAtBottom(enable: Boolean) {
         preferences.edit {
             it[KEY_DRAWER_SEARCH_BAR_AT_BOTTOM] = enable
         }
-    }
-
-    fun getDrawerSearchBarAtBottom(): Flow<Boolean> {
-        return preferences.data.map { it[KEY_DRAWER_SEARCH_BAR_AT_BOTTOM] ?: false }
     }
 
     suspend fun setHomeAppSizeToAllApps(enable: Boolean) {
@@ -293,25 +187,9 @@ class PreferenceHelper @Inject constructor(
         }
     }
 
-    fun getHomeAppSizeToAllApps(): Flow<Boolean> {
-        return preferences.data.map { it[KEY_APPLY_HOME_APP_SIZE_TO_ALL_APPS] ?: false }
-    }
-
     suspend fun setBlackTheme(enable: Boolean) {
         preferences.edit {
             it[KEY_BLACK_THEME] = enable
-        }
-    }
-
-    fun getBlackTheme(): Flow<Boolean> {
-        return preferences.data.map {
-            // Added themeMode check for backward compatibility. Previously "Black" theme was part of ThemeMode.
-            val themeMode = it[KEY_THEME_MODE]
-            if (themeMode == "Black") {
-                true
-            } else {
-                it[KEY_BLACK_THEME] ?: false
-            }
         }
     }
 
@@ -321,18 +199,10 @@ class PreferenceHelper @Inject constructor(
         }
     }
 
-    fun getSetWallpaperToThemeColor(): Flow<Boolean> {
-        return preferences.data.map { it[KEY_SET_WALLPAPER_TO_THEME_COLOR] ?: false }
-    }
-
     suspend fun setEnableWallpaper(enable: Boolean) {
         preferences.edit {
             it[KEY_ENABLE_WALLPAPER] = enable
         }
-    }
-
-    fun getEnableWallpaper(): Flow<Boolean> {
-        return preferences.data.map { it[KEY_ENABLE_WALLPAPER] ?: false }
     }
 
     suspend fun setLightTextOnWallpaper(enable: Boolean) {
@@ -341,18 +211,10 @@ class PreferenceHelper @Inject constructor(
         }
     }
 
-    fun getLightTextOnWallpaper(): Flow<Boolean> {
-        return preferences.data.map { it[KEY_LIGHT_TEXT_ON_WALLPAPER] ?: true }
-    }
-
     suspend fun setDimWallpaper(enable: Boolean) {
         preferences.edit {
             it[KEY_DIM_WALLPAPER] = enable
         }
-    }
-
-    fun getDimWallpaper(): Flow<Boolean> {
-        return preferences.data.map { it[KEY_DIM_WALLPAPER] ?: false }
     }
 
     suspend fun setAutoOpenApp(enable: Boolean) {
@@ -361,18 +223,10 @@ class PreferenceHelper @Inject constructor(
         }
     }
 
-    fun getAutoOpenApp(): Flow<Boolean> {
-        return preferences.data.map { it[KEY_AUTO_OPEN_APP] ?: false }
-    }
-
     suspend fun hideAppDrawerArrow(enable: Boolean) {
         preferences.edit {
             it[KEY_HIDE_APP_DRAWER_ARROW] = enable
         }
-    }
-
-    fun getHideAppDrawerArrow(): Flow<Boolean> {
-        return preferences.data.map { it[KEY_HIDE_APP_DRAWER_ARROW] ?: false }
     }
 
     suspend fun setNotificationDot(enable: Boolean) {
@@ -391,21 +245,9 @@ class PreferenceHelper @Inject constructor(
         }
     }
 
-    fun getHomeAppVerticalPadding(): Flow<Int> {
-        return preferences.data.map {
-            it[KEY_HOME_APP_VERTICAL_PADDING] ?: Constants.DEFAULT_HOME_VERTICAL_PADDING
-        }
-    }
-
     suspend fun setIgnoreSpecialCharacters(characters: String) {
         preferences.edit {
             it[KEY_IGNORE_SPECIAL_CHARACTERS_IN_SEARCH] = characters
-        }
-    }
-
-    fun getIgnoreSpecialCharacters(): Flow<String> {
-        return preferences.data.map {
-            it[KEY_IGNORE_SPECIAL_CHARACTERS_IN_SEARCH] ?: ""
         }
     }
 
@@ -415,18 +257,10 @@ class PreferenceHelper @Inject constructor(
         }
     }
 
-    fun getHideAppDrawerSearch(): Flow<Boolean> {
-        return preferences.data.map { it[KEY_HIDE_APP_DRAWER_SEARCH] ?: false }
-    }
-
     suspend fun showScreenTimeWidget(enable: Boolean) {
         preferences.edit {
             it[KEY_SHOW_SCREEN_TIME_WIDGET] = enable
         }
-    }
-
-    fun getShowScreenTimeWidget(): Flow<Boolean> {
-        return preferences.data.map { it[KEY_SHOW_SCREEN_TIME_WIDGET] ?: false }
     }
 
     suspend fun setClockAppPreference(appData: String) {
@@ -435,18 +269,10 @@ class PreferenceHelper @Inject constructor(
         }
     }
 
-    fun getClockAppPreference(): Flow<String> {
-        return preferences.data.map { it[KEY_CLOCK_APP_PREFERENCE] ?: "" }
-    }
-
     suspend fun setCalendarAppPreference(appData: String) {
         preferences.edit {
             it[KEY_CALENDAR_APP_PREFERENCE] = appData
         }
-    }
-
-    fun getCalendarAppPreference(): Flow<String> {
-        return preferences.data.map { it[KEY_CALENDAR_APP_PREFERENCE] ?: "" }
     }
 
     suspend fun setScreenTimeAppPreference(appData: String) {
@@ -455,18 +281,10 @@ class PreferenceHelper @Inject constructor(
         }
     }
 
-    fun getScreenTimeAppPreference(): Flow<String> {
-        return preferences.data.map { it[KEY_SCREEN_TIME_APP_PREFERENCE] ?: "" }
-    }
-
     suspend fun setSwipeLeftAppPreference(appData: String) {
         preferences.edit {
             it[KEY_SWIPE_LEFT_APP_PREFERENCE] = appData
         }
-    }
-
-    fun getSwipeLeftAppPreference(): Flow<String> {
-        return preferences.data.map { it[KEY_SWIPE_LEFT_APP_PREFERENCE] ?: "" }
     }
 
     suspend fun setSwipeRightAppPreference(appData: String) {
@@ -475,18 +293,10 @@ class PreferenceHelper @Inject constructor(
         }
     }
 
-    fun getSwipeRightAppPreference(): Flow<String> {
-        return preferences.data.map { it[KEY_SWIPE_RIGHT_APP_PREFERENCE] ?: "" }
-    }
-
     suspend fun setFontPreference(font: String) {
         preferences.edit {
             it[KEY_FONT_PREFERENCE] = font
         }
-    }
-
-    fun getFontPreference(): Flow<String> {
-        return preferences.data.map { it[KEY_FONT_PREFERENCE] ?: "" }
     }
 
     suspend fun setMinimoSettingsPosition(position: MinimoSettingsPosition) {
@@ -495,16 +305,148 @@ class PreferenceHelper @Inject constructor(
         }
     }
 
-    fun getMinimoSettingsPosition(): Flow<MinimoSettingsPosition> {
-        return preferences.data.map {
-            val position = it[KEY_MINIMO_SETTINGS_POSITION]
-            if (!position.isNullOrBlank()
-                && MinimoSettingsPosition.entries.any { entry -> entry.name == position }
-            ) {
-                MinimoSettingsPosition.valueOf(position)
-            } else {
-                MinimoSettingsPosition.Auto
-            }
+    fun getMainPreferencesFlow(): Flow<MainPreferences> {
+        return preferences.data.map { prefs ->
+            MainPreferences(
+                themeMode = getThemeModeFromPref(prefs[KEY_THEME_MODE]),
+                fontPreference = prefs[KEY_FONT_PREFERENCE] ?: "",
+                showStatusBar = prefs[KEY_SHOW_STATUS_BAR] ?: true,
+                dynamicTheme = prefs[KEY_DYNAMIC_THEME] ?: false,
+                blackTheme = getBlackThemeFromPref(prefs[KEY_BLACK_THEME], prefs[KEY_THEME_MODE]),
+                setWallpaperToThemeColor = prefs[KEY_SET_WALLPAPER_TO_THEME_COLOR] ?: false,
+                enableWallpaper = prefs[KEY_ENABLE_WALLPAPER] ?: false,
+                lightTextOnWallpaper = prefs[KEY_LIGHT_TEXT_ON_WALLPAPER] ?: true
+            )
         }
+    }
+
+    fun getHomePreferencesFlow(): Flow<HomePreferences> {
+        return preferences.data.map { prefs ->
+            HomePreferences(
+                homeAppsAlignmentHorizontal = getHomeAppsAlignmentHorizontalFromPref(prefs[KEY_HOME_APPS_ALIGN_HORIZONTAL]),
+                homeAppsAlignmentVertical = getHomeAppsAlignmentVerticalFromPref(prefs[KEY_HOME_APPS_ALIGN_VERTICAL]),
+                homeClockAlignment = getHomeClockAlignmentFromPref(prefs[KEY_HOME_CLOCK_ALIGNMENT]),
+                showHomeClock = prefs[KEY_SHOW_HOME_CLOCK] ?: false,
+                homeTextSize = prefs[KEY_HOME_TEXT_SIZE] ?: Constants.DEFAULT_HOME_TEXT_SIZE,
+                autoOpenKeyboardAllApps = prefs[KEY_AUTO_OPEN_KEYBOARD_ALL_APPS] ?: false,
+                homeClockMode = getHomeClockModeFromPref(prefs[KEY_HOME_CLOCK_MODE]),
+                doubleTapToLock = prefs[KEY_DOUBLE_TAP_TO_LOCK] ?: false,
+                twentyFourHourFormat = prefs[KEY_TWENTY_FOUR_HOUR_FORMAT] ?: false,
+                showBatteryLevel = prefs[KEY_SHOW_BATTERY_LEVEL] ?: false,
+                showHiddenAppsInSearch = prefs[KEY_SHOW_HIDDEN_APPS_IN_SEARCH] ?: true,
+                drawerSearchBarAtBottom = prefs[KEY_DRAWER_SEARCH_BAR_AT_BOTTOM] ?: false,
+                applyHomeAppSizeToAllApps = prefs[KEY_APPLY_HOME_APP_SIZE_TO_ALL_APPS] ?: false,
+                autoOpenApp = prefs[KEY_AUTO_OPEN_APP] ?: false,
+                hideAppDrawerArrow = prefs[KEY_HIDE_APP_DRAWER_ARROW] ?: false,
+                homeAppVerticalPadding = prefs[KEY_HOME_APP_VERTICAL_PADDING] ?: Constants.DEFAULT_HOME_VERTICAL_PADDING,
+                ignoreSpecialCharacters = prefs[KEY_IGNORE_SPECIAL_CHARACTERS_IN_SEARCH] ?: "",
+                hideAppDrawerSearch = prefs[KEY_HIDE_APP_DRAWER_SEARCH] ?: false,
+                minimoSettingsPosition = getMinimoSettingsPositionFromPref(prefs[KEY_MINIMO_SETTINGS_POSITION]),
+                enableWallpaper = prefs[KEY_ENABLE_WALLPAPER] ?: false,
+                showScreenTimeWidget = prefs[KEY_SHOW_SCREEN_TIME_WIDGET] ?: false,
+                lightTextOnWallpaper = prefs[KEY_LIGHT_TEXT_ON_WALLPAPER] ?: true,
+                dimWallpaper = prefs[KEY_DIM_WALLPAPER] ?: false,
+                clockAppPreference = prefs[KEY_CLOCK_APP_PREFERENCE] ?: "",
+                calendarAppPreference = prefs[KEY_CALENDAR_APP_PREFERENCE] ?: "",
+                screenTimeAppPreference = prefs[KEY_SCREEN_TIME_APP_PREFERENCE] ?: "",
+                swipeLeftAppPreference = prefs[KEY_SWIPE_LEFT_APP_PREFERENCE] ?: "",
+                swipeRightAppPreference = prefs[KEY_SWIPE_RIGHT_APP_PREFERENCE] ?: ""
+            )
+        }
+    }
+
+    fun getCustomisationPreferencesFlow(): Flow<CustomisationPreferences> {
+        return preferences.data.map { prefs ->
+            CustomisationPreferences(
+                themeMode = getThemeModeFromPref(prefs[KEY_THEME_MODE]),
+                fontPreference = prefs[KEY_FONT_PREFERENCE] ?: "",
+                homeAppsAlignmentHorizontal = getHomeAppsAlignmentHorizontalFromPref(prefs[KEY_HOME_APPS_ALIGN_HORIZONTAL]),
+                homeAppsAlignmentVertical = getHomeAppsAlignmentVerticalFromPref(prefs[KEY_HOME_APPS_ALIGN_VERTICAL]),
+                homeClockAlignment = getHomeClockAlignmentFromPref(prefs[KEY_HOME_CLOCK_ALIGNMENT]),
+                showHomeClock = prefs[KEY_SHOW_HOME_CLOCK] ?: false,
+                showStatusBar = prefs[KEY_SHOW_STATUS_BAR] ?: true,
+                homeTextSize = prefs[KEY_HOME_TEXT_SIZE] ?: Constants.DEFAULT_HOME_TEXT_SIZE,
+                autoOpenKeyboardAllApps = prefs[KEY_AUTO_OPEN_KEYBOARD_ALL_APPS] ?: false,
+                dynamicTheme = prefs[KEY_DYNAMIC_THEME] ?: false,
+                homeClockMode = getHomeClockModeFromPref(prefs[KEY_HOME_CLOCK_MODE]),
+                doubleTapToLock = prefs[KEY_DOUBLE_TAP_TO_LOCK] ?: false,
+                twentyFourHourFormat = prefs[KEY_TWENTY_FOUR_HOUR_FORMAT] ?: false,
+                showBatteryLevel = prefs[KEY_SHOW_BATTERY_LEVEL] ?: false,
+                showHiddenAppsInSearch = prefs[KEY_SHOW_HIDDEN_APPS_IN_SEARCH] ?: true,
+                drawerSearchBarAtBottom = prefs[KEY_DRAWER_SEARCH_BAR_AT_BOTTOM] ?: false,
+                applyHomeAppSizeToAllApps = prefs[KEY_APPLY_HOME_APP_SIZE_TO_ALL_APPS] ?: false,
+                blackTheme = getBlackThemeFromPref(prefs[KEY_BLACK_THEME], prefs[KEY_THEME_MODE]),
+                setWallpaperToThemeColor = prefs[KEY_SET_WALLPAPER_TO_THEME_COLOR] ?: false,
+                enableWallpaper = prefs[KEY_ENABLE_WALLPAPER] ?: false,
+                lightTextOnWallpaper = prefs[KEY_LIGHT_TEXT_ON_WALLPAPER] ?: true,
+                dimWallpaper = prefs[KEY_DIM_WALLPAPER] ?: false,
+                autoOpenApp = prefs[KEY_AUTO_OPEN_APP] ?: false,
+                hideAppDrawerArrow = prefs[KEY_HIDE_APP_DRAWER_ARROW] ?: false,
+                notificationDot = prefs[KEY_NOTIFICATION_DOT] ?: false,
+                homeAppVerticalPadding = prefs[KEY_HOME_APP_VERTICAL_PADDING] ?: Constants.DEFAULT_HOME_VERTICAL_PADDING,
+                ignoreSpecialCharacters = prefs[KEY_IGNORE_SPECIAL_CHARACTERS_IN_SEARCH] ?: "",
+                hideAppDrawerSearch = prefs[KEY_HIDE_APP_DRAWER_SEARCH] ?: false,
+                minimoSettingsPosition = getMinimoSettingsPositionFromPref(prefs[KEY_MINIMO_SETTINGS_POSITION]),
+                showScreenTimeWidget = prefs[KEY_SHOW_SCREEN_TIME_WIDGET] ?: false,
+                clockAppPreference = prefs[KEY_CLOCK_APP_PREFERENCE] ?: "",
+                calendarAppPreference = prefs[KEY_CALENDAR_APP_PREFERENCE] ?: "",
+                screenTimeAppPreference = prefs[KEY_SCREEN_TIME_APP_PREFERENCE] ?: "",
+                swipeLeftAppPreference = prefs[KEY_SWIPE_LEFT_APP_PREFERENCE] ?: "",
+                swipeRightAppPreference = prefs[KEY_SWIPE_RIGHT_APP_PREFERENCE] ?: ""
+            )
+        }
+    }
+
+    private fun getThemeModeFromPref(mode: String?): ThemeMode {
+        // Added mode check of "Black" for backward compatibility. Previously "Black" theme was part of ThemeMode.
+        if (mode == "Black") {
+            return ThemeMode.Dark
+        }
+
+        if (!mode.isNullOrBlank() && ThemeMode.entries.any { entry -> entry.name == mode }) {
+            return ThemeMode.valueOf(mode)
+        }
+
+        return ThemeMode.System
+    }
+
+    private fun getBlackThemeFromPref(blackTheme: Boolean?, themeMode: String?): Boolean {
+        if (themeMode == "Black") return true
+        return blackTheme ?: false
+    }
+
+    private fun getHomeAppsAlignmentHorizontalFromPref(alignment: String?): HomeAppsAlignmentHorizontal {
+        if (!alignment.isNullOrBlank() && HomeAppsAlignmentHorizontal.entries.any { entry -> entry.name == alignment }) {
+            return HomeAppsAlignmentHorizontal.valueOf(alignment)
+        }
+        return HomeAppsAlignmentHorizontal.Start
+    }
+
+    private fun getHomeAppsAlignmentVerticalFromPref(alignment: String?): HomeAppsAlignmentVertical {
+        if (!alignment.isNullOrBlank() && HomeAppsAlignmentVertical.entries.any { entry -> entry.name == alignment }) {
+            return HomeAppsAlignmentVertical.valueOf(alignment)
+        }
+        return HomeAppsAlignmentVertical.Center
+    }
+
+    private fun getHomeClockAlignmentFromPref(alignment: String?): HomeClockAlignment {
+        if (!alignment.isNullOrBlank() && HomeClockAlignment.entries.any { entry -> entry.name == alignment }) {
+            return HomeClockAlignment.valueOf(alignment)
+        }
+        return HomeClockAlignment.Start
+    }
+
+    private fun getHomeClockModeFromPref(mode: String?): HomeClockMode {
+        if (!mode.isNullOrBlank() && HomeClockMode.entries.any { entry -> entry.name == mode }) {
+            return HomeClockMode.valueOf(mode)
+        }
+        return HomeClockMode.Full
+    }
+
+    private fun getMinimoSettingsPositionFromPref(position: String?): MinimoSettingsPosition {
+        if (!position.isNullOrBlank() && MinimoSettingsPosition.entries.any { entry -> entry.name == position }) {
+            return MinimoSettingsPosition.valueOf(position)
+        }
+        return MinimoSettingsPosition.Auto
     }
 }

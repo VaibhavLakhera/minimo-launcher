@@ -22,81 +22,20 @@ class MainViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            preferenceHelper.getThemeMode()
+            preferenceHelper.getMainPreferencesFlow()
                 .distinctUntilChanged()
-                .collect { mode ->
+                .collect { prefs ->
                     _state.update {
-                        it.copy(themeMode = mode)
-                    }
-                }
-        }
-
-        viewModelScope.launch {
-            preferenceHelper.getFontPreference()
-                .distinctUntilChanged()
-                .collect { font ->
-                    _state.update {
-                        it.copy(fontPreference = font)
-                    }
-                }
-        }
-
-        viewModelScope.launch {
-            preferenceHelper.getShowStatusBar()
-                .distinctUntilChanged()
-                .collect { visible ->
-                    _state.update {
-                        it.copy(statusBarVisible = visible)
-                    }
-                }
-        }
-
-        viewModelScope.launch {
-            preferenceHelper.getDynamicTheme()
-                .distinctUntilChanged()
-                .collect { enable ->
-                    _state.update {
-                        it.copy(useDynamicTheme = enable)
-                    }
-                }
-        }
-
-        viewModelScope.launch {
-            preferenceHelper.getBlackTheme()
-                .distinctUntilChanged()
-                .collect { enable ->
-                    _state.update {
-                        it.copy(blackTheme = enable)
-                    }
-                }
-        }
-
-        viewModelScope.launch {
-            preferenceHelper.getSetWallpaperToThemeColor()
-                .distinctUntilChanged()
-                .collect { enable ->
-                    _state.update {
-                        it.copy(setWallpaperToThemeColor = enable)
-                    }
-                }
-        }
-
-        viewModelScope.launch {
-            preferenceHelper.getEnableWallpaper()
-                .distinctUntilChanged()
-                .collect { enable ->
-                    _state.update {
-                        it.copy(enableWallpaper = enable)
-                    }
-                }
-        }
-
-        viewModelScope.launch {
-            preferenceHelper.getLightTextOnWallpaper()
-                .distinctUntilChanged()
-                .collect { enable ->
-                    _state.update {
-                        it.copy(lightTextOnWallpaper = enable)
+                        it.copy(
+                            themeMode = prefs.themeMode,
+                            fontPreference = prefs.fontPreference,
+                            statusBarVisible = prefs.showStatusBar,
+                            useDynamicTheme = prefs.dynamicTheme,
+                            blackTheme = prefs.blackTheme,
+                            setWallpaperToThemeColor = prefs.setWallpaperToThemeColor,
+                            enableWallpaper = prefs.enableWallpaper,
+                            lightTextOnWallpaper = prefs.lightTextOnWallpaper
+                        )
                     }
                 }
         }

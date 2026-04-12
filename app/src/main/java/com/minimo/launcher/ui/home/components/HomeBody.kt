@@ -22,6 +22,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.sp
 import com.minimo.launcher.ui.components.ScreenTimeView
 import com.minimo.launcher.ui.components.TimeAndDateView
@@ -127,7 +128,9 @@ fun HomeBody(
             modifier = Modifier
                 .weight(1f)
                 .nestedScroll(nestedScrollConnection),
-            contentPadding = PaddingValues(bottom = systemNavigationHeight),
+            contentPadding = PaddingValues(
+                bottom = max(systemNavigationHeight, paddingValues.calculateBottomPadding())
+            ),
             verticalArrangement = state.appsArrangementVertical
         ) {
             items(items = state.favouriteApps, key = { it.id }) { appInfo ->

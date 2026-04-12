@@ -132,334 +132,95 @@ class HomeViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
-            preferenceHelper.getHomeAppsAlignmentHorizontal()
+            preferenceHelper.getHomePreferencesFlow()
                 .distinctUntilChanged()
-                .collect { alignment ->
-                    val arrangement = when (alignment) {
-                        HomeAppsAlignmentHorizontal.Start -> Arrangement.Start
-                        HomeAppsAlignmentHorizontal.Center -> Arrangement.Center
-                        HomeAppsAlignmentHorizontal.End -> Arrangement.End
-                    }
-                    _state.update {
-                        it.copy(appsArrangementHorizontal = arrangement)
-                    }
-                }
-        }
-
-        viewModelScope.launch {
-            preferenceHelper.getHomeAppsAlignmentVertical()
-                .distinctUntilChanged()
-                .collect { alignment ->
-                    val arrangement = when (alignment) {
-                        HomeAppsAlignmentVertical.Top -> Arrangement.Top
-                        HomeAppsAlignmentVertical.Center -> Arrangement.Center
-                        HomeAppsAlignmentVertical.Bottom -> Arrangement.Bottom
-                    }
-                    _state.update {
-                        it.copy(appsArrangementVertical = arrangement)
-                    }
-                }
-        }
-
-        viewModelScope.launch {
-            preferenceHelper.getHomeClockAlignment()
-                .distinctUntilChanged()
-                .collect { alignment ->
-                    val horizontalAlignment = when (alignment) {
-                        HomeClockAlignment.Start -> Alignment.Start
-                        HomeClockAlignment.Center -> Alignment.CenterHorizontally
-                        HomeClockAlignment.End -> Alignment.End
-                    }
-                    _state.update {
-                        it.copy(homeClockAlignment = horizontalAlignment)
-                    }
-                }
-        }
-
-        viewModelScope.launch {
-            preferenceHelper.getShowHomeClock()
-                .distinctUntilChanged()
-                .collect { show ->
-                    _state.update {
-                        it.copy(showHomeClock = show)
-                    }
-                }
-        }
-
-        viewModelScope.launch {
-            preferenceHelper.getHomeTextSizeFlow()
-                .distinctUntilChanged()
-                .collect { size ->
-                    _state.update {
-                        it.copy(homeTextSize = size)
-                    }
-                }
-        }
-
-        viewModelScope.launch {
-            preferenceHelper.getAutoOpenKeyboardAllApps()
-                .distinctUntilChanged()
-                .collect { open ->
-                    _state.update {
-                        it.copy(autoOpenKeyboardAllApps = open)
-                    }
-                }
-        }
-
-        viewModelScope.launch {
-            preferenceHelper.getHomeClockMode()
-                .distinctUntilChanged()
-                .collect { mode ->
-                    _state.update {
-                        it.copy(homeClockMode = mode)
-                    }
-                }
-        }
-
-        viewModelScope.launch {
-            preferenceHelper.getDoubleTapToLock()
-                .distinctUntilChanged()
-                .collect { enable ->
-                    _state.update {
-                        it.copy(doubleTapToLock = enable)
-                    }
-                }
-        }
-
-        viewModelScope.launch {
-            preferenceHelper.getTwentyFourHourFormat()
-                .distinctUntilChanged()
-                .collect { enable ->
-                    _state.update {
-                        it.copy(twentyFourHourFormat = enable)
-                    }
-                }
-        }
-
-        viewModelScope.launch {
-            preferenceHelper.getShowBatteryLevel()
-                .distinctUntilChanged()
-                .collect { enable ->
-                    _state.update {
-                        it.copy(showBatteryLevel = enable)
-                    }
-                }
-        }
-
-        viewModelScope.launch {
-            preferenceHelper.getShowHiddenAppsInSearch()
-                .distinctUntilChanged()
-                .collect { enable ->
-                    _state.update {
-                        it.copy(showHiddenAppsInSearch = enable)
-                    }
-                }
-        }
-
-        viewModelScope.launch {
-            preferenceHelper.getDrawerSearchBarAtBottom()
-                .distinctUntilChanged()
-                .collect { enable ->
-                    _state.update {
-                        it.copy(drawerSearchBarAtBottom = enable)
-                    }
-                }
-        }
-
-        viewModelScope.launch {
-            preferenceHelper.getHomeAppSizeToAllApps()
-                .distinctUntilChanged()
-                .collect { enable ->
-                    _state.update {
-                        it.copy(applyHomeAppSizeToAllApps = enable)
-                    }
-                }
-        }
-
-        viewModelScope.launch {
-            preferenceHelper.getAutoOpenApp()
-                .distinctUntilChanged()
-                .collect { enable ->
-                    _state.update {
-                        it.copy(autoOpenApp = enable)
-                    }
-                }
-        }
-
-        viewModelScope.launch {
-            preferenceHelper.getHideAppDrawerArrow()
-                .distinctUntilChanged()
-                .collect { enable ->
-                    _state.update {
-                        it.copy(hideAppDrawerArrow = enable)
-                    }
-                }
-        }
-
-        viewModelScope.launch {
-            preferenceHelper.getHomeAppVerticalPadding()
-                .distinctUntilChanged()
-                .collect { padding ->
-                    _state.update {
-                        it.copy(homeAppVerticalPadding = padding)
-                    }
-                }
-        }
-
-        viewModelScope.launch {
-            preferenceHelper.getIgnoreSpecialCharacters()
-                .distinctUntilChanged()
-                .collect { characters ->
-                    _state.update {
-                        it.copy(ignoreSpecialCharacters = characters)
-                    }
-                }
-        }
-
-        viewModelScope.launch {
-            preferenceHelper.getHideAppDrawerSearch()
-                .distinctUntilChanged()
-                .collect { enable ->
+                .collect { prefs ->
                     _state.update { state ->
-                        val dbApps =
-                            state.allApps.filterNot { it.packageName == Constants.MINIMO_SETTINGS_PACKAGE }
-                        val allApps = getCombinedAllApps(
-                            dbApps = dbApps,
-                            hideAppDrawerSearch = enable,
-                            minimoSettingsPosition = state.minimoSettingsPosition
-                        )
+                        val homeAppsArrangementHorizontal = when (prefs.homeAppsAlignmentHorizontal) {
+                            HomeAppsAlignmentHorizontal.Start -> Arrangement.Start
+                            HomeAppsAlignmentHorizontal.Center -> Arrangement.Center
+                            HomeAppsAlignmentHorizontal.End -> Arrangement.End
+                        }
+
+                        val homeAppsArrangementVertical = when (prefs.homeAppsAlignmentVertical) {
+                            HomeAppsAlignmentVertical.Top -> Arrangement.Top
+                            HomeAppsAlignmentVertical.Center -> Arrangement.Center
+                            HomeAppsAlignmentVertical.Bottom -> Arrangement.Bottom
+                        }
+
+                        val homeClockAlignment = when (prefs.homeClockAlignment) {
+                            HomeClockAlignment.Start -> Alignment.Start
+                            HomeClockAlignment.Center -> Alignment.CenterHorizontally
+                            HomeClockAlignment.End -> Alignment.End
+                        }
+
+                        var newAllApps = state.allApps
+                        var newFilteredApps = state.filteredAllApps
+                        var clearSearchText = state.searchText
+
+                        if (state.hideAppDrawerSearch != prefs.hideAppDrawerSearch || state.minimoSettingsPosition != prefs.minimoSettingsPosition) {
+                            val dbApps = state.allApps.filterNot { it.packageName == Constants.MINIMO_SETTINGS_PACKAGE }
+                            newAllApps = getCombinedAllApps(
+                                dbApps = dbApps,
+                                hideAppDrawerSearch = prefs.hideAppDrawerSearch,
+                                minimoSettingsPosition = prefs.minimoSettingsPosition
+                            )
+                            if (prefs.hideAppDrawerSearch) {
+                                clearSearchText = ""
+                            }
+                            newFilteredApps = getAppsWithSearch(
+                                searchText = clearSearchText,
+                                apps = newAllApps,
+                                includeHiddenApps = prefs.showHiddenAppsInSearch,
+                                ignoreSpecialCharacters = prefs.ignoreSpecialCharacters
+                            )
+                        } else if (state.showHiddenAppsInSearch != prefs.showHiddenAppsInSearch || state.ignoreSpecialCharacters != prefs.ignoreSpecialCharacters) {
+                            newFilteredApps = getAppsWithSearch(
+                                searchText = clearSearchText,
+                                apps = newAllApps,
+                                includeHiddenApps = prefs.showHiddenAppsInSearch,
+                                ignoreSpecialCharacters = prefs.ignoreSpecialCharacters
+                            )
+                        }
+
+                        // Refresh screen time when the preference flag is enabled
+                        if (prefs.showScreenTimeWidget && !state.showScreenTimeWidget) {
+                            refreshScreenTime()
+                        }
 
                         state.copy(
-                            hideAppDrawerSearch = enable,
-                            allApps = allApps,
-                            searchText = "",    // To clear any search result
-                            filteredAllApps = getAppsWithSearch(
-                                searchText = "",
-                                apps = allApps,
-                                includeHiddenApps = state.showHiddenAppsInSearch,
-                                ignoreSpecialCharacters = state.ignoreSpecialCharacters
-                            )
+                            appsArrangementHorizontal = homeAppsArrangementHorizontal,
+                            appsArrangementVertical = homeAppsArrangementVertical,
+                            homeClockAlignment = homeClockAlignment,
+                            showHomeClock = prefs.showHomeClock,
+                            homeTextSize = prefs.homeTextSize,
+                            autoOpenKeyboardAllApps = prefs.autoOpenKeyboardAllApps,
+                            homeClockMode = prefs.homeClockMode,
+                            doubleTapToLock = prefs.doubleTapToLock,
+                            twentyFourHourFormat = prefs.twentyFourHourFormat,
+                            showBatteryLevel = prefs.showBatteryLevel,
+                            showHiddenAppsInSearch = prefs.showHiddenAppsInSearch,
+                            drawerSearchBarAtBottom = prefs.drawerSearchBarAtBottom,
+                            applyHomeAppSizeToAllApps = prefs.applyHomeAppSizeToAllApps,
+                            autoOpenApp = prefs.autoOpenApp,
+                            hideAppDrawerArrow = prefs.hideAppDrawerArrow,
+                            homeAppVerticalPadding = prefs.homeAppVerticalPadding,
+                            ignoreSpecialCharacters = prefs.ignoreSpecialCharacters,
+                            hideAppDrawerSearch = prefs.hideAppDrawerSearch,
+                            minimoSettingsPosition = prefs.minimoSettingsPosition,
+                            enableWallpaper = prefs.enableWallpaper,
+                            showScreenTimeWidget = prefs.showScreenTimeWidget,
+                            lightTextOnWallpaper = prefs.lightTextOnWallpaper,
+                            dimWallpaper = prefs.dimWallpaper,
+                            clockAppPreference = prefs.clockAppPreference,
+                            calendarAppPreference = prefs.calendarAppPreference,
+                            screenTimeAppPreference = prefs.screenTimeAppPreference,
+                            swipeLeftAppPreference = prefs.swipeLeftAppPreference,
+                            swipeRightAppPreference = prefs.swipeRightAppPreference,
+                            allApps = newAllApps,
+                            filteredAllApps = newFilteredApps,
+                            searchText = clearSearchText
                         )
-                    }
-                }
-        }
-
-        viewModelScope.launch {
-            preferenceHelper.getMinimoSettingsPosition()
-                .distinctUntilChanged()
-                .collect { position ->
-                    _state.update { state ->
-                        val dbApps =
-                            state.allApps.filterNot { it.packageName == Constants.MINIMO_SETTINGS_PACKAGE }
-                        val allApps = getCombinedAllApps(
-                            dbApps = dbApps,
-                            hideAppDrawerSearch = state.hideAppDrawerSearch,
-                            minimoSettingsPosition = position
-                        )
-
-                        state.copy(
-                            minimoSettingsPosition = position,
-                            allApps = allApps,
-                            filteredAllApps = getAppsWithSearch(
-                                searchText = state.searchText,
-                                apps = allApps,
-                                includeHiddenApps = state.showHiddenAppsInSearch,
-                                ignoreSpecialCharacters = state.ignoreSpecialCharacters
-                            )
-                        )
-                    }
-                }
-        }
-
-        viewModelScope.launch {
-            preferenceHelper.getEnableWallpaper()
-                .distinctUntilChanged()
-                .collect { enable ->
-                    _state.update {
-                        it.copy(enableWallpaper = enable)
-                    }
-                }
-        }
-
-        viewModelScope.launch {
-            preferenceHelper.getShowScreenTimeWidget()
-                .distinctUntilChanged()
-                .collect { enable ->
-                    _state.update {
-                        it.copy(showScreenTimeWidget = enable)
-                    }
-                    if (enable) {
-                        refreshScreenTime()
-                    }
-                }
-        }
-
-        viewModelScope.launch {
-            preferenceHelper.getLightTextOnWallpaper()
-                .distinctUntilChanged()
-                .collect { enable ->
-                    _state.update {
-                        it.copy(lightTextOnWallpaper = enable)
-                    }
-                }
-        }
-
-        viewModelScope.launch {
-            preferenceHelper.getDimWallpaper()
-                .distinctUntilChanged()
-                .collect { enable ->
-                    _state.update {
-                        it.copy(dimWallpaper = enable)
-                    }
-                }
-        }
-
-        viewModelScope.launch {
-            preferenceHelper.getClockAppPreference()
-                .distinctUntilChanged()
-                .collect { pref ->
-                    _state.update {
-                        it.copy(clockAppPreference = pref)
-                    }
-                }
-        }
-
-        viewModelScope.launch {
-            preferenceHelper.getCalendarAppPreference()
-                .distinctUntilChanged()
-                .collect { pref ->
-                    _state.update {
-                        it.copy(calendarAppPreference = pref)
-                    }
-                }
-        }
-
-        viewModelScope.launch {
-            preferenceHelper.getScreenTimeAppPreference()
-                .distinctUntilChanged()
-                .collect { pref ->
-                    _state.update {
-                        it.copy(screenTimeAppPreference = pref)
-                    }
-                }
-        }
-
-        viewModelScope.launch {
-            preferenceHelper.getSwipeLeftAppPreference()
-                .distinctUntilChanged()
-                .collect { pref ->
-                    _state.update {
-                        it.copy(swipeLeftAppPreference = pref)
-                    }
-                }
-        }
-
-        viewModelScope.launch {
-            preferenceHelper.getSwipeRightAppPreference()
-                .distinctUntilChanged()
-                .collect { pref ->
-                    _state.update {
-                        it.copy(swipeRightAppPreference = pref)
                     }
                 }
         }
