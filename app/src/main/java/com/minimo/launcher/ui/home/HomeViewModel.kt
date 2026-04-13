@@ -203,7 +203,6 @@ class HomeViewModel @Inject constructor(
                             drawerSearchBarAtBottom = prefs.drawerSearchBarAtBottom,
                             applyHomeAppSizeToAllApps = prefs.applyHomeAppSizeToAllApps,
                             autoOpenApp = prefs.autoOpenApp,
-                            hideAppDrawerArrow = prefs.hideAppDrawerArrow,
                             homeAppVerticalPadding = prefs.homeAppVerticalPadding,
                             ignoreSpecialCharacters = prefs.ignoreSpecialCharacters,
                             hideAppDrawerSearch = prefs.hideAppDrawerSearch,

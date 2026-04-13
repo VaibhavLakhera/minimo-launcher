@@ -9,7 +9,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.geometry.Offset
@@ -18,9 +21,9 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.minimo.launcher.ui.components.SheetDragHandle
 import com.minimo.launcher.ui.home.HomeScreenState
 import com.minimo.launcher.ui.home.HomeViewModel
 import com.minimo.launcher.utils.Constants
@@ -36,13 +39,13 @@ fun ColumnScope.AppDrawerSheet(
     systemNavigationHeight: Dp,
     onSettingsClick: () -> Unit,
     hideKeyboardWithClearFocus: () -> Unit,
+    swipeDownThreshold: Float,
+    onCloseSheet: () -> Unit,
 ) {
     val context = LocalContext.current
 
-    SheetDragHandle(
-        isExpanded = state.isBottomSheetExpanded,
-        isIconHidden = state.hideAppDrawerArrow
-    )
+    // For blank space at the top of the drawer sheet
+    Spacer(modifier = Modifier.height(32.dp))
 
     if (!state.hideAppDrawerSearch && !state.drawerSearchBarAtBottom) {
         AppDrawerSearch(
@@ -56,17 +59,44 @@ fun ColumnScope.AppDrawerSheet(
         )
     }
 
-    val nestedScrollConnection = remember(allAppsLazyListState) {
+    var swipeYAccumulator by remember { mutableFloatStateOf(0f) }
+
+    val nestedScrollConnection = remember(allAppsLazyListState, swipeDownThreshold) {
         object : NestedScrollConnection {
+            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+                return Offset.Zero
+            }
+
             override fun onPostScroll(
                 consumed: Offset,
                 available: Offset,
                 source: NestedScrollSource
             ): Offset {
-                if (available.y > 0 && allAppsLazyListState.canScrollBackward) {
-                    return Offset(0f, available.y)
+                if (source == NestedScrollSource.UserInput) {
+                    if (available.y > 0 && !allAppsLazyListState.canScrollBackward) {
+                        swipeYAccumulator += available.y
+                    } else if (available.y < 0 && !allAppsLazyListState.canScrollForward) {
+                        swipeYAccumulator += available.y
+                    } else {
+                        swipeYAccumulator = 0f
+                    }
                 }
                 return Offset.Zero
+            }
+
+            override suspend fun onPreFling(available: Velocity): Velocity {
+                if (swipeYAccumulator > swipeDownThreshold) {
+                    onCloseSheet()
+                } else if (available.y > 1000f && !allAppsLazyListState.canScrollBackward) {
+                    onCloseSheet()
+                }
+                swipeYAccumulator = 0f
+                return super.onPreFling(available)
+            }
+
+            override suspend fun onPostFling(consumed: Velocity, available: Velocity): Velocity {
+                swipeYAccumulator = 0f
+                return super.onPostFling(consumed, available)
             }
         }
     }

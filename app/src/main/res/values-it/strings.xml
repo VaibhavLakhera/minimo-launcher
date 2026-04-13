@@ -80,8 +80,7 @@
     <string name="applied_only_when_the_app_theme_is_in_dark_mode">Applicato solo quando il tema dell\'app è in modalità scura</string>
     <string name="auto_open_app">Apertura automatica app</string>
     <string name="automatically_open_the_app_if_it_is_the_only_search_result">Apri automaticamente l\'app se è l\'unico risultato di ricerca</string>
-    <string name="hide_app_drawer_arrow">Nascondi freccia del drawer</string>
-    <string name="hide_app_drawer_arrow_description">Quando la freccia è nascosta, scorri verso l\'alto nella schermata home per aprire il drawer</string>
+
     <string name="rename_app">Rinomina app</string>
     <string name="app_name_label">Nome app</string>
     <string name="cancel">Annulla</string>

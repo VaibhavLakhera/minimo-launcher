@@ -69,6 +69,12 @@ fun HomeBody(
         }
     }
 
+    val lazyColumnPadding = remember(systemNavigationHeight, paddingValues) {
+        PaddingValues(
+            bottom = max(systemNavigationHeight, paddingValues.calculateBottomPadding()) + 16.dp
+        )
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -128,9 +134,7 @@ fun HomeBody(
             modifier = Modifier
                 .weight(1f)
                 .nestedScroll(nestedScrollConnection),
-            contentPadding = PaddingValues(
-                bottom = max(systemNavigationHeight, paddingValues.calculateBottomPadding())
-            ),
+            contentPadding = lazyColumnPadding,
             verticalArrangement = state.appsArrangementVertical
         ) {
             items(items = state.favouriteApps, key = { it.id }) { appInfo ->

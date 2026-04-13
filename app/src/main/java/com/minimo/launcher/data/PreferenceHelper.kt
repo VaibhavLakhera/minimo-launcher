@@ -54,7 +54,6 @@ class PreferenceHelper @Inject constructor(
             booleanPreferencesKey("KEY_APPLY_HOME_APP_SIZE_TO_ALL_APPS")
         private val KEY_BLACK_THEME = booleanPreferencesKey("KEY_BLACK_THEME")
         private val KEY_AUTO_OPEN_APP = booleanPreferencesKey("KEY_AUTO_OPEN_APP")
-        private val KEY_HIDE_APP_DRAWER_ARROW = booleanPreferencesKey("KEY_HIDE_APP_DRAWER_ARROW")
         private val KEY_NOTIFICATION_DOT = booleanPreferencesKey("KEY_NOTIFICATION_DOT")
         private val KEY_HOME_APP_VERTICAL_PADDING =
             intPreferencesKey("KEY_HOME_APP_VERTICAL_PADDING")
@@ -223,12 +222,6 @@ class PreferenceHelper @Inject constructor(
         }
     }
 
-    suspend fun hideAppDrawerArrow(enable: Boolean) {
-        preferences.edit {
-            it[KEY_HIDE_APP_DRAWER_ARROW] = enable
-        }
-    }
-
     suspend fun setNotificationDot(enable: Boolean) {
         preferences.edit {
             it[KEY_NOTIFICATION_DOT] = enable
@@ -337,7 +330,6 @@ class PreferenceHelper @Inject constructor(
                 drawerSearchBarAtBottom = prefs[KEY_DRAWER_SEARCH_BAR_AT_BOTTOM] ?: false,
                 applyHomeAppSizeToAllApps = prefs[KEY_APPLY_HOME_APP_SIZE_TO_ALL_APPS] ?: false,
                 autoOpenApp = prefs[KEY_AUTO_OPEN_APP] ?: false,
-                hideAppDrawerArrow = prefs[KEY_HIDE_APP_DRAWER_ARROW] ?: false,
                 homeAppVerticalPadding = prefs[KEY_HOME_APP_VERTICAL_PADDING] ?: Constants.DEFAULT_HOME_VERTICAL_PADDING,
                 ignoreSpecialCharacters = prefs[KEY_IGNORE_SPECIAL_CHARACTERS_IN_SEARCH] ?: "",
                 hideAppDrawerSearch = prefs[KEY_HIDE_APP_DRAWER_SEARCH] ?: false,
@@ -381,7 +373,6 @@ class PreferenceHelper @Inject constructor(
                 lightTextOnWallpaper = prefs[KEY_LIGHT_TEXT_ON_WALLPAPER] ?: true,
                 dimWallpaper = prefs[KEY_DIM_WALLPAPER] ?: false,
                 autoOpenApp = prefs[KEY_AUTO_OPEN_APP] ?: false,
-                hideAppDrawerArrow = prefs[KEY_HIDE_APP_DRAWER_ARROW] ?: false,
                 notificationDot = prefs[KEY_NOTIFICATION_DOT] ?: false,
                 homeAppVerticalPadding = prefs[KEY_HOME_APP_VERTICAL_PADDING] ?: Constants.DEFAULT_HOME_VERTICAL_PADDING,
                 ignoreSpecialCharacters = prefs[KEY_IGNORE_SPECIAL_CHARACTERS_IN_SEARCH] ?: "",

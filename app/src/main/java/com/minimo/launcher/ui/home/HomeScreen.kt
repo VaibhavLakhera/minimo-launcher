@@ -5,13 +5,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.statusBars
@@ -31,7 +28,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.geometry.Offset
@@ -215,13 +211,6 @@ fun HomeScreen(
     val systemNavigationHeight =
         WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
 
-    val sheetPeekHeight = if (state.hideAppDrawerArrow || state.enableWallpaper) {
-        // Don't peek the bottom sheet if either the hideAppDrawerArrow or enableWallpaper is true
-        0.dp
-    } else {
-        56.dp + systemNavigationHeight
-    }
-
     val safeDrawingTop =
         WindowInsets.statusBars.union(WindowInsets.ime).union(WindowInsets.displayCutout)
 
@@ -270,7 +259,7 @@ fun HomeScreen(
                         }
                         swipeXAccumulator = 0f
                     },
-                    onHorizontalDrag = { change, dragAmount ->
+                    onHorizontalDrag = { _, dragAmount ->
                         swipeXAccumulator += dragAmount
                     }
                 )
@@ -278,6 +267,7 @@ fun HomeScreen(
     ) {
         BottomSheetScaffold(
             scaffoldState = bottomSheetScaffoldState,
+            sheetSwipeEnabled = false,
             sheetDragHandle = null,
             sheetShadowElevation = 0.dp,
             sheetContent = {
@@ -288,10 +278,16 @@ fun HomeScreen(
                     allAppsLazyListState = allAppsLazyListState,
                     systemNavigationHeight = systemNavigationHeight,
                     onSettingsClick = onSettingsClick,
-                    hideKeyboardWithClearFocus = ::hideKeyboardWithClearFocus
+                    hideKeyboardWithClearFocus = ::hideKeyboardWithClearFocus,
+                    swipeDownThreshold = swipeDownThreshold,
+                    onCloseSheet = {
+                        coroutineScope.launch {
+                            bottomSheetScaffoldState.bottomSheetState.partialExpand()
+                        }
+                    }
                 )
             },
-            sheetPeekHeight = sheetPeekHeight,
+            sheetPeekHeight = 0.dp,
             sheetContainerColor = MaterialTheme.colorScheme.surface,
             containerColor = scaffoldContainerColor
         ) { paddingValues ->
@@ -311,15 +307,6 @@ fun HomeScreen(
                 )
             }
         }
-
-        // To cover the navigation bars with surface color.
-        Spacer(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .height(systemNavigationHeight)
-                .fillMaxWidth()
-                .background(if (state.enableWallpaper) Color.Transparent else MaterialTheme.colorScheme.surface)
-        )
     }
 
     if (state.renameAppDialog != null) {

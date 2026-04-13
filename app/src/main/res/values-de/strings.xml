@@ -80,8 +80,7 @@
     <string name="applied_only_when_the_app_theme_is_in_dark_mode">Wird nur angewendet, wenn das App-Design im Dunkelmodus ist</string>
     <string name="auto_open_app">App automatisch öffnen</string>
     <string name="automatically_open_the_app_if_it_is_the_only_search_result">App automatisch öffnen, wenn sie das einzige Suchergebnis ist</string>
-    <string name="hide_app_drawer_arrow">Pfeil der App-Schublade ausblenden</string>
-    <string name="hide_app_drawer_arrow_description">Wenn der Pfeil ausgeblendet ist, nach oben wischen auf dem Startbildschirm, um die App-Schublade zu öffnen</string>
+
     <string name="rename_app">App umbenennen</string>
     <string name="app_name_label">App-Name</string>
     <string name="cancel">Abbrechen</string>

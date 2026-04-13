@@ -77,8 +77,7 @@
     <string name="applied_only_when_the_app_theme_is_in_dark_mode">Applied only when the app theme is in dark mode</string>
     <string name="auto_open_app">Auto Open App</string>
     <string name="automatically_open_the_app_if_it_is_the_only_search_result">Automatically open the app if it is the only search result</string>
-    <string name="hide_app_drawer_arrow">Hide App Drawer Arrow</string>
-    <string name="hide_app_drawer_arrow_description">When the arrow is hidden, swipe up on the home screen to open the app drawer</string>
+
     <string name="rename_app">Rename App</string>
     <string name="app_name_label">App Name</string>
     <string name="cancel">Cancel</string>

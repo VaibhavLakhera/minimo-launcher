@@ -56,7 +56,6 @@ class CustomisationViewModel @Inject constructor(
                             lightTextOnWallpaper = prefs.lightTextOnWallpaper,
                             dimWallpaper = prefs.dimWallpaper,
                             autoOpenApp = prefs.autoOpenApp,
-                            hideAppDrawerArrow = prefs.hideAppDrawerArrow,
                             notificationDot = prefs.notificationDot,
                             homeAppVerticalPadding = prefs.homeAppVerticalPadding.toFloat(),
                             ignoreSpecialCharacters = prefs.ignoreSpecialCharacters,
@@ -274,12 +273,6 @@ class CustomisationViewModel @Inject constructor(
     fun onToggleAutoOpenApp() {
         viewModelScope.launch {
             preferenceHelper.setAutoOpenApp(_state.value.autoOpenApp.not())
-        }
-    }
-
-    fun onToggleHideAppDrawerArrow() {
-        viewModelScope.launch {
-            preferenceHelper.hideAppDrawerArrow(_state.value.hideAppDrawerArrow.not())
         }
     }
 

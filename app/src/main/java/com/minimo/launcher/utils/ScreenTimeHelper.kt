@@ -39,7 +39,8 @@ class ScreenTimeHelper @Inject constructor(
     private fun getScreenTimeMillis(
         usageStatsManager: UsageStatsManager,
         startTimestamp: Long,
-        endTimestamp: Long
+        endTimestamp: Long,
+        includeSelfPackageTime: Boolean = true
     ): Long {
         val usageIntervals = mutableListOf<Pair<Long, Long>>()
         val usageEvents = usageStatsManager.queryEvents(startTimestamp, endTimestamp) ?: return 0L
@@ -53,7 +54,7 @@ class ScreenTimeHelper @Inject constructor(
             if (usageEvents.getNextEvent(event)) {
                 val eventPackageName = event.packageName ?: continue
 
-                if (eventPackageName == context.packageName) {
+                if (includeSelfPackageTime && eventPackageName == context.packageName) {
                     if (event.eventType == UsageEvents.Event.ACTIVITY_RESUMED) {
                         lastLauncherResumeTime = event.timeStamp
                     }

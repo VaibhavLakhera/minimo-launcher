@@ -30,7 +30,6 @@ data class CustomisationState(
     val drawerSearchBarAtBottom: Boolean = false,
     val applyHomeAppSizeToAllApps: Boolean = false,
     val autoOpenApp: Boolean = false,
-    val hideAppDrawerArrow: Boolean = false,
     val notificationDot: Boolean = false,
     val homeAppVerticalPadding: Float = Constants.DEFAULT_HOME_VERTICAL_PADDING.toFloat(),
     val ignoreSpecialCharacters: String = "",
