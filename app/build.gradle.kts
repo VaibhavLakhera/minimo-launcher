@@ -14,8 +14,8 @@ android {
         applicationId = "com.minimo.launcher"
         minSdk = 26
         targetSdk = 36
-        versionCode = 91
-        versionName = "1.27.0"
+        versionCode = 95
+        versionName = "1.27.1"
     }
 
     buildFeatures {
@@ -31,10 +31,6 @@ android {
         create("playStore") {
             dimension = "store"
         }
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.14"
     }
 
     buildTypes {

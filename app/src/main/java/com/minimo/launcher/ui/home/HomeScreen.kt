@@ -53,6 +53,7 @@ import com.minimo.launcher.utils.launchApp
 import com.minimo.launcher.utils.launchAppFromPreference
 import com.minimo.launcher.utils.lockScreen
 import com.minimo.launcher.utils.showNotificationDrawer
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
@@ -97,6 +98,7 @@ fun HomeScreen(
     BackHandler {
         coroutineScope.launch {
             if (bottomSheetScaffoldState.bottomSheetState.currentValue != SheetValue.PartiallyExpanded) {
+                hideKeyboardWithClearFocus()
                 bottomSheetScaffoldState.bottomSheetState.partialExpand()
             } else {
                 allAppsLazyListState.scrollToItem(0)
@@ -122,14 +124,17 @@ fun HomeScreen(
         }
     }
 
-    LaunchedEffect(bottomSheetScaffoldState.bottomSheetState.currentValue) {
-        when (bottomSheetScaffoldState.bottomSheetState.currentValue) {
+    LaunchedEffect(bottomSheetScaffoldState.bottomSheetState.targetValue) {
+        when (bottomSheetScaffoldState.bottomSheetState.targetValue) {
             SheetValue.Expanded -> {
                 if (!state.isBottomSheetExpanded) {
                     viewModel.setBottomSheetExpanded(true)
 
                     // Request focus only when the autoOpenKeyboardAllApps is true and drawer search bar is not hidden
                     if (state.autoOpenKeyboardAllApps && !state.hideAppDrawerSearch) {
+                        // Add a small delay to let the bottom sheet animation get a head start.
+                        // This prevents the focus request and keyboard layout from halting the sheet's expansion.
+                        delay(150)
                         focusRequester.requestFocus()
                         keyboardController?.show()
                     }
@@ -137,6 +142,7 @@ fun HomeScreen(
             }
 
             else -> {
+                delay(250)
                 viewModel.setBottomSheetExpanded(false)
                 focusManager.clearFocus()
             }
