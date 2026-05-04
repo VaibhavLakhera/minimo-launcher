@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.minimo.launcher.ui.theme.ThemeMode
 import com.minimo.launcher.utils.Constants
@@ -74,6 +75,7 @@ class PreferenceHelper @Inject constructor(
         private val KEY_FONT_PREFERENCE = stringPreferencesKey("KEY_FONT_PREFERENCE")
         private val KEY_MINIMO_SETTINGS_POSITION =
             stringPreferencesKey("KEY_MINIMO_SETTINGS_POSITION")
+        private val KEY_KEYBOARD_OPEN_DELAY = longPreferencesKey("KEY_KEYBOARD_OPEN_DELAY")
     }
 
     suspend fun setIsIntroCompleted(isCompleted: Boolean) {
@@ -292,6 +294,12 @@ class PreferenceHelper @Inject constructor(
         }
     }
 
+    suspend fun setKeyboardOpenDelay(delay: Long) {
+        preferences.edit {
+            it[KEY_KEYBOARD_OPEN_DELAY] = delay
+        }
+    }
+
     suspend fun setMinimoSettingsPosition(position: MinimoSettingsPosition) {
         preferences.edit {
             it[KEY_MINIMO_SETTINGS_POSITION] = position.name
@@ -342,7 +350,9 @@ class PreferenceHelper @Inject constructor(
                 calendarAppPreference = prefs[KEY_CALENDAR_APP_PREFERENCE] ?: "",
                 screenTimeAppPreference = prefs[KEY_SCREEN_TIME_APP_PREFERENCE] ?: "",
                 swipeLeftAppPreference = prefs[KEY_SWIPE_LEFT_APP_PREFERENCE] ?: "",
-                swipeRightAppPreference = prefs[KEY_SWIPE_RIGHT_APP_PREFERENCE] ?: ""
+                swipeRightAppPreference = prefs[KEY_SWIPE_RIGHT_APP_PREFERENCE] ?: "",
+                keyboardOpenDelay = prefs[KEY_KEYBOARD_OPEN_DELAY]
+                    ?: Constants.DEFAULT_KEYBOARD_OPEN_DELAY
             )
         }
     }
@@ -383,7 +393,9 @@ class PreferenceHelper @Inject constructor(
                 calendarAppPreference = prefs[KEY_CALENDAR_APP_PREFERENCE] ?: "",
                 screenTimeAppPreference = prefs[KEY_SCREEN_TIME_APP_PREFERENCE] ?: "",
                 swipeLeftAppPreference = prefs[KEY_SWIPE_LEFT_APP_PREFERENCE] ?: "",
-                swipeRightAppPreference = prefs[KEY_SWIPE_RIGHT_APP_PREFERENCE] ?: ""
+                swipeRightAppPreference = prefs[KEY_SWIPE_RIGHT_APP_PREFERENCE] ?: "",
+                keyboardOpenDelay = prefs[KEY_KEYBOARD_OPEN_DELAY]
+                    ?: Constants.DEFAULT_KEYBOARD_OPEN_DELAY
             )
         }
     }

@@ -134,7 +134,7 @@ fun HomeScreen(
                     if (state.autoOpenKeyboardAllApps && !state.hideAppDrawerSearch) {
                         // Add a small delay to let the bottom sheet animation get a head start.
                         // This prevents the focus request and keyboard layout from halting the sheet's expansion.
-                        delay(150)
+                        delay(state.keyboardOpenDelay)
                         focusRequester.requestFocus()
                         keyboardController?.show()
                     }

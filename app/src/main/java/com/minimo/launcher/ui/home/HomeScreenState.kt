@@ -42,5 +42,6 @@ data class HomeScreenState(
     val screenTimeAppPreference: String = "",
     val swipeLeftAppPreference: String = "",
     val swipeRightAppPreference: String = "",
-    val minimoSettingsPosition: MinimoSettingsPosition = MinimoSettingsPosition.Auto
+    val minimoSettingsPosition: MinimoSettingsPosition = MinimoSettingsPosition.Auto,
+    val keyboardOpenDelay: Long = Constants.DEFAULT_KEYBOARD_OPEN_DELAY
 )

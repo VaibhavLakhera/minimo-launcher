@@ -44,6 +44,11 @@
     <string name="show_status_bar">Mostra barra di stato</string>
     <string name="show_keyboard">Mostra tastiera</string>
     <string name="show_keyboard_when_the_drawer_is_opened">Mostra la tastiera quando il drawer viene aperto</string>
+    <string name="keyboard_open_delay">Ritardo apertura tastiera</string>
+    <string name="delay_in_milliseconds">Ritardo in millisecondi</string>
+    <string name="keyboard_open_delay_min">Min: 0ms</string>
+    <string name="keyboard_open_delay_max">Max: 1500ms</string>
+    <string name="keyboard_open_delay_default">Predefinito: %1$dms</string>
     <string name="double_tap_to_lock">Doppio tocco per bloccare</string>
     <string name="on_home_screen_double_tap_on_empty_space_to_lock">Nella schermata home, tocca due volte uno spazio vuoto per bloccare lo schermo</string>
     <string name="dynamic_colours">Colori dinamici</string>

@@ -216,6 +216,7 @@ class HomeViewModel @Inject constructor(
                             screenTimeAppPreference = prefs.screenTimeAppPreference,
                             swipeLeftAppPreference = prefs.swipeLeftAppPreference,
                             swipeRightAppPreference = prefs.swipeRightAppPreference,
+                            keyboardOpenDelay = prefs.keyboardOpenDelay,
                             allApps = newAllApps,
                             filteredAllApps = newFilteredApps,
                             searchText = clearSearchText

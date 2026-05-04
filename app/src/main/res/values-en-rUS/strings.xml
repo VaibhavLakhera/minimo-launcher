@@ -43,6 +43,11 @@
     <string name="show_status_bar">Show Status Bar</string>
     <string name="show_keyboard">Show Keyboard</string>
     <string name="show_keyboard_when_the_drawer_is_opened">Show keyboard when the drawer is opened</string>
+    <string name="keyboard_open_delay">Keyboard Open Delay</string>
+    <string name="delay_in_milliseconds">Delay in milliseconds</string>
+    <string name="keyboard_open_delay_min">Min: 0ms</string>
+    <string name="keyboard_open_delay_max">Max: 1500ms</string>
+    <string name="keyboard_open_delay_default">Default: %1$dms</string>
     <string name="double_tap_to_lock">Double Tap To Lock</string>
     <string name="on_home_screen_double_tap_on_empty_space_to_lock">On the home screen, double-tap on empty space to lock the screen</string>
     <string name="dynamic_colours">Dynamic Colors</string>

@@ -66,7 +66,8 @@ class CustomisationViewModel @Inject constructor(
                             calendarAppPreference = prefs.calendarAppPreference,
                             screenTimeAppPreference = prefs.screenTimeAppPreference,
                             swipeLeftAppPreference = prefs.swipeLeftAppPreference,
-                            swipeRightAppPreference = prefs.swipeRightAppPreference
+                            swipeRightAppPreference = prefs.swipeRightAppPreference,
+                            keyboardOpenDelay = prefs.keyboardOpenDelay
                         )
                     }
 
@@ -352,6 +353,12 @@ class CustomisationViewModel @Inject constructor(
     fun onMinimoSettingsPositionChanged(position: com.minimo.launcher.utils.MinimoSettingsPosition) {
         viewModelScope.launch {
             preferenceHelper.setMinimoSettingsPosition(position)
+        }
+    }
+
+    fun onKeyboardOpenDelayChanged(delay: Long) {
+        viewModelScope.launch {
+            preferenceHelper.setKeyboardOpenDelay(delay)
         }
     }
 }
