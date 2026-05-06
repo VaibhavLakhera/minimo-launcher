@@ -69,9 +69,6 @@
     <string name="open_settings">Einstellungen öffnen</string>
     <string name="twenty_four_hour_format">24-Stunden-Format</string>
     <string name="show_battery_level">Akkustand anzeigen</string>
-    <string name="no_favourites_added">Keine Favoriten hinzugefügt</string>
-    <string name="add_your_favourite_apps_to_access_them_easily">Fügen Sie Ihre Lieblings-Apps hinzu, um schnell auf sie zugreifen zu können</string>
-    <string name="add_favourite_apps">Lieblings-Apps hinzufügen</string>
     <string name="favourites_only">Nur Favoriten</string>
     <string name="hidden_only">Nur ausgeblendete</string>
     <string name="show_hidden_apps">Ausgeblendete Apps anzeigen</string>
@@ -142,4 +139,17 @@
     <string name="join_discord_channel">Discord-Kanal beitreten</string>
     <string name="github">GitHub</string>
     <string name="links">Links</string>
+
+    <string name="web_shortcuts">Web-Verknüpfungen</string>
+    <string name="default_launcher_required_shortcuts">Du musst diesen Launcher als Standard-Launcher festlegen, um auf Verknüpfungen zugreifen zu können.</string>
+    <string name="delete_shortcut_confirmation">Dadurch wird die Verknüpfung gelöscht. Bist du sicher, dass du sie löschen möchtest?</string>
+    <string name="how_to_add_shortcut">So fügst du eine Web-Verknüpfung hinzu:\n\n1. Öffne deinen Browser und rufe eine Website auf.\n2. Wähle im Menü „Zum Startbildschirm hinzufügen".\n3. Wähle „Installieren" oder „Verknüpfung erstellen".\n\nDie installierte App wird in der App-Übersicht angezeigt und die Verknüpfung erscheint hier.</string>
+    <string name="search">Suchen</string>
+    <string name="back_icon">Zurück</string>
+    <string name="delete">Löschen</string>
+    <string name="shortcut_pinned">Verknüpfung angeheftet</string>
+    <string name="failed_to_pin_shortcut">Verknüpfung konnte nicht angeheftet werden</string>
+    <string name="invalid_shortcut_request">Ungültige Verknüpfungsanfrage</string>
+    <string name="rename_shortcut">Verknüpfung umbenennen</string>
+    <string name="shortcut_name">Name der Verknüpfung</string>
 </resources>

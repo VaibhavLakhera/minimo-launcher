@@ -39,15 +39,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.LocalWindowInfo
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
-import com.minimo.launcher.ui.components.RenameAppDialog
+import com.minimo.launcher.R
+import com.minimo.launcher.ui.components.RenameDialog
 import com.minimo.launcher.ui.home.components.AppDrawerSheet
-import com.minimo.launcher.ui.home.components.EmptyHomeBody
 import com.minimo.launcher.ui.home.components.HomeBody
 import com.minimo.launcher.utils.launchApp
 import com.minimo.launcher.utils.launchAppFromPreference
@@ -61,8 +62,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel,
-    onSettingsClick: () -> Unit,
-    onAddFavouriteAppsClick: () -> Unit,
+    onSettingsClick: () -> Unit
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -297,12 +297,7 @@ fun HomeScreen(
             sheetContainerColor = MaterialTheme.colorScheme.surface,
             containerColor = scaffoldContainerColor
         ) { paddingValues ->
-            if (state.initialLoaded && state.favouriteApps.isEmpty() && state.favouriteShortcuts.isEmpty()) {
-                EmptyHomeBody(
-                    paddingValues = paddingValues,
-                    onAddFavouriteAppsClick = onAddFavouriteAppsClick
-                )
-            } else {
+            if (state.initialLoaded) {
                 HomeBody(
                     paddingValues = paddingValues,
                     state = state,
@@ -317,7 +312,9 @@ fun HomeScreen(
 
     if (state.renameAppDialog != null) {
         val app = state.renameAppDialog!!
-        RenameAppDialog(
+        RenameDialog(
+            title = stringResource(R.string.rename_app),
+            label = stringResource(R.string.app_name_label),
             originalName = app.appName,
             currentName = app.name,
             onRenameClick = viewModel::onRenameApp,

@@ -5,12 +5,14 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.LauncherApps
+import android.content.pm.ShortcutInfo
 import android.os.Handler
 import android.os.Looper
 import android.os.UserHandle
 import com.minimo.launcher.data.usecase.AddUpdateAppsUseCase
 import com.minimo.launcher.data.usecase.RemoveAppsUseCase
 import com.minimo.launcher.data.usecase.UpdateAllAppsUseCase
+import com.minimo.launcher.data.usecase.UpdateAllShortcutsUseCase
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -26,7 +28,8 @@ class AppsManager @Inject constructor(
     private val context: Context,
     private val addUpdateAppsUseCase: AddUpdateAppsUseCase,
     private val removeAppsUseCase: RemoveAppsUseCase,
-    private val updateAllAppsUseCase: UpdateAllAppsUseCase
+    private val updateAllAppsUseCase: UpdateAllAppsUseCase,
+    private val updateAllShortcutsUseCase: UpdateAllShortcutsUseCase
 ) : LauncherApps.Callback() {
     private val launcherApps = context.getSystemService(LauncherApps::class.java)
     private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
@@ -140,6 +143,18 @@ class AppsManager @Inject constructor(
                         checkAppRemoval = false
                     )
                 }
+            }
+        }
+    }
+
+    override fun onShortcutsChanged(
+        packageName: String,
+        shortcuts: MutableList<ShortcutInfo>,
+        user: UserHandle
+    ) {
+        coroutineScope.launch {
+            mutex.withLock {
+                updateAllShortcutsUseCase.invoke()
             }
         }
     }

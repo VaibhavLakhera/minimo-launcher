@@ -133,7 +133,7 @@ fun HomeBody(
         LazyColumn(
             state = homeLazyListState,
             modifier = Modifier
-                .weight(1f)
+                .fillMaxSize()
                 .nestedScroll(nestedScrollConnection),
             contentPadding = lazyColumnPadding,
             verticalArrangement = state.appsArrangementVertical

@@ -72,7 +72,7 @@ class CustomisationViewModel @Inject constructor(
                     }
 
                     // Special checks for custom apps.
-                    // If preference value exist, we app doesn't exist in DB then clear the preference value
+                    // If preference value exist, and app doesn't exist in DB then clear the preference value
                     val clockAppName = getAppNameFromPref(prefs.clockAppPreference)
                     if (prefs.clockAppPreference.isNotBlank() && clockAppName.isEmpty()) {
                         preferenceHelper.setClockAppPreference("")

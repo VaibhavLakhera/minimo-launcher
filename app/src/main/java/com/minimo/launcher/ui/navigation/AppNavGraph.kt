@@ -90,9 +90,6 @@ fun AppNavGraph(
                 viewModel = hiltViewModel(it),
                 onSettingsClick = {
                     navController.navigate(Routes.SETTINGS)
-                },
-                onAddFavouriteAppsClick = {
-                    navController.navigate(Routes.FAVOURITE_APPS)
                 }
             )
         }

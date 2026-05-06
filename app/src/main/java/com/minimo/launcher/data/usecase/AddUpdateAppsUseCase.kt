@@ -43,7 +43,7 @@ class AddUpdateAppsUseCase @Inject constructor(
                     addApps.add(dbApp.copy(appName = installedApp.appName))
                 }
             } else {
-                // Add the app if it does not exists in the database
+                // Add the app if it does not exist in the database
                 addApps.add(
                     AppInfoEntity(
                         packageName = installedApp.packageName,

@@ -37,7 +37,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.minimo.launcher.R
-import com.minimo.launcher.ui.components.RenameAppDialog
+import com.minimo.launcher.ui.components.RenameDialog
 import com.minimo.launcher.ui.home.components.SearchItem
 import com.minimo.launcher.utils.openHomeSettings
 
@@ -192,7 +192,9 @@ fun WebShortcutsScreen(
     }
 
     state.shortcutToRename?.let { shortcut ->
-        RenameAppDialog(
+        RenameDialog(
+            title = stringResource(R.string.rename_shortcut),
+            label = stringResource(R.string.shortcut_name),
             originalName = shortcut.shortcutName,
             currentName = shortcut.displayName,
             onRenameClick = viewModel::onConfirmRename,
