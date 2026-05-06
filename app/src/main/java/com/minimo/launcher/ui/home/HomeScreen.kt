@@ -297,7 +297,7 @@ fun HomeScreen(
             sheetContainerColor = MaterialTheme.colorScheme.surface,
             containerColor = scaffoldContainerColor
         ) { paddingValues ->
-            if (state.initialLoaded && state.favouriteApps.isEmpty()) {
+            if (state.initialLoaded && state.favouriteApps.isEmpty() && state.favouriteShortcuts.isEmpty()) {
                 EmptyHomeBody(
                     paddingValues = paddingValues,
                     onAddFavouriteAppsClick = onAddFavouriteAppsClick

@@ -63,6 +63,34 @@ fun Context.launchAppFromPreference(pref: String, fallback: () -> Unit = {}) {
     fallback()
 }
 
+fun Context.startShortcut(
+    packageName: String,
+    shortcutId: String,
+    userHandleHashCode: Int
+): Boolean {
+    if (packageName.isBlank() || shortcutId.isBlank()) return false
+
+    val userManager = getSystemService(Context.USER_SERVICE) as UserManager
+    val userHandle = userManager.userProfiles.find { it.hashCode() == userHandleHashCode }
+
+    try {
+        val launcher = getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
+        if (userHandle != null) {
+            try {
+                launcher.startShortcut(packageName, shortcutId, null, null, userHandle)
+                return true
+            } catch (_: Exception) {
+                Timber.w("Exception for userHandle, falling back to myUserHandle")
+            }
+        }
+        launcher.startShortcut(packageName, shortcutId, null, null, Process.myUserHandle())
+        return true
+    } catch (exception: Exception) {
+        Timber.e(exception)
+    }
+    return false
+}
+
 fun Context.uninstallApp(appInfo: AppInfo) {
     try {
         val userManager = getSystemService(Context.USER_SERVICE) as UserManager

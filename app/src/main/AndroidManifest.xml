@@ -61,6 +61,17 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".ui.main.PinShortcutActivity"
+            android:excludeFromRecents="true"
+            android:exported="true"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar">
+            <intent-filter>
+                <action android:name="android.content.pm.action.CONFIRM_PIN_SHORTCUT" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
         <receiver
             android:name=".utils.ScreenOffAdminReceiver"
             android:exported="false"

@@ -3,6 +3,7 @@ package com.minimo.launcher.ui.home
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.ui.Alignment
 import com.minimo.launcher.ui.entities.AppInfo
+import com.minimo.launcher.ui.entities.ShortcutInfo
 import com.minimo.launcher.utils.Constants
 import com.minimo.launcher.utils.HomeClockMode
 import com.minimo.launcher.utils.MinimoSettingsPosition
@@ -10,6 +11,7 @@ import com.minimo.launcher.utils.MinimoSettingsPosition
 data class HomeScreenState(
     val initialLoaded: Boolean = false,
     val favouriteApps: List<AppInfo> = emptyList(),
+    val favouriteShortcuts: List<ShortcutInfo> = emptyList(),
     val allApps: List<AppInfo> = emptyList(),
     val filteredAllApps: List<AppInfo> = emptyList(),
     val isBottomSheetExpanded: Boolean = false,

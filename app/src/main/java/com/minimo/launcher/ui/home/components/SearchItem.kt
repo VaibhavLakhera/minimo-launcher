@@ -17,12 +17,13 @@ fun SearchItem(
     searchText: String,
     onSearchTextChange: (String) -> Unit,
     startPadding: Dp = Dimens.APP_HORIZONTAL_SPACING,
-    endPadding: Dp = Dimens.APP_HORIZONTAL_SPACING
+    endPadding: Dp = Dimens.APP_HORIZONTAL_SPACING,
+    placeholderText: String = stringResource(R.string.search_app)
 ) {
     OutlinedTextField(
         value = searchText,
         onValueChange = onSearchTextChange,
-        placeholder = { Text(text = stringResource(R.string.search_app)) },
+        placeholder = { Text(text = placeholderText) },
         modifier = modifier
             .fillMaxWidth()
             .padding(start = startPadding, end = endPadding),
