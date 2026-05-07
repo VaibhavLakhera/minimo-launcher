@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Minimo Launcher</string>
     <string name="app_tagline">Distraction free home screen</string>
@@ -43,6 +44,11 @@
     <string name="show_status_bar">Show Status Bar</string>
     <string name="show_keyboard">Show Keyboard</string>
     <string name="show_keyboard_when_the_drawer_is_opened">Show keyboard when the drawer is opened</string>
+    <string name="keyboard_open_delay">Keyboard Open Delay</string>
+    <string name="delay_in_milliseconds">Delay in milliseconds</string>
+    <string name="keyboard_open_delay_min">Min: 0ms</string>
+    <string name="keyboard_open_delay_max">Max: 1500ms</string>
+    <string name="keyboard_open_delay_default">Default: %1$dms</string>
     <string name="double_tap_to_lock">Double Tap To Lock</string>
     <string name="on_home_screen_double_tap_on_empty_space_to_lock">On the home screen, double-tap on empty space to lock the screen</string>
     <string name="dynamic_colours">Dynamic Colors</string>
@@ -63,9 +69,6 @@
     <string name="open_settings">Open Settings</string>
     <string name="twenty_four_hour_format">24 Hour Format</string>
     <string name="show_battery_level">Show Battery Level</string>
-    <string name="no_favourites_added">No favorites added</string>
-    <string name="add_your_favourite_apps_to_access_them_easily">Add your favorite apps to access them easily</string>
-    <string name="add_favourite_apps">Add favorite apps</string>
     <string name="favourites_only">Favorites only</string>
     <string name="hidden_only">Hidden only</string>
     <string name="show_hidden_apps">Show Hidden Apps</string>
@@ -136,4 +139,17 @@
     <string name="join_discord_channel">Join Discord Channel</string>
     <string name="github">GitHub</string>
     <string name="links">Links</string>
+
+    <string name="web_shortcuts">Web Shortcuts</string>
+    <string name="default_launcher_required_shortcuts">You must set this launcher as your Default Launcher to access Shortcuts.</string>
+    <string name="delete_shortcut_confirmation">This will delete the shortcut. Are you sure you want to delete?</string>
+    <string name="how_to_add_shortcut">To add a web shortcut:\n\n1. Open your browser and go to a website.\n2. Select \"Add to Home screen\" from the menu.\n3. Select \"Install\" or \"Create shortcut\".\n\nInstalled app will be shown in the app drawer and the Shortcut will be shown here.</string>
+    <string name="search">Search</string>
+    <string name="back_icon">Back</string>
+    <string name="delete">Delete</string>
+    <string name="shortcut_pinned">Shortcut pinned</string>
+    <string name="failed_to_pin_shortcut">Failed to pin shortcut</string>
+    <string name="invalid_shortcut_request">Invalid shortcut request</string>
+    <string name="rename_shortcut">Rename Shortcut</string>
+    <string name="shortcut_name">Shortcut Name</string>
 </resources>

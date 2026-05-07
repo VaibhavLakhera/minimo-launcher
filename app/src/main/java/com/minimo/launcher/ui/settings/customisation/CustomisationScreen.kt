@@ -14,17 +14,22 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -33,8 +38,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -62,6 +72,8 @@ import com.minimo.launcher.ui.settings.customisation.components.ToggleItem
 import com.minimo.launcher.ui.theme.Dimens
 import com.minimo.launcher.ui.theme.ThemeMode
 import com.minimo.launcher.utils.AndroidUtils
+import com.minimo.launcher.utils.Constants
+import com.minimo.launcher.utils.Constants.KEYBOARD_OPEN_DELAY_RANGE
 import com.minimo.launcher.utils.HomeAppsAlignmentHorizontal
 import com.minimo.launcher.utils.HomeAppsAlignmentVertical
 import com.minimo.launcher.utils.HomeClockAlignment
@@ -75,6 +87,7 @@ import com.minimo.launcher.utils.openNotificationSettings
 import com.minimo.launcher.utils.openUsageAccessSettings
 import com.minimo.launcher.utils.removeLockScreenPermission
 import com.minimo.launcher.utils.requestLockScreenPermission
+import kotlinx.coroutines.android.awaitFrame
 
 @Composable
 fun CustomisationScreen(
@@ -95,6 +108,9 @@ fun CustomisationScreen(
 
     var showSwipeLeftAppPicker by remember { mutableStateOf(false) }
     var showSwipeRightAppPicker by remember { mutableStateOf(false) }
+
+    var showKeyboardOpenDelayDialog by remember { mutableStateOf(false) }
+    var keyboardOpenDelayInput by remember { mutableStateOf(state.keyboardOpenDelay.toString()) }
 
     val lifecycleOwner = LocalLifecycleOwner.current
 
@@ -411,6 +427,18 @@ fun CustomisationScreen(
                 onToggleClick = viewModel::onToggleAutoOpenKeyboardAllApps
             )
 
+            if (state.autoOpenKeyboardAllApps) {
+                Spacer(modifier = Modifier.height(4.dp))
+
+                KeyboardOpenDelayItem(
+                    delayMs = state.keyboardOpenDelay,
+                    onClick = {
+                        keyboardOpenDelayInput = state.keyboardOpenDelay.toString()
+                        showKeyboardOpenDelayDialog = true
+                    }
+                )
+            }
+
             HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
 
             ToggleItem(
@@ -627,6 +655,20 @@ fun CustomisationScreen(
             )
         }
 
+        if (showKeyboardOpenDelayDialog) {
+            KeyboardOpenDelayDialog(
+                currentDelay = keyboardOpenDelayInput,
+                onDelayChange = { keyboardOpenDelayInput = it },
+                onUpdate = { delay ->
+                    viewModel.onKeyboardOpenDelayChanged(delay)
+                    showKeyboardOpenDelayDialog = false
+                },
+                onDismiss = {
+                    showKeyboardOpenDelayDialog = false
+                }
+            )
+        }
+
         if (showClockAppPicker) {
             AppPickerDialog(
                 onDismissRequest = { showClockAppPicker = false },
@@ -737,5 +779,124 @@ fun AppSelectionItem(
                 }
             }
         }
+    }
+}
+
+@Composable
+fun KeyboardOpenDelayItem(
+    delayMs: Long,
+    onClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() }
+            .padding(
+                horizontal = Dimens.APP_HORIZONTAL_SPACING,
+                vertical = 16.dp
+            ),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = stringResource(R.string.keyboard_open_delay),
+            modifier = Modifier.weight(0.65f),
+            fontSize = 20.sp
+        )
+        Spacer(modifier = Modifier.width(16.dp))
+        Box(
+            modifier = Modifier.weight(0.35f),
+            contentAlignment = Alignment.CenterEnd
+        ) {
+            Text(
+                text = "${delayMs}ms",
+                fontSize = 16.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.End
+            )
+        }
+    }
+}
+
+@Composable
+fun KeyboardOpenDelayDialog(
+    currentDelay: String,
+    onDelayChange: (String) -> Unit,
+    onUpdate: (Long) -> Unit,
+    onDismiss: () -> Unit
+) {
+    val focusRequester = remember { FocusRequester() }
+
+    var delayValue by remember {
+        mutableStateOf(
+            TextFieldValue(
+                text = currentDelay,
+                selection = TextRange(currentDelay.length)
+            )
+        )
+    }
+
+    val isValid = delayValue.text.toLongOrNull()?.let { it in KEYBOARD_OPEN_DELAY_RANGE } == true
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(text = stringResource(R.string.keyboard_open_delay)) },
+        text = {
+            Column {
+                OutlinedTextField(
+                    modifier = Modifier.focusRequester(focusRequester),
+                    value = delayValue,
+                    onValueChange = { newValue ->
+                        if (newValue.text.all { it.isDigit() }) {
+                            delayValue = newValue
+                            onDelayChange(newValue.text)
+                        }
+                    },
+                    singleLine = true,
+                    label = { Text(stringResource(R.string.delay_in_milliseconds)) },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = stringResource(R.string.keyboard_open_delay_min),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Text(
+                    text = stringResource(R.string.keyboard_open_delay_max),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Text(
+                    text = stringResource(
+                        R.string.keyboard_open_delay_default,
+                        Constants.DEFAULT_KEYBOARD_OPEN_DELAY
+                    ),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    delayValue.text.toLongOrNull()?.let { onUpdate(it) }
+                },
+                enabled = isValid
+            ) {
+                Text(text = stringResource(R.string.update))
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = onDismiss
+            ) {
+                Text(text = stringResource(R.string.dismiss))
+            }
+        }
+    )
+
+    LaunchedEffect(focusRequester) {
+        awaitFrame()
+        focusRequester.requestFocus()
     }
 }

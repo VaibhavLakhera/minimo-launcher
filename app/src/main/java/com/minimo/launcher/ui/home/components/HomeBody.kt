@@ -34,6 +34,7 @@ import com.minimo.launcher.utils.launchAppInfo
 import com.minimo.launcher.utils.openDefaultCalendarApp
 import com.minimo.launcher.utils.openDefaultClockApp
 import com.minimo.launcher.utils.openDigitalWellbeing
+import com.minimo.launcher.utils.startShortcut
 import com.minimo.launcher.utils.uninstallApp
 
 @Composable
@@ -132,7 +133,7 @@ fun HomeBody(
         LazyColumn(
             state = homeLazyListState,
             modifier = Modifier
-                .weight(1f)
+                .fillMaxSize()
                 .nestedScroll(nestedScrollConnection),
             contentPadding = lazyColumnPadding,
             verticalArrangement = state.appsArrangementVertical
@@ -157,6 +158,26 @@ fun HomeBody(
                     textSize = state.homeTextSize.sp,
                     onUninstallClick = { context.uninstallApp(appInfo) },
                     showNotificationDot = appInfo.showNotificationDot,
+                    verticalPadding = state.homeAppVerticalPadding.dp,
+                    textColor = textColor,
+                    shadow = textShadow
+                )
+            }
+
+            items(items = state.favouriteShortcuts, key = { it.id }) { shortcutInfo ->
+                HomeShortcutItem(
+                    modifier = Modifier.animateItem(),
+                    shortcutName = shortcutInfo.displayName,
+                    isWorkProfile = shortcutInfo.isWorkProfile,
+                    onClick = {
+                        context.startShortcut(
+                            shortcutInfo.packageName,
+                            shortcutInfo.shortcutId,
+                            shortcutInfo.userHandle
+                        )
+                    },
+                    appsArrangement = state.appsArrangementHorizontal,
+                    textSize = state.homeTextSize.sp,
                     verticalPadding = state.homeAppVerticalPadding.dp,
                     textColor = textColor,
                     shadow = textShadow

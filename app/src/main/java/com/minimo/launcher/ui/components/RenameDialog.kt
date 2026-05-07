@@ -23,7 +23,9 @@ import com.minimo.launcher.R
 import kotlinx.coroutines.android.awaitFrame
 
 @Composable
-fun RenameAppDialog(
+fun RenameDialog(
+    title: String,
+    label: String,
     originalName: String,
     currentName: String,
     onRenameClick: (String) -> Unit,
@@ -41,18 +43,18 @@ fun RenameAppDialog(
     }
     AlertDialog(
         onDismissRequest = onCancelClick,
-        title = { Text(stringResource(R.string.rename_app)) },
+        title = { Text(title) },
         text = {
             OutlinedTextField(
                 modifier = Modifier.focusRequester(focusRequester),
                 value = newName,
                 onValueChange = { newValue ->
-                    if (newValue.text.length <= 100) {
+                    if (newValue.text.length <= 150) {
                         newName = newValue
                     }
                 },
                 singleLine = true,
-                label = { Text(stringResource(R.string.app_name_label)) },
+                label = { Text(label) },
                 placeholder = { Text(originalName) },
                 keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences)
             )

@@ -44,6 +44,11 @@
     <string name="show_status_bar">Mostra barra di stato</string>
     <string name="show_keyboard">Mostra tastiera</string>
     <string name="show_keyboard_when_the_drawer_is_opened">Mostra la tastiera quando il drawer viene aperto</string>
+    <string name="keyboard_open_delay">Ritardo apertura tastiera</string>
+    <string name="delay_in_milliseconds">Ritardo in millisecondi</string>
+    <string name="keyboard_open_delay_min">Min: 0ms</string>
+    <string name="keyboard_open_delay_max">Max: 1500ms</string>
+    <string name="keyboard_open_delay_default">Predefinito: %1$dms</string>
     <string name="double_tap_to_lock">Doppio tocco per bloccare</string>
     <string name="on_home_screen_double_tap_on_empty_space_to_lock">Nella schermata home, tocca due volte uno spazio vuoto per bloccare lo schermo</string>
     <string name="dynamic_colours">Colori dinamici</string>
@@ -64,9 +69,6 @@
     <string name="open_settings">Apri impostazioni</string>
     <string name="twenty_four_hour_format">Formato 24 ore</string>
     <string name="show_battery_level">Mostra livello batteria</string>
-    <string name="no_favourites_added">Nessun preferito aggiunto</string>
-    <string name="add_your_favourite_apps_to_access_them_easily">Aggiungi le tue app preferite per accedervi facilmente</string>
-    <string name="add_favourite_apps">Aggiungi app preferite</string>
     <string name="favourites_only">Solo preferiti</string>
     <string name="hidden_only">Solo nascoste</string>
     <string name="show_hidden_apps">Mostra app nascoste</string>
@@ -137,4 +139,17 @@
     <string name="join_discord_channel">Unisciti al canale Discord</string>
     <string name="github">GitHub</string>
     <string name="links">Link</string>
+
+    <string name="web_shortcuts">Scorciatoie Web</string>
+    <string name="default_launcher_required_shortcuts">Devi impostare questo launcher come Launcher Predefinito per accedere alle scorciatoie.</string>
+    <string name="delete_shortcut_confirmation">Questa operazione eliminerà la scorciatoia. Sei sicuro di volerla eliminare?</string>
+    <string name="how_to_add_shortcut">Per aggiungere una scorciatoia web:\n\n1. Apri il browser e vai su un sito web.\n2. Seleziona \"Aggiungi alla schermata Home\" dal menu.\n3. Seleziona \"Installa\" o \"Crea scorciatoia\".\n\nL\'app installata verrà mostrata nel cassetto delle app e la scorciatoia apparirà qui.</string>
+    <string name="search">Cerca</string>
+    <string name="back_icon">Indietro</string>
+    <string name="delete">Elimina</string>
+    <string name="shortcut_pinned">Scorciatoia aggiunta</string>
+    <string name="failed_to_pin_shortcut">Impossibile aggiungere la scorciatoia</string>
+    <string name="invalid_shortcut_request">Richiesta di scorciatoia non valida</string>
+    <string name="rename_shortcut">Rinomina collegamento</string>
+    <string name="shortcut_name">Nome collegamento</string>
 </resources>

@@ -9,7 +9,9 @@ import androidx.lifecycle.viewModelScope
 import com.minimo.launcher.R
 import com.minimo.launcher.data.AppInfoDao
 import com.minimo.launcher.data.PreferenceHelper
+import com.minimo.launcher.data.ShortcutInfoDao
 import com.minimo.launcher.data.usecase.UpdateAllAppsUseCase
+import com.minimo.launcher.data.usecase.UpdateAllShortcutsUseCase
 import com.minimo.launcher.ui.entities.AppInfo
 import com.minimo.launcher.utils.AppUtils
 import com.minimo.launcher.utils.Constants
@@ -20,6 +22,7 @@ import com.minimo.launcher.utils.HomePressedNotifier
 import com.minimo.launcher.utils.MinimoSettingsPosition
 import com.minimo.launcher.utils.NotificationDotsNotifier
 import com.minimo.launcher.utils.ScreenTimeHelper
+import com.minimo.launcher.utils.ShortcutsUtils
 import com.minimo.launcher.utils.isAppUsagePermissionGranted
 import com.minimo.launcher.utils.updateNotificationDots
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -50,7 +53,10 @@ class HomeViewModel @Inject constructor(
     private val notificationDotsNotifier: NotificationDotsNotifier,
     @ApplicationContext
     private val applicationContext: Context,
-    private val screenTimeHelper: ScreenTimeHelper
+    private val screenTimeHelper: ScreenTimeHelper,
+    private val shortcutInfoDao: ShortcutInfoDao,
+    private val updateAllShortcutsUseCase: UpdateAllShortcutsUseCase,
+    private val shortcutsUtils: ShortcutsUtils
 ) : ViewModel() {
     private val _state = MutableStateFlow(HomeScreenState())
     val state: StateFlow<HomeScreenState> = _state
@@ -66,6 +72,12 @@ class HomeViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             updateAllAppsUseCase.invoke()
+        }
+
+        viewModelScope.launch {
+            if (shortcutInfoDao.hasShortcuts()) {
+                updateAllShortcutsUseCase.invoke()
+            }
         }
 
         viewModelScope.launch {
@@ -112,6 +124,17 @@ class HomeViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
+            shortcutInfoDao.getFavouriteShortcutsFlow()
+                .collect { shortcutEntities ->
+                    _state.update {
+                        it.copy(
+                            favouriteShortcuts = shortcutsUtils.mapToShortcutInfo(shortcutEntities)
+                        )
+                    }
+                }
+        }
+
+        viewModelScope.launch {
             notificationDotsNotifier.notificationDots.collect { notificationDotSet ->
                 val allApps = _state.value.allApps.updateNotificationDots(notificationDotSet)
                 val favouriteApps =
@@ -136,11 +159,12 @@ class HomeViewModel @Inject constructor(
                 .distinctUntilChanged()
                 .collect { prefs ->
                     _state.update { state ->
-                        val homeAppsArrangementHorizontal = when (prefs.homeAppsAlignmentHorizontal) {
-                            HomeAppsAlignmentHorizontal.Start -> Arrangement.Start
-                            HomeAppsAlignmentHorizontal.Center -> Arrangement.Center
-                            HomeAppsAlignmentHorizontal.End -> Arrangement.End
-                        }
+                        val homeAppsArrangementHorizontal =
+                            when (prefs.homeAppsAlignmentHorizontal) {
+                                HomeAppsAlignmentHorizontal.Start -> Arrangement.Start
+                                HomeAppsAlignmentHorizontal.Center -> Arrangement.Center
+                                HomeAppsAlignmentHorizontal.End -> Arrangement.End
+                            }
 
                         val homeAppsArrangementVertical = when (prefs.homeAppsAlignmentVertical) {
                             HomeAppsAlignmentVertical.Top -> Arrangement.Top
@@ -159,7 +183,8 @@ class HomeViewModel @Inject constructor(
                         var clearSearchText = state.searchText
 
                         if (state.hideAppDrawerSearch != prefs.hideAppDrawerSearch || state.minimoSettingsPosition != prefs.minimoSettingsPosition) {
-                            val dbApps = state.allApps.filterNot { it.packageName == Constants.MINIMO_SETTINGS_PACKAGE }
+                            val dbApps =
+                                state.allApps.filterNot { it.packageName == Constants.MINIMO_SETTINGS_PACKAGE }
                             newAllApps = getCombinedAllApps(
                                 dbApps = dbApps,
                                 hideAppDrawerSearch = prefs.hideAppDrawerSearch,
@@ -216,6 +241,7 @@ class HomeViewModel @Inject constructor(
                             screenTimeAppPreference = prefs.screenTimeAppPreference,
                             swipeLeftAppPreference = prefs.swipeLeftAppPreference,
                             swipeRightAppPreference = prefs.swipeRightAppPreference,
+                            keyboardOpenDelay = prefs.keyboardOpenDelay,
                             allApps = newAllApps,
                             filteredAllApps = newFilteredApps,
                             searchText = clearSearchText

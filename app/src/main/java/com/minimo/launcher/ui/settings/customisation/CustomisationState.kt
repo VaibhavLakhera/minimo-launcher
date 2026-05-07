@@ -48,4 +48,5 @@ data class CustomisationState(
     val swipeRightAppPreference: String = "",
     val swipeRightAppName: String = "",
     val minimoSettingsPosition: MinimoSettingsPosition = MinimoSettingsPosition.Auto,
+    val keyboardOpenDelay: Long = Constants.DEFAULT_KEYBOARD_OPEN_DELAY,
 )

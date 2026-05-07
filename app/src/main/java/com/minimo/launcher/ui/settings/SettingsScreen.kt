@@ -34,7 +34,8 @@ fun SettingsScreen(
     onHiddenAppsClick: () -> Unit,
     onCustomisationClick: () -> Unit,
     onSupporterClick: () -> Unit,
-    onAboutAppClick: () -> Unit
+    onAboutAppClick: () -> Unit,
+    onWebShortcutsClick: () -> Unit
 ) {
     val context = LocalContext.current
 
@@ -69,6 +70,10 @@ fun SettingsScreen(
                 onClick = onFavouriteAppsClick
             )
             SettingsItem(name = stringResource(R.string.hidden_apps), onClick = onHiddenAppsClick)
+            SettingsItem(
+                name = stringResource(R.string.web_shortcuts),
+                onClick = onWebShortcutsClick
+            )
             SettingsItem(
                 name = stringResource(R.string.customisation),
                 onClick = onCustomisationClick

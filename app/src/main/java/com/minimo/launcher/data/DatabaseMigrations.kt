@@ -146,4 +146,59 @@ object DatabaseMigrations {
             favouritesCursor.close()
         }
     }
+
+    val MIGRATION_3_4 = object : Migration(3, 4) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL(
+                """
+                CREATE TABLE IF NOT EXISTS `shortcutInfoEntity` (
+                    `package_name` TEXT NOT NULL,
+                    `shortcut_id` TEXT NOT NULL,
+                    `user_handle` INTEGER NOT NULL,
+                    `shortcut_name` TEXT NOT NULL,
+                    `alternate_shortcut_name` TEXT NOT NULL DEFAULT '',
+                    `is_favourite` INTEGER NOT NULL DEFAULT 0,
+                    PRIMARY KEY(`package_name`, `shortcut_id`, `user_handle`)
+                )
+                """.trimIndent()
+            )
+        }
+    }
+
+    val MIGRATION_4_5 = object : Migration(4, 5) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            val cursor = db.query("PRAGMA table_info(shortcutInfoEntity)")
+            val columns = mutableListOf<String>()
+            while (cursor.moveToNext()) {
+                columns.add(cursor.getString(cursor.getColumnIndexOrThrow("name")))
+            }
+            cursor.close()
+
+            if (columns.contains("app_name")) {
+                db.execSQL(
+                    """
+                    CREATE TABLE IF NOT EXISTS `shortcutInfoEntity_new` (
+                        `package_name` TEXT NOT NULL,
+                        `shortcut_id` TEXT NOT NULL,
+                        `user_handle` INTEGER NOT NULL,
+                        `shortcut_name` TEXT NOT NULL,
+                        `alternate_shortcut_name` TEXT NOT NULL DEFAULT '',
+                        `is_favourite` INTEGER NOT NULL DEFAULT 0,
+                        PRIMARY KEY(`package_name`, `shortcut_id`, `user_handle`)
+                    )
+                    """.trimIndent()
+                )
+
+                db.execSQL(
+                    """
+                    INSERT INTO `shortcutInfoEntity_new` (`package_name`, `shortcut_id`, `user_handle`, `shortcut_name`, `alternate_shortcut_name`, `is_favourite`)
+                    SELECT `package_name`, `shortcut_id`, `user_handle`, `app_name`, `alternate_app_name`, `is_favourite` FROM `shortcutInfoEntity`
+                    """.trimIndent()
+                )
+
+                db.execSQL("DROP TABLE `shortcutInfoEntity`")
+                db.execSQL("ALTER TABLE `shortcutInfoEntity_new` RENAME TO `shortcutInfoEntity`")
+            }
+        }
+    }
 }

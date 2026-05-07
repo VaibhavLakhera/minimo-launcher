@@ -66,12 +66,13 @@ class CustomisationViewModel @Inject constructor(
                             calendarAppPreference = prefs.calendarAppPreference,
                             screenTimeAppPreference = prefs.screenTimeAppPreference,
                             swipeLeftAppPreference = prefs.swipeLeftAppPreference,
-                            swipeRightAppPreference = prefs.swipeRightAppPreference
+                            swipeRightAppPreference = prefs.swipeRightAppPreference,
+                            keyboardOpenDelay = prefs.keyboardOpenDelay
                         )
                     }
 
                     // Special checks for custom apps.
-                    // If preference value exist, we app doesn't exist in DB then clear the preference value
+                    // If preference value exist, and app doesn't exist in DB then clear the preference value
                     val clockAppName = getAppNameFromPref(prefs.clockAppPreference)
                     if (prefs.clockAppPreference.isNotBlank() && clockAppName.isEmpty()) {
                         preferenceHelper.setClockAppPreference("")
@@ -352,6 +353,12 @@ class CustomisationViewModel @Inject constructor(
     fun onMinimoSettingsPositionChanged(position: com.minimo.launcher.utils.MinimoSettingsPosition) {
         viewModelScope.launch {
             preferenceHelper.setMinimoSettingsPosition(position)
+        }
+    }
+
+    fun onKeyboardOpenDelayChanged(delay: Long) {
+        viewModelScope.launch {
+            preferenceHelper.setKeyboardOpenDelay(delay)
         }
     }
 }
