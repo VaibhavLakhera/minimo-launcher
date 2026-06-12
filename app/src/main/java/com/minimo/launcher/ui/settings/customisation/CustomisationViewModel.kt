@@ -67,7 +67,8 @@ class CustomisationViewModel @Inject constructor(
                             screenTimeAppPreference = prefs.screenTimeAppPreference,
                             swipeLeftAppPreference = prefs.swipeLeftAppPreference,
                             swipeRightAppPreference = prefs.swipeRightAppPreference,
-                            keyboardOpenDelay = prefs.keyboardOpenDelay
+                            keyboardOpenDelay = prefs.keyboardOpenDelay,
+                            keyboardCloseDelay = prefs.keyboardCloseDelay
                         )
                     }
 
@@ -359,6 +360,12 @@ class CustomisationViewModel @Inject constructor(
     fun onKeyboardOpenDelayChanged(delay: Long) {
         viewModelScope.launch {
             preferenceHelper.setKeyboardOpenDelay(delay)
+        }
+    }
+
+    fun onKeyboardCloseDelayChanged(delay: Long) {
+        viewModelScope.launch {
+            preferenceHelper.setKeyboardCloseDelay(delay)
         }
     }
 }

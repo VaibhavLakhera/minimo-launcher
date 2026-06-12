@@ -142,7 +142,7 @@ fun HomeScreen(
             }
 
             else -> {
-                delay(250)
+                delay(state.keyboardCloseDelay)
                 viewModel.setBottomSheetExpanded(false)
                 focusManager.clearFocus()
             }

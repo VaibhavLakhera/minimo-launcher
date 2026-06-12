@@ -73,6 +73,7 @@ import com.minimo.launcher.ui.theme.Dimens
 import com.minimo.launcher.ui.theme.ThemeMode
 import com.minimo.launcher.utils.AndroidUtils
 import com.minimo.launcher.utils.Constants
+import com.minimo.launcher.utils.Constants.KEYBOARD_CLOSE_DELAY_RANGE
 import com.minimo.launcher.utils.Constants.KEYBOARD_OPEN_DELAY_RANGE
 import com.minimo.launcher.utils.HomeAppsAlignmentHorizontal
 import com.minimo.launcher.utils.HomeAppsAlignmentVertical
@@ -111,6 +112,9 @@ fun CustomisationScreen(
 
     var showKeyboardOpenDelayDialog by remember { mutableStateOf(false) }
     var keyboardOpenDelayInput by remember { mutableStateOf(state.keyboardOpenDelay.toString()) }
+
+    var showKeyboardCloseDelayDialog by remember { mutableStateOf(false) }
+    var keyboardCloseDelayInput by remember { mutableStateOf(state.keyboardCloseDelay.toString()) }
 
     val lifecycleOwner = LocalLifecycleOwner.current
 
@@ -430,11 +434,23 @@ fun CustomisationScreen(
             if (state.autoOpenKeyboardAllApps) {
                 Spacer(modifier = Modifier.height(4.dp))
 
-                KeyboardOpenDelayItem(
+                KeyboardDelayItem(
+                    title = stringResource(R.string.keyboard_open_delay),
                     delayMs = state.keyboardOpenDelay,
                     onClick = {
                         keyboardOpenDelayInput = state.keyboardOpenDelay.toString()
                         showKeyboardOpenDelayDialog = true
+                    }
+                )
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                KeyboardDelayItem(
+                    title = stringResource(R.string.keyboard_close_delay),
+                    delayMs = state.keyboardCloseDelay,
+                    onClick = {
+                        keyboardCloseDelayInput = state.keyboardCloseDelay.toString()
+                        showKeyboardCloseDelayDialog = true
                     }
                 )
             }
@@ -471,15 +487,6 @@ fun CustomisationScreen(
                 subtitle = stringResource(R.string.show_hidden_apps_in_the_search_result_of_the_app_drawer),
                 isChecked = state.showHiddenAppsInSearch,
                 onToggleClick = viewModel::onToggleShowHiddenAppsInSearch
-            )
-
-            HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
-
-            ToggleItem(
-                title = stringResource(R.string.search_bar_at_bottom),
-                subtitle = stringResource(R.string.change_the_position_of_the_app_drawer_search_bar_to_the_bottom),
-                isChecked = state.drawerSearchBarAtBottom,
-                onToggleClick = viewModel::onToggleDrawerSearchBarAtBottom
             )
 
             HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
@@ -547,6 +554,17 @@ fun CustomisationScreen(
                         )
                     ),
                     onOptionSelected = viewModel::onMinimoSettingsPositionChanged
+                )
+            }
+
+            if (!state.hideAppDrawerSearch) {
+                Spacer(modifier = Modifier.height(4.dp))
+
+                ToggleItem(
+                    title = stringResource(R.string.search_bar_at_bottom),
+                    subtitle = stringResource(R.string.change_the_position_of_the_app_drawer_search_bar_to_the_bottom),
+                    isChecked = state.drawerSearchBarAtBottom,
+                    onToggleClick = viewModel::onToggleDrawerSearchBarAtBottom
                 )
             }
 
@@ -656,8 +674,11 @@ fun CustomisationScreen(
         }
 
         if (showKeyboardOpenDelayDialog) {
-            KeyboardOpenDelayDialog(
+            KeyboardDelayDialog(
+                title = stringResource(R.string.keyboard_open_delay),
                 currentDelay = keyboardOpenDelayInput,
+                delayRange = KEYBOARD_OPEN_DELAY_RANGE,
+                defaultDelay = Constants.DEFAULT_KEYBOARD_OPEN_DELAY,
                 onDelayChange = { keyboardOpenDelayInput = it },
                 onUpdate = { delay ->
                     viewModel.onKeyboardOpenDelayChanged(delay)
@@ -665,6 +686,23 @@ fun CustomisationScreen(
                 },
                 onDismiss = {
                     showKeyboardOpenDelayDialog = false
+                }
+            )
+        }
+
+        if (showKeyboardCloseDelayDialog) {
+            KeyboardDelayDialog(
+                title = stringResource(R.string.keyboard_close_delay),
+                currentDelay = keyboardCloseDelayInput,
+                delayRange = KEYBOARD_CLOSE_DELAY_RANGE,
+                defaultDelay = Constants.DEFAULT_KEYBOARD_CLOSE_DELAY,
+                onDelayChange = { keyboardCloseDelayInput = it },
+                onUpdate = { delay ->
+                    viewModel.onKeyboardCloseDelayChanged(delay)
+                    showKeyboardCloseDelayDialog = false
+                },
+                onDismiss = {
+                    showKeyboardCloseDelayDialog = false
                 }
             )
         }
@@ -783,7 +821,8 @@ fun AppSelectionItem(
 }
 
 @Composable
-fun KeyboardOpenDelayItem(
+fun KeyboardDelayItem(
+    title: String,
     delayMs: Long,
     onClick: () -> Unit
 ) {
@@ -798,7 +837,7 @@ fun KeyboardOpenDelayItem(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = stringResource(R.string.keyboard_open_delay),
+            text = title,
             modifier = Modifier.weight(0.65f),
             fontSize = 20.sp
         )
@@ -818,8 +857,11 @@ fun KeyboardOpenDelayItem(
 }
 
 @Composable
-fun KeyboardOpenDelayDialog(
+fun KeyboardDelayDialog(
+    title: String,
     currentDelay: String,
+    delayRange: ClosedRange<Long>,
+    defaultDelay: Long,
     onDelayChange: (String) -> Unit,
     onUpdate: (Long) -> Unit,
     onDismiss: () -> Unit
@@ -835,11 +877,11 @@ fun KeyboardOpenDelayDialog(
         )
     }
 
-    val isValid = delayValue.text.toLongOrNull()?.let { it in KEYBOARD_OPEN_DELAY_RANGE } == true
+    val isValid = delayValue.text.toLongOrNull()?.let { it in delayRange } == true
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(text = stringResource(R.string.keyboard_open_delay)) },
+        title = { Text(text = title) },
         text = {
             Column {
                 OutlinedTextField(
@@ -857,20 +899,17 @@ fun KeyboardOpenDelayDialog(
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = stringResource(R.string.keyboard_open_delay_min),
+                    text = stringResource(R.string.keyboard_delay_min, delayRange.start),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
-                    text = stringResource(R.string.keyboard_open_delay_max),
+                    text = stringResource(R.string.keyboard_delay_max, delayRange.endInclusive),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
-                    text = stringResource(
-                        R.string.keyboard_open_delay_default,
-                        Constants.DEFAULT_KEYBOARD_OPEN_DELAY
-                    ),
+                    text = stringResource(R.string.keyboard_delay_default, defaultDelay),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

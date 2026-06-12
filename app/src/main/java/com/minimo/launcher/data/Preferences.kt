@@ -47,7 +47,8 @@ data class HomePreferences(
     val screenTimeAppPreference: String = "",
     val swipeLeftAppPreference: String = "",
     val swipeRightAppPreference: String = "",
-    val keyboardOpenDelay: Long = Constants.DEFAULT_KEYBOARD_OPEN_DELAY
+    val keyboardOpenDelay: Long = Constants.DEFAULT_KEYBOARD_OPEN_DELAY,
+    val keyboardCloseDelay: Long = Constants.DEFAULT_KEYBOARD_CLOSE_DELAY
 )
 
 data class CustomisationPreferences(
@@ -85,5 +86,6 @@ data class CustomisationPreferences(
     val screenTimeAppPreference: String = "",
     val swipeLeftAppPreference: String = "",
     val swipeRightAppPreference: String = "",
-    val keyboardOpenDelay: Long = Constants.DEFAULT_KEYBOARD_OPEN_DELAY
+    val keyboardOpenDelay: Long = Constants.DEFAULT_KEYBOARD_OPEN_DELAY,
+    val keyboardCloseDelay: Long = Constants.DEFAULT_KEYBOARD_CLOSE_DELAY
 )

@@ -76,6 +76,7 @@ class PreferenceHelper @Inject constructor(
         private val KEY_MINIMO_SETTINGS_POSITION =
             stringPreferencesKey("KEY_MINIMO_SETTINGS_POSITION")
         private val KEY_KEYBOARD_OPEN_DELAY = longPreferencesKey("KEY_KEYBOARD_OPEN_DELAY")
+        private val KEY_KEYBOARD_CLOSE_DELAY = longPreferencesKey("KEY_KEYBOARD_CLOSE_DELAY")
     }
 
     suspend fun setIsIntroCompleted(isCompleted: Boolean) {
@@ -300,6 +301,12 @@ class PreferenceHelper @Inject constructor(
         }
     }
 
+    suspend fun setKeyboardCloseDelay(delay: Long) {
+        preferences.edit {
+            it[KEY_KEYBOARD_CLOSE_DELAY] = delay
+        }
+    }
+
     suspend fun setMinimoSettingsPosition(position: MinimoSettingsPosition) {
         preferences.edit {
             it[KEY_MINIMO_SETTINGS_POSITION] = position.name
@@ -352,7 +359,9 @@ class PreferenceHelper @Inject constructor(
                 swipeLeftAppPreference = prefs[KEY_SWIPE_LEFT_APP_PREFERENCE] ?: "",
                 swipeRightAppPreference = prefs[KEY_SWIPE_RIGHT_APP_PREFERENCE] ?: "",
                 keyboardOpenDelay = prefs[KEY_KEYBOARD_OPEN_DELAY]
-                    ?: Constants.DEFAULT_KEYBOARD_OPEN_DELAY
+                    ?: Constants.DEFAULT_KEYBOARD_OPEN_DELAY,
+                keyboardCloseDelay = prefs[KEY_KEYBOARD_CLOSE_DELAY]
+                    ?: Constants.DEFAULT_KEYBOARD_CLOSE_DELAY
             )
         }
     }
@@ -395,7 +404,9 @@ class PreferenceHelper @Inject constructor(
                 swipeLeftAppPreference = prefs[KEY_SWIPE_LEFT_APP_PREFERENCE] ?: "",
                 swipeRightAppPreference = prefs[KEY_SWIPE_RIGHT_APP_PREFERENCE] ?: "",
                 keyboardOpenDelay = prefs[KEY_KEYBOARD_OPEN_DELAY]
-                    ?: Constants.DEFAULT_KEYBOARD_OPEN_DELAY
+                    ?: Constants.DEFAULT_KEYBOARD_OPEN_DELAY,
+                keyboardCloseDelay = prefs[KEY_KEYBOARD_CLOSE_DELAY]
+                    ?: Constants.DEFAULT_KEYBOARD_CLOSE_DELAY
             )
         }
     }
