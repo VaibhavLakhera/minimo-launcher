@@ -39,7 +39,8 @@ fun TimeAndDateView(
     textColor: Color,
     textShadow: Shadow?,
     onClockClick: () -> Unit,
-    onDateClick: () -> Unit
+    onDateClick: () -> Unit,
+    batteryAppPreference: String
 ) {
     var currentDateTime by remember { mutableStateOf(LocalDateTime.now()) }
 
@@ -105,7 +106,8 @@ fun TimeAndDateView(
                         fontSize = dateFontSize,
                         fontWeight = dateFontWeight,
                         textColor = textColor,
-                        textShadow = textShadow
+                        textShadow = textShadow,
+                        batteryAppPreference = batteryAppPreference
                     )
                 }
             }

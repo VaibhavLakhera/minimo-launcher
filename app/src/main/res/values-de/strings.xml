@@ -117,6 +117,7 @@
     <string name="set_wallpaper_to_theme_color_dialog_message">Sind Sie sicher, dass Sie dies aktivieren möchten? Das Hintergrundbild des Telefons wird automatisch auf die Farbe des aktuellen Designs gesetzt.</string>
     <string name="select_app">App auswählen</string>
     <string name="clock_app">Uhr-App</string>
+    <string name="battery_app">Akku-App</string>
     <string name="calendar_app">Kalender-App</string>
     <string name="default_app">Standard</string>
     <string name="choose">Auswählen</string>

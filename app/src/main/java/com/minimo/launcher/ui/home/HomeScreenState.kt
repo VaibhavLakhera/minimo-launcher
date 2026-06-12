@@ -40,6 +40,7 @@ data class HomeScreenState(
     val lightTextOnWallpaper: Boolean = true,
     val dimWallpaper: Boolean = false,
     val clockAppPreference: String = "",
+    val batteryAppPreference: String = "",
     val calendarAppPreference: String = "",
     val screenTimeAppPreference: String = "",
     val swipeLeftAppPreference: String = "",

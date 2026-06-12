@@ -39,6 +39,8 @@ data class CustomisationState(
     val dimWallpaper: Boolean = false,
     val clockAppPreference: String = "",
     val clockAppName: String = "",
+    val batteryAppPreference: String = "",
+    val batteryAppName: String = "",
     val calendarAppPreference: String = "",
     val calendarAppName: String = "",
     val screenTimeAppPreference: String = "",

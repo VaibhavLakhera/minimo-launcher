@@ -63,6 +63,7 @@ class CustomisationViewModel @Inject constructor(
                             minimoSettingsPosition = prefs.minimoSettingsPosition,
                             showScreenTimeWidget = prefs.showScreenTimeWidget,
                             clockAppPreference = prefs.clockAppPreference,
+                            batteryAppPreference = prefs.batteryAppPreference,
                             calendarAppPreference = prefs.calendarAppPreference,
                             screenTimeAppPreference = prefs.screenTimeAppPreference,
                             swipeLeftAppPreference = prefs.swipeLeftAppPreference,
@@ -79,6 +80,13 @@ class CustomisationViewModel @Inject constructor(
                         preferenceHelper.setClockAppPreference("")
                     } else {
                         _state.update { it.copy(clockAppName = clockAppName) }
+                    }
+
+                    val batteryAppName = getAppNameFromPref(prefs.batteryAppPreference)
+                    if (prefs.batteryAppPreference.isNotBlank() && batteryAppName.isEmpty()) {
+                        preferenceHelper.setBatteryAppPreference("")
+                    } else {
+                        _state.update { it.copy(batteryAppName = batteryAppName) }
                     }
 
                     val calendarAppName = getAppNameFromPref(prefs.calendarAppPreference)
@@ -324,6 +332,12 @@ class CustomisationViewModel @Inject constructor(
     fun onClockAppChanged(appData: String) {
         viewModelScope.launch {
             preferenceHelper.setClockAppPreference(appData)
+        }
+    }
+
+    fun onBatteryAppChanged(appData: String) {
+        viewModelScope.launch {
+            preferenceHelper.setBatteryAppPreference(appData)
         }
     }
 

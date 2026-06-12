@@ -237,6 +237,7 @@ class HomeViewModel @Inject constructor(
                             lightTextOnWallpaper = prefs.lightTextOnWallpaper,
                             dimWallpaper = prefs.dimWallpaper,
                             clockAppPreference = prefs.clockAppPreference,
+                            batteryAppPreference = prefs.batteryAppPreference,
                             calendarAppPreference = prefs.calendarAppPreference,
                             screenTimeAppPreference = prefs.screenTimeAppPreference,
                             swipeLeftAppPreference = prefs.swipeLeftAppPreference,

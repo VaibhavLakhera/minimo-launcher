@@ -104,6 +104,7 @@ fun CustomisationScreen(
     var showSetWallpaperToThemeColorDialog by remember { mutableStateOf(false) }
 
     var showClockAppPicker by remember { mutableStateOf(false) }
+    var showBatteryAppPicker by remember { mutableStateOf(false) }
     var showCalendarAppPicker by remember { mutableStateOf(false) }
     var showScreenTimeAppPicker by remember { mutableStateOf(false) }
 
@@ -392,6 +393,15 @@ fun CustomisationScreen(
                         title = stringResource(R.string.show_battery_level),
                         isChecked = state.showBatteryLevel,
                         onToggleClick = viewModel::onToggleShowBatteryLevel
+                    )
+
+                    Spacer(modifier = Modifier.height(4.dp))
+
+                    AppSelectionItem(
+                        title = stringResource(R.string.battery_app),
+                        selectedAppName = state.batteryAppName,
+                        onDefaultClick = { viewModel.onBatteryAppChanged("") },
+                        onChooseClick = { showBatteryAppPicker = true }
                     )
                 }
 
@@ -713,6 +723,16 @@ fun CustomisationScreen(
                 onAppSelected = { appInfo ->
                     viewModel.onClockAppChanged("${appInfo.packageName}|${appInfo.className}|${appInfo.userHandle}")
                     showClockAppPicker = false
+                }
+            )
+        }
+
+        if (showBatteryAppPicker) {
+            AppPickerDialog(
+                onDismissRequest = { showBatteryAppPicker = false },
+                onAppSelected = { appInfo ->
+                    viewModel.onBatteryAppChanged("${appInfo.packageName}|${appInfo.className}|${appInfo.userHandle}")
+                    showBatteryAppPicker = false
                 }
             )
         }

@@ -115,6 +115,7 @@
     <string name="set_wallpaper_to_theme_color_dialog_message">Are you sure you want to enable this? The phone\'s wallpaper will automatically be set to the current theme\'s colour.</string>
     <string name="select_app">Select App</string>
     <string name="clock_app">Clock App</string>
+    <string name="battery_app">Battery App</string>
     <string name="calendar_app">Calendar App</string>
     <string name="default_app">Default</string>
     <string name="choose">Choose</string>

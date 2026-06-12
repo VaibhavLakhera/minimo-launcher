@@ -64,6 +64,8 @@ class PreferenceHelper @Inject constructor(
         private val KEY_SHOW_SCREEN_TIME_WIDGET =
             booleanPreferencesKey("KEY_SHOW_SCREEN_TIME_WIDGET")
         private val KEY_CLOCK_APP_PREFERENCE = stringPreferencesKey("KEY_CLOCK_APP_PREFERENCE")
+        private val KEY_BATTERY_APP_PREFERENCE =
+            stringPreferencesKey("KEY_BATTERY_APP_PREFERENCE")
         private val KEY_CALENDAR_APP_PREFERENCE =
             stringPreferencesKey("KEY_CALENDAR_APP_PREFERENCE")
         private val KEY_SCREEN_TIME_APP_PREFERENCE =
@@ -265,6 +267,12 @@ class PreferenceHelper @Inject constructor(
         }
     }
 
+    suspend fun setBatteryAppPreference(appData: String) {
+        preferences.edit {
+            it[KEY_BATTERY_APP_PREFERENCE] = appData
+        }
+    }
+
     suspend fun setCalendarAppPreference(appData: String) {
         preferences.edit {
             it[KEY_CALENDAR_APP_PREFERENCE] = appData
@@ -354,6 +362,7 @@ class PreferenceHelper @Inject constructor(
                 lightTextOnWallpaper = prefs[KEY_LIGHT_TEXT_ON_WALLPAPER] ?: true,
                 dimWallpaper = prefs[KEY_DIM_WALLPAPER] ?: false,
                 clockAppPreference = prefs[KEY_CLOCK_APP_PREFERENCE] ?: "",
+                batteryAppPreference = prefs[KEY_BATTERY_APP_PREFERENCE] ?: "",
                 calendarAppPreference = prefs[KEY_CALENDAR_APP_PREFERENCE] ?: "",
                 screenTimeAppPreference = prefs[KEY_SCREEN_TIME_APP_PREFERENCE] ?: "",
                 swipeLeftAppPreference = prefs[KEY_SWIPE_LEFT_APP_PREFERENCE] ?: "",
@@ -399,6 +408,7 @@ class PreferenceHelper @Inject constructor(
                 minimoSettingsPosition = getMinimoSettingsPositionFromPref(prefs[KEY_MINIMO_SETTINGS_POSITION]),
                 showScreenTimeWidget = prefs[KEY_SHOW_SCREEN_TIME_WIDGET] ?: false,
                 clockAppPreference = prefs[KEY_CLOCK_APP_PREFERENCE] ?: "",
+                batteryAppPreference = prefs[KEY_BATTERY_APP_PREFERENCE] ?: "",
                 calendarAppPreference = prefs[KEY_CALENDAR_APP_PREFERENCE] ?: "",
                 screenTimeAppPreference = prefs[KEY_SCREEN_TIME_APP_PREFERENCE] ?: "",
                 swipeLeftAppPreference = prefs[KEY_SWIPE_LEFT_APP_PREFERENCE] ?: "",

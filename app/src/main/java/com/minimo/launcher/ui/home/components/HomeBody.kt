@@ -105,7 +105,8 @@ fun HomeBody(
                             context.launchAppFromPreference(state.calendarAppPreference) {
                                 context.openDefaultCalendarApp()
                             }
-                        }
+                        },
+                        batteryAppPreference = state.batteryAppPreference
                     )
                 }
 
