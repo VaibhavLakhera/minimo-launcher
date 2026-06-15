@@ -120,7 +120,7 @@ fun ColumnScope.AppDrawerSheet(
             contentPadding = PaddingValues(
                 top = 16.dp,
                 bottom = systemNavigationHeight,
-                end = 40.dp
+                end = if (state.enableFastScroller) 40.dp else 0.dp
             )
         ) {
             items(items = state.filteredAllApps, key = { it.id }) { appInfo ->
