@@ -244,6 +244,7 @@ class HomeViewModel @Inject constructor(
                             swipeRightAppPreference = prefs.swipeRightAppPreference,
                             keyboardOpenDelay = prefs.keyboardOpenDelay,
                             keyboardCloseDelay = prefs.keyboardCloseDelay,
+                            enableFastScroller = prefs.enableFastScroller,
                             allApps = newAllApps,
                             filteredAllApps = newFilteredApps,
                             searchText = clearSearchText

@@ -630,6 +630,15 @@ fun CustomisationScreen(
                 onChooseClick = { showSwipeRightAppPicker = true }
             )
 
+            HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
+
+            ToggleItem(
+                title = stringResource(R.string.fast_scroller),
+                subtitle = stringResource(R.string.fast_scroller_description),
+                isChecked = state.enableFastScroller,
+                onToggleClick = viewModel::onToggleFastScroller
+            )
+
             Spacer(modifier = Modifier.height(8.dp))
         }
 

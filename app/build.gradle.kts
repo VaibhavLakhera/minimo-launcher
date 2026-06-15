@@ -14,8 +14,8 @@ android {
         applicationId = "com.minimo.launcher"
         minSdk = 26
         targetSdk = 36
-        versionCode = 97
-        versionName = "1.28.0"
+        versionCode = 99
+        versionName = "1.29.0"
     }
 
     buildFeatures {
@@ -75,7 +75,7 @@ room {
 }
 
 dependencies {
-    implementation(platform("androidx.compose:compose-bom:2026.04.01"))
+    implementation(platform("androidx.compose:compose-bom:2026.05.01"))
 
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.material:material-icons-core")

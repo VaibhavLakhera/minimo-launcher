@@ -126,6 +126,8 @@
     <string name="home_swipe_right_app">App beim Wischen nach rechts</string>
     <string name="none">Keine</string>
     <string name="font">Schriftart</string>
+    <string name="fast_scroller">Schnellscroller</string>
+    <string name="fast_scroller_description">Zeige einen A-Z-Schnellscroller in der App-Schublade</string>
     <string name="become_a_supporter">Unterstützer werden</string>
     <string name="supporter_title">Unterstützer</string>
     <string name="supporter_description">Diese App ist völlig kostenlos und Open Source und wird es auch bleiben. Wenn Ihnen die App gefällt und Sie die Entwicklung unterstützen möchten, können Sie eine der folgenden Optionen wählen.</string>
