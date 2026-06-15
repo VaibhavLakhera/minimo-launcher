@@ -1,11 +1,13 @@
 package com.minimo.launcher.ui.home.components
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
@@ -169,16 +171,20 @@ fun ColumnScope.AppDrawerSheet(
     }
 
     if (!state.hideAppDrawerSearch && state.drawerSearchBarAtBottom) {
-        AppDrawerSearch(
-            focusRequester = focusRequester,
-            searchText = state.searchText,
-            onSearchTextChange = viewModel::onSearchTextChange,
-            onSettingsClick = {
-                hideKeyboardWithClearFocus()
-                onSettingsClick()
-            }
-        )
+        Column(
+            modifier = Modifier.imePadding()
+        ) {
+            AppDrawerSearch(
+                focusRequester = focusRequester,
+                searchText = state.searchText,
+                onSearchTextChange = viewModel::onSearchTextChange,
+                onSettingsClick = {
+                    hideKeyboardWithClearFocus()
+                    onSettingsClick()
+                }
+            )
 
-        Spacer(modifier = Modifier.height(systemNavigationHeight))
+            Spacer(modifier = Modifier.height(systemNavigationHeight))
+        }
     }
 }
