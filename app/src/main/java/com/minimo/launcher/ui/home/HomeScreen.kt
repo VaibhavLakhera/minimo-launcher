@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.union
@@ -142,7 +141,7 @@ fun HomeScreen(
             }
 
             else -> {
-                delay(250)
+                delay(state.keyboardCloseDelay)
                 viewModel.setBottomSheetExpanded(false)
                 focusManager.clearFocus()
             }
@@ -218,7 +217,7 @@ fun HomeScreen(
         WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
 
     val safeDrawingTop =
-        WindowInsets.statusBars.union(WindowInsets.ime).union(WindowInsets.displayCutout)
+        WindowInsets.statusBars.union(WindowInsets.displayCutout)
 
     val surfaceColor = MaterialTheme.colorScheme.surface
 

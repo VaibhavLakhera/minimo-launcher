@@ -64,6 +64,8 @@ class PreferenceHelper @Inject constructor(
         private val KEY_SHOW_SCREEN_TIME_WIDGET =
             booleanPreferencesKey("KEY_SHOW_SCREEN_TIME_WIDGET")
         private val KEY_CLOCK_APP_PREFERENCE = stringPreferencesKey("KEY_CLOCK_APP_PREFERENCE")
+        private val KEY_BATTERY_APP_PREFERENCE =
+            stringPreferencesKey("KEY_BATTERY_APP_PREFERENCE")
         private val KEY_CALENDAR_APP_PREFERENCE =
             stringPreferencesKey("KEY_CALENDAR_APP_PREFERENCE")
         private val KEY_SCREEN_TIME_APP_PREFERENCE =
@@ -76,6 +78,8 @@ class PreferenceHelper @Inject constructor(
         private val KEY_MINIMO_SETTINGS_POSITION =
             stringPreferencesKey("KEY_MINIMO_SETTINGS_POSITION")
         private val KEY_KEYBOARD_OPEN_DELAY = longPreferencesKey("KEY_KEYBOARD_OPEN_DELAY")
+        private val KEY_KEYBOARD_CLOSE_DELAY = longPreferencesKey("KEY_KEYBOARD_CLOSE_DELAY")
+        private val KEY_ENABLE_FAST_SCROLLER = booleanPreferencesKey("KEY_ENABLE_FAST_SCROLLER")
     }
 
     suspend fun setIsIntroCompleted(isCompleted: Boolean) {
@@ -264,6 +268,12 @@ class PreferenceHelper @Inject constructor(
         }
     }
 
+    suspend fun setBatteryAppPreference(appData: String) {
+        preferences.edit {
+            it[KEY_BATTERY_APP_PREFERENCE] = appData
+        }
+    }
+
     suspend fun setCalendarAppPreference(appData: String) {
         preferences.edit {
             it[KEY_CALENDAR_APP_PREFERENCE] = appData
@@ -297,6 +307,18 @@ class PreferenceHelper @Inject constructor(
     suspend fun setKeyboardOpenDelay(delay: Long) {
         preferences.edit {
             it[KEY_KEYBOARD_OPEN_DELAY] = delay
+        }
+    }
+
+    suspend fun setKeyboardCloseDelay(delay: Long) {
+        preferences.edit {
+            it[KEY_KEYBOARD_CLOSE_DELAY] = delay
+        }
+    }
+
+    suspend fun setEnableFastScroller(enable: Boolean) {
+        preferences.edit {
+            it[KEY_ENABLE_FAST_SCROLLER] = enable
         }
     }
 
@@ -347,12 +369,16 @@ class PreferenceHelper @Inject constructor(
                 lightTextOnWallpaper = prefs[KEY_LIGHT_TEXT_ON_WALLPAPER] ?: true,
                 dimWallpaper = prefs[KEY_DIM_WALLPAPER] ?: false,
                 clockAppPreference = prefs[KEY_CLOCK_APP_PREFERENCE] ?: "",
+                batteryAppPreference = prefs[KEY_BATTERY_APP_PREFERENCE] ?: "",
                 calendarAppPreference = prefs[KEY_CALENDAR_APP_PREFERENCE] ?: "",
                 screenTimeAppPreference = prefs[KEY_SCREEN_TIME_APP_PREFERENCE] ?: "",
                 swipeLeftAppPreference = prefs[KEY_SWIPE_LEFT_APP_PREFERENCE] ?: "",
                 swipeRightAppPreference = prefs[KEY_SWIPE_RIGHT_APP_PREFERENCE] ?: "",
                 keyboardOpenDelay = prefs[KEY_KEYBOARD_OPEN_DELAY]
-                    ?: Constants.DEFAULT_KEYBOARD_OPEN_DELAY
+                    ?: Constants.DEFAULT_KEYBOARD_OPEN_DELAY,
+                keyboardCloseDelay = prefs[KEY_KEYBOARD_CLOSE_DELAY]
+                    ?: Constants.DEFAULT_KEYBOARD_CLOSE_DELAY,
+                enableFastScroller = prefs[KEY_ENABLE_FAST_SCROLLER] ?: false
             )
         }
     }
@@ -390,12 +416,16 @@ class PreferenceHelper @Inject constructor(
                 minimoSettingsPosition = getMinimoSettingsPositionFromPref(prefs[KEY_MINIMO_SETTINGS_POSITION]),
                 showScreenTimeWidget = prefs[KEY_SHOW_SCREEN_TIME_WIDGET] ?: false,
                 clockAppPreference = prefs[KEY_CLOCK_APP_PREFERENCE] ?: "",
+                batteryAppPreference = prefs[KEY_BATTERY_APP_PREFERENCE] ?: "",
                 calendarAppPreference = prefs[KEY_CALENDAR_APP_PREFERENCE] ?: "",
                 screenTimeAppPreference = prefs[KEY_SCREEN_TIME_APP_PREFERENCE] ?: "",
                 swipeLeftAppPreference = prefs[KEY_SWIPE_LEFT_APP_PREFERENCE] ?: "",
                 swipeRightAppPreference = prefs[KEY_SWIPE_RIGHT_APP_PREFERENCE] ?: "",
                 keyboardOpenDelay = prefs[KEY_KEYBOARD_OPEN_DELAY]
-                    ?: Constants.DEFAULT_KEYBOARD_OPEN_DELAY
+                    ?: Constants.DEFAULT_KEYBOARD_OPEN_DELAY,
+                keyboardCloseDelay = prefs[KEY_KEYBOARD_CLOSE_DELAY]
+                    ?: Constants.DEFAULT_KEYBOARD_CLOSE_DELAY,
+                enableFastScroller = prefs[KEY_ENABLE_FAST_SCROLLER] ?: false
             )
         }
     }

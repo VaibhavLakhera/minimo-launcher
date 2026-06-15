@@ -39,6 +39,8 @@ data class CustomisationState(
     val dimWallpaper: Boolean = false,
     val clockAppPreference: String = "",
     val clockAppName: String = "",
+    val batteryAppPreference: String = "",
+    val batteryAppName: String = "",
     val calendarAppPreference: String = "",
     val calendarAppName: String = "",
     val screenTimeAppPreference: String = "",
@@ -49,4 +51,6 @@ data class CustomisationState(
     val swipeRightAppName: String = "",
     val minimoSettingsPosition: MinimoSettingsPosition = MinimoSettingsPosition.Auto,
     val keyboardOpenDelay: Long = Constants.DEFAULT_KEYBOARD_OPEN_DELAY,
+    val keyboardCloseDelay: Long = Constants.DEFAULT_KEYBOARD_CLOSE_DELAY,
+    val enableFastScroller: Boolean = false
 )

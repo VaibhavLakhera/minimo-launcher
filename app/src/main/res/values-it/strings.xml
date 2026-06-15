@@ -45,10 +45,11 @@
     <string name="show_keyboard">Mostra tastiera</string>
     <string name="show_keyboard_when_the_drawer_is_opened">Mostra la tastiera quando il drawer viene aperto</string>
     <string name="keyboard_open_delay">Ritardo apertura tastiera</string>
+    <string name="keyboard_close_delay">Ritardo chiusura tastiera</string>
     <string name="delay_in_milliseconds">Ritardo in millisecondi</string>
-    <string name="keyboard_open_delay_min">Min: 0ms</string>
-    <string name="keyboard_open_delay_max">Max: 1500ms</string>
-    <string name="keyboard_open_delay_default">Predefinito: %1$dms</string>
+    <string name="keyboard_delay_min">Min: %1$dms</string>
+    <string name="keyboard_delay_max">Max: %1$dms</string>
+    <string name="keyboard_delay_default">Predefinito: %1$dms</string>
     <string name="double_tap_to_lock">Doppio tocco per bloccare</string>
     <string name="on_home_screen_double_tap_on_empty_space_to_lock">Nella schermata home, tocca due volte uno spazio vuoto per bloccare lo schermo</string>
     <string name="dynamic_colours">Colori dinamici</string>
@@ -116,6 +117,7 @@
     <string name="set_wallpaper_to_theme_color_dialog_message">Sei sicuro di voler abilitare questa opzione? Lo sfondo del telefono verrà impostato automaticamente al colore del tema corrente.</string>
     <string name="select_app">Seleziona app</string>
     <string name="clock_app">App orologio</string>
+    <string name="battery_app">App batteria</string>
     <string name="calendar_app">App calendario</string>
     <string name="default_app">Predefinita</string>
     <string name="choose">Scegli</string>
@@ -124,6 +126,8 @@
     <string name="home_swipe_right_app">App scorrimento destra nella home</string>
     <string name="none">Nessuna</string>
     <string name="font">Carattere</string>
+    <string name="fast_scroller">Scorrimento rapido</string>
+    <string name="fast_scroller_description">Mostra uno scorrimento rapido A-Z nel drawer</string>
     <string name="become_a_supporter">Diventa un sostenitore</string>
     <string name="supporter_title">Sostenitore</string>
     <string name="supporter_description">Questa app è completamente gratuita e open source, e rimarrà tale. Se ti piace l\'app e vuoi supportare lo sviluppo, puoi scegliere una delle opzioni seguenti.</string>

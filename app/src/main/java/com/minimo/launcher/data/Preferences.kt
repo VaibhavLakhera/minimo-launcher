@@ -43,11 +43,14 @@ data class HomePreferences(
     val lightTextOnWallpaper: Boolean = true,
     val dimWallpaper: Boolean = false,
     val clockAppPreference: String = "",
+    val batteryAppPreference: String = "",
     val calendarAppPreference: String = "",
     val screenTimeAppPreference: String = "",
     val swipeLeftAppPreference: String = "",
     val swipeRightAppPreference: String = "",
-    val keyboardOpenDelay: Long = Constants.DEFAULT_KEYBOARD_OPEN_DELAY
+    val keyboardOpenDelay: Long = Constants.DEFAULT_KEYBOARD_OPEN_DELAY,
+    val keyboardCloseDelay: Long = Constants.DEFAULT_KEYBOARD_CLOSE_DELAY,
+    val enableFastScroller: Boolean = false
 )
 
 data class CustomisationPreferences(
@@ -81,9 +84,12 @@ data class CustomisationPreferences(
     val minimoSettingsPosition: MinimoSettingsPosition = MinimoSettingsPosition.Auto,
     val showScreenTimeWidget: Boolean = false,
     val clockAppPreference: String = "",
+    val batteryAppPreference: String = "",
     val calendarAppPreference: String = "",
     val screenTimeAppPreference: String = "",
     val swipeLeftAppPreference: String = "",
     val swipeRightAppPreference: String = "",
-    val keyboardOpenDelay: Long = Constants.DEFAULT_KEYBOARD_OPEN_DELAY
+    val keyboardOpenDelay: Long = Constants.DEFAULT_KEYBOARD_OPEN_DELAY,
+    val keyboardCloseDelay: Long = Constants.DEFAULT_KEYBOARD_CLOSE_DELAY,
+    val enableFastScroller: Boolean = false
 )

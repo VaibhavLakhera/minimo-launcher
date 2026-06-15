@@ -1,10 +1,13 @@
 package com.minimo.launcher.ui.home.components
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
@@ -13,6 +16,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.geometry.Offset
@@ -101,62 +105,86 @@ fun ColumnScope.AppDrawerSheet(
         }
     }
 
-    LazyColumn(
-        state = allAppsLazyListState,
+    val showFastScroller = state.enableFastScroller && state.searchText.isBlank()
+
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .weight(1f)
-            .nestedScroll(nestedScrollConnection),
-        contentPadding = PaddingValues(top = 16.dp, bottom = systemNavigationHeight)
     ) {
-        items(items = state.filteredAllApps, key = { it.id }) { appInfo ->
-            if (appInfo.packageName == Constants.MINIMO_SETTINGS_PACKAGE) {
-                MinimoSettingsItem(
-                    modifier = Modifier.animateItem(),
-                    horizontalArrangement = state.appsArrangementHorizontal,
-                    textSize = if (state.applyHomeAppSizeToAllApps) state.homeTextSize.sp else 20.sp,
-                    onClick = {
-                        hideKeyboardWithClearFocus()
-                        onSettingsClick()
-                    },
-                    verticalPadding = state.homeAppVerticalPadding.dp
-                )
-            } else {
-                AppNameItem(
-                    modifier = Modifier.animateItem(),
-                    appName = appInfo.name,
-                    isFavourite = appInfo.isFavourite,
-                    isHidden = appInfo.isHidden,
-                    isWorkProfile = appInfo.isWorkProfile,
-                    onClick = {
-                        viewModel.onLaunchAppClick(appInfo)
-                    },
-                    onToggleFavouriteClick = { viewModel.onToggleFavouriteAppClick(appInfo) },
-                    onRenameClick = { viewModel.onRenameAppClick(appInfo) },
-                    onToggleHideClick = { viewModel.onToggleHideClick(appInfo) },
-                    onAppInfoClick = { context.launchAppInfo(appInfo) },
-                    appsArrangement = state.appsArrangementHorizontal,
-                    onLongClick = hideKeyboardWithClearFocus,
-                    onUninstallClick = { context.uninstallApp(appInfo) },
-                    textSize = if (state.applyHomeAppSizeToAllApps) state.homeTextSize.sp else 20.sp,
-                    showNotificationDot = appInfo.showNotificationDot,
-                    verticalPadding = state.homeAppVerticalPadding.dp
-                )
+        LazyColumn(
+            state = allAppsLazyListState,
+            modifier = Modifier
+                .fillMaxSize()
+                .nestedScroll(nestedScrollConnection),
+            contentPadding = PaddingValues(
+                top = 16.dp,
+                bottom = systemNavigationHeight,
+                end = 40.dp
+            )
+        ) {
+            items(items = state.filteredAllApps, key = { it.id }) { appInfo ->
+                if (appInfo.packageName == Constants.MINIMO_SETTINGS_PACKAGE) {
+                    MinimoSettingsItem(
+                        modifier = Modifier.animateItem(),
+                        horizontalArrangement = state.appsArrangementHorizontal,
+                        textSize = if (state.applyHomeAppSizeToAllApps) state.homeTextSize.sp else 20.sp,
+                        onClick = {
+                            hideKeyboardWithClearFocus()
+                            onSettingsClick()
+                        },
+                        verticalPadding = state.homeAppVerticalPadding.dp
+                    )
+                } else {
+                    AppNameItem(
+                        modifier = Modifier.animateItem(),
+                        appName = appInfo.name,
+                        isFavourite = appInfo.isFavourite,
+                        isHidden = appInfo.isHidden,
+                        isWorkProfile = appInfo.isWorkProfile,
+                        onClick = {
+                            viewModel.onLaunchAppClick(appInfo)
+                        },
+                        onToggleFavouriteClick = { viewModel.onToggleFavouriteAppClick(appInfo) },
+                        onRenameClick = { viewModel.onRenameAppClick(appInfo) },
+                        onToggleHideClick = { viewModel.onToggleHideClick(appInfo) },
+                        onAppInfoClick = { context.launchAppInfo(appInfo) },
+                        appsArrangement = state.appsArrangementHorizontal,
+                        onLongClick = hideKeyboardWithClearFocus,
+                        onUninstallClick = { context.uninstallApp(appInfo) },
+                        textSize = if (state.applyHomeAppSizeToAllApps) state.homeTextSize.sp else 20.sp,
+                        showNotificationDot = appInfo.showNotificationDot,
+                        verticalPadding = state.homeAppVerticalPadding.dp
+                    )
+                }
             }
+        }
+
+        if (showFastScroller) {
+            AppDrawerFastScroller(
+                apps = state.filteredAllApps,
+                listState = allAppsLazyListState,
+                modifier = Modifier.align(Alignment.CenterEnd),
+                onInteractionStart = hideKeyboardWithClearFocus
+            )
         }
     }
 
     if (!state.hideAppDrawerSearch && state.drawerSearchBarAtBottom) {
-        AppDrawerSearch(
-            focusRequester = focusRequester,
-            searchText = state.searchText,
-            onSearchTextChange = viewModel::onSearchTextChange,
-            onSettingsClick = {
-                hideKeyboardWithClearFocus()
-                onSettingsClick()
-            }
-        )
+        Column(
+            modifier = Modifier.imePadding()
+        ) {
+            AppDrawerSearch(
+                focusRequester = focusRequester,
+                searchText = state.searchText,
+                onSearchTextChange = viewModel::onSearchTextChange,
+                onSettingsClick = {
+                    hideKeyboardWithClearFocus()
+                    onSettingsClick()
+                }
+            )
 
-        Spacer(modifier = Modifier.height(systemNavigationHeight))
+            Spacer(modifier = Modifier.height(systemNavigationHeight))
+        }
     }
 }
