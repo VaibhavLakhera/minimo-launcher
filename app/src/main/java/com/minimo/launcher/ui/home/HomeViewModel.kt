@@ -166,6 +166,13 @@ class HomeViewModel @Inject constructor(
                                 HomeAppsAlignmentHorizontal.End -> Arrangement.End
                             }
 
+                        val drawerAppsArrangementHorizontal =
+                            when (prefs.drawerAppsAlignmentHorizontal) {
+                                HomeAppsAlignmentHorizontal.Start -> Arrangement.Start
+                                HomeAppsAlignmentHorizontal.Center -> Arrangement.Center
+                                HomeAppsAlignmentHorizontal.End -> Arrangement.End
+                            }
+
                         val homeAppsArrangementVertical = when (prefs.homeAppsAlignmentVertical) {
                             HomeAppsAlignmentVertical.Top -> Arrangement.Top
                             HomeAppsAlignmentVertical.Center -> Arrangement.Center
@@ -215,6 +222,7 @@ class HomeViewModel @Inject constructor(
 
                         state.copy(
                             appsArrangementHorizontal = homeAppsArrangementHorizontal,
+                            drawerAppsArrangementHorizontal = drawerAppsArrangementHorizontal,
                             appsArrangementVertical = homeAppsArrangementVertical,
                             homeClockAlignment = homeClockAlignment,
                             showHomeClock = prefs.showHomeClock,

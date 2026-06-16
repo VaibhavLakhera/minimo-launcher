@@ -36,6 +36,7 @@ class CustomisationViewModel @Inject constructor(
                             themeMode = prefs.themeMode,
                             fontPreference = prefs.fontPreference,
                             homeAppsAlignmentHorizontal = prefs.homeAppsAlignmentHorizontal,
+                            drawerAppsAlignmentHorizontal = prefs.drawerAppsAlignmentHorizontal,
                             homeAppsAlignmentVertical = prefs.homeAppsAlignmentVertical,
                             homeClockAlignment = prefs.homeClockAlignment,
                             showHomeClock = prefs.showHomeClock,
@@ -151,6 +152,12 @@ class CustomisationViewModel @Inject constructor(
     fun onHomeAppsAlignmentHorizontalChanged(alignment: HomeAppsAlignmentHorizontal) {
         viewModelScope.launch {
             preferenceHelper.setHomeAppsAlignmentHorizontal(alignment)
+        }
+    }
+
+    fun onDrawerAppsAlignmentHorizontalChanged(alignment: HomeAppsAlignmentHorizontal) {
+        viewModelScope.launch {
+            preferenceHelper.setDrawerAppsAlignmentHorizontal(alignment)
         }
     }
 

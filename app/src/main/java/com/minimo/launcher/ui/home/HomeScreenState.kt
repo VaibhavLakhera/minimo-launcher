@@ -18,6 +18,7 @@ data class HomeScreenState(
     val renameAppDialog: AppInfo? = null,
     val searchText: String = "",
     val appsArrangementHorizontal: Arrangement.Horizontal = Arrangement.Start,
+    val drawerAppsArrangementHorizontal: Arrangement.Horizontal = Arrangement.Start,
     val appsArrangementVertical: Arrangement.Vertical = Arrangement.Center,
     val showHomeClock: Boolean = false,
     val homeClockAlignment: Alignment.Horizontal = Alignment.Start,

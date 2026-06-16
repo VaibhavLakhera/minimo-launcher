@@ -19,6 +19,7 @@ import com.minimo.launcher.utils.HomeAppsAlignmentHorizontal
 
 @Composable
 fun AppsAlignmentHorizontalDropdown(
+    titleRes: Int = R.string.home_apps_alignment_horizontal,
     selectedOption: String,
     options: List<Pair<HomeAppsAlignmentHorizontal, String>>,
     onOptionSelected: (HomeAppsAlignmentHorizontal) -> Unit
@@ -33,7 +34,7 @@ fun AppsAlignmentHorizontalDropdown(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            stringResource(R.string.home_apps_alignment_horizontal),
+            stringResource(titleRes),
             modifier = Modifier.weight(1f),
             fontSize = 20.sp
         )

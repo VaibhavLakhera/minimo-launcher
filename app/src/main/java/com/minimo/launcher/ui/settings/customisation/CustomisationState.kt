@@ -12,6 +12,7 @@ data class CustomisationState(
     val themeMode: ThemeMode? = null,
     val fontPreference: String = "",
     val homeAppsAlignmentHorizontal: HomeAppsAlignmentHorizontal? = null,
+    val drawerAppsAlignmentHorizontal: HomeAppsAlignmentHorizontal? = null,
     val homeAppsAlignmentVertical: HomeAppsAlignmentVertical? = null,
     val homeClockAlignment: HomeClockAlignment? = null,
     val showHomeClock: Boolean = false,

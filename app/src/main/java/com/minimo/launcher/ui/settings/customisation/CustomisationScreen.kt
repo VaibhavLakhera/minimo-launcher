@@ -320,6 +320,29 @@ fun CustomisationScreen(
                 onOptionSelected = viewModel::onHomeAppsAlignmentVerticalChanged
             )
 
+            AppsAlignmentHorizontalDropdown(
+                titleRes = R.string.drawer_apps_alignment_horizontal,
+                selectedOption = StringUtils.homeAppsAlignmentHorizontalText(
+                    context = context,
+                    alignment = state.drawerAppsAlignmentHorizontal
+                ),
+                options = listOf(
+                    HomeAppsAlignmentHorizontal.Start to StringUtils.homeAppsAlignmentHorizontalText(
+                        context,
+                        HomeAppsAlignmentHorizontal.Start
+                    ),
+                    HomeAppsAlignmentHorizontal.Center to StringUtils.homeAppsAlignmentHorizontalText(
+                        context,
+                        HomeAppsAlignmentHorizontal.Center
+                    ),
+                    HomeAppsAlignmentHorizontal.End to StringUtils.homeAppsAlignmentHorizontalText(
+                        context,
+                        HomeAppsAlignmentHorizontal.End
+                    ),
+                ),
+                onOptionSelected = viewModel::onDrawerAppsAlignmentHorizontalChanged
+            )
+
             HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
 
             ToggleItem(

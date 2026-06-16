@@ -21,6 +21,7 @@ data class MainPreferences(
 
 data class HomePreferences(
     val homeAppsAlignmentHorizontal: HomeAppsAlignmentHorizontal = HomeAppsAlignmentHorizontal.Start,
+    val drawerAppsAlignmentHorizontal: HomeAppsAlignmentHorizontal = HomeAppsAlignmentHorizontal.Start,
     val homeAppsAlignmentVertical: HomeAppsAlignmentVertical = HomeAppsAlignmentVertical.Center,
     val homeClockAlignment: HomeClockAlignment = HomeClockAlignment.Start,
     val showHomeClock: Boolean = false,
@@ -57,6 +58,7 @@ data class CustomisationPreferences(
     val themeMode: ThemeMode = ThemeMode.System,
     val fontPreference: String = "",
     val homeAppsAlignmentHorizontal: HomeAppsAlignmentHorizontal = HomeAppsAlignmentHorizontal.Start,
+    val drawerAppsAlignmentHorizontal: HomeAppsAlignmentHorizontal = HomeAppsAlignmentHorizontal.Start,
     val homeAppsAlignmentVertical: HomeAppsAlignmentVertical = HomeAppsAlignmentVertical.Center,
     val homeClockAlignment: HomeClockAlignment = HomeClockAlignment.Start,
     val showHomeClock: Boolean = false,

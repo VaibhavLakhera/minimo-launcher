@@ -1,5 +1,6 @@
 package com.minimo.launcher.ui.home.components
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -106,7 +107,9 @@ fun ColumnScope.AppDrawerSheet(
     }
 
     val showFastScroller = state.enableFastScroller && state.searchText.isBlank()
-    val horizontalContentPadding = if (state.enableFastScroller) 40.dp else 0.dp
+    val endContentPadding = if (state.enableFastScroller) 40.dp else 0.dp
+    val startContentPadding =
+        if (state.drawerAppsArrangementHorizontal == Arrangement.Start) 0.dp else endContentPadding
 
     Box(
         modifier = Modifier
@@ -121,15 +124,15 @@ fun ColumnScope.AppDrawerSheet(
             contentPadding = PaddingValues(
                 top = 16.dp,
                 bottom = systemNavigationHeight,
-                start = horizontalContentPadding,
-                end = horizontalContentPadding
+                start = startContentPadding,
+                end = endContentPadding
             )
         ) {
             items(items = state.filteredAllApps, key = { it.id }) { appInfo ->
                 if (appInfo.packageName == Constants.MINIMO_SETTINGS_PACKAGE) {
                     MinimoSettingsItem(
                         modifier = Modifier.animateItem(),
-                        horizontalArrangement = state.appsArrangementHorizontal,
+                        horizontalArrangement = state.drawerAppsArrangementHorizontal,
                         textSize = if (state.applyHomeAppSizeToAllApps) state.homeTextSize.sp else 20.sp,
                         onClick = {
                             hideKeyboardWithClearFocus()
@@ -151,7 +154,7 @@ fun ColumnScope.AppDrawerSheet(
                         onRenameClick = { viewModel.onRenameAppClick(appInfo) },
                         onToggleHideClick = { viewModel.onToggleHideClick(appInfo) },
                         onAppInfoClick = { context.launchAppInfo(appInfo) },
-                        appsArrangement = state.appsArrangementHorizontal,
+                        appsArrangement = state.drawerAppsArrangementHorizontal,
                         onLongClick = hideKeyboardWithClearFocus,
                         onUninstallClick = { context.uninstallApp(appInfo) },
                         textSize = if (state.applyHomeAppSizeToAllApps) state.homeTextSize.sp else 20.sp,

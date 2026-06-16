@@ -32,7 +32,9 @@ class PreferenceHelper @Inject constructor(
         private val KEY_LIGHT_TEXT_ON_WALLPAPER =
             booleanPreferencesKey("KEY_LIGHT_TEXT_ON_WALLPAPER")
         private val KEY_DIM_WALLPAPER = booleanPreferencesKey("KEY_DIM_WALLPAPER")
-        private val KEY_HOME_APPS_ALIGN_HORIZONTAL = stringPreferencesKey("KEY_HOME_APPS_ALIGN")
+        internal val KEY_HOME_APPS_ALIGN_HORIZONTAL = stringPreferencesKey("KEY_HOME_APPS_ALIGN")
+        internal val KEY_DRAWER_APPS_ALIGN_HORIZONTAL =
+            stringPreferencesKey("KEY_DRAWER_APPS_ALIGN_HORIZONTAL")
         private val KEY_HOME_APPS_ALIGN_VERTICAL =
             stringPreferencesKey("KEY_HOME_APPS_ALIGN_VERTICAL")
         private val KEY_HOME_CLOCK_ALIGNMENT = stringPreferencesKey("KEY_HOME_CLOCK_ALIGNMENT")
@@ -101,6 +103,12 @@ class PreferenceHelper @Inject constructor(
     suspend fun setHomeAppsAlignmentHorizontal(alignment: HomeAppsAlignmentHorizontal) {
         preferences.edit {
             it[KEY_HOME_APPS_ALIGN_HORIZONTAL] = alignment.name
+        }
+    }
+
+    suspend fun setDrawerAppsAlignmentHorizontal(alignment: HomeAppsAlignmentHorizontal) {
+        preferences.edit {
+            it[KEY_DRAWER_APPS_ALIGN_HORIZONTAL] = alignment.name
         }
     }
 
@@ -347,6 +355,7 @@ class PreferenceHelper @Inject constructor(
         return preferences.data.map { prefs ->
             HomePreferences(
                 homeAppsAlignmentHorizontal = getHomeAppsAlignmentHorizontalFromPref(prefs[KEY_HOME_APPS_ALIGN_HORIZONTAL]),
+                drawerAppsAlignmentHorizontal = getDrawerAppsAlignmentHorizontalFromPref(prefs[KEY_DRAWER_APPS_ALIGN_HORIZONTAL]),
                 homeAppsAlignmentVertical = getHomeAppsAlignmentVerticalFromPref(prefs[KEY_HOME_APPS_ALIGN_VERTICAL]),
                 homeClockAlignment = getHomeClockAlignmentFromPref(prefs[KEY_HOME_CLOCK_ALIGNMENT]),
                 showHomeClock = prefs[KEY_SHOW_HOME_CLOCK] ?: false,
@@ -389,6 +398,7 @@ class PreferenceHelper @Inject constructor(
                 themeMode = getThemeModeFromPref(prefs[KEY_THEME_MODE]),
                 fontPreference = prefs[KEY_FONT_PREFERENCE] ?: "",
                 homeAppsAlignmentHorizontal = getHomeAppsAlignmentHorizontalFromPref(prefs[KEY_HOME_APPS_ALIGN_HORIZONTAL]),
+                drawerAppsAlignmentHorizontal = getDrawerAppsAlignmentHorizontalFromPref(prefs[KEY_DRAWER_APPS_ALIGN_HORIZONTAL]),
                 homeAppsAlignmentVertical = getHomeAppsAlignmentVerticalFromPref(prefs[KEY_HOME_APPS_ALIGN_VERTICAL]),
                 homeClockAlignment = getHomeClockAlignmentFromPref(prefs[KEY_HOME_CLOCK_ALIGNMENT]),
                 showHomeClock = prefs[KEY_SHOW_HOME_CLOCK] ?: false,
@@ -449,6 +459,13 @@ class PreferenceHelper @Inject constructor(
     }
 
     private fun getHomeAppsAlignmentHorizontalFromPref(alignment: String?): HomeAppsAlignmentHorizontal {
+        if (!alignment.isNullOrBlank() && HomeAppsAlignmentHorizontal.entries.any { entry -> entry.name == alignment }) {
+            return HomeAppsAlignmentHorizontal.valueOf(alignment)
+        }
+        return HomeAppsAlignmentHorizontal.Start
+    }
+
+    private fun getDrawerAppsAlignmentHorizontalFromPref(alignment: String?): HomeAppsAlignmentHorizontal {
         if (!alignment.isNullOrBlank() && HomeAppsAlignmentHorizontal.entries.any { entry -> entry.name == alignment }) {
             return HomeAppsAlignmentHorizontal.valueOf(alignment)
         }
