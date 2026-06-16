@@ -106,6 +106,7 @@ fun ColumnScope.AppDrawerSheet(
     }
 
     val showFastScroller = state.enableFastScroller && state.searchText.isBlank()
+    val horizontalContentPadding = if (state.enableFastScroller) 40.dp else 0.dp
 
     Box(
         modifier = Modifier
@@ -120,7 +121,8 @@ fun ColumnScope.AppDrawerSheet(
             contentPadding = PaddingValues(
                 top = 16.dp,
                 bottom = systemNavigationHeight,
-                end = if (state.enableFastScroller) 40.dp else 0.dp
+                start = horizontalContentPadding,
+                end = horizontalContentPadding
             )
         ) {
             items(items = state.filteredAllApps, key = { it.id }) { appInfo ->
