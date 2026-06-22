@@ -45,6 +45,8 @@ fun ColumnScope.AppDrawerSheet(
     onSettingsClick: () -> Unit,
     hideKeyboardWithClearFocus: () -> Unit,
     swipeDownThreshold: Float,
+    useDarkBottomSheetStatusBarIcons: Boolean,
+    useDarkBottomSheetNavigationBarIcons: Boolean,
     onCloseSheet: () -> Unit,
 ) {
     val context = LocalContext.current
@@ -159,6 +161,8 @@ fun ColumnScope.AppDrawerSheet(
                         onUninstallClick = { context.uninstallApp(appInfo) },
                         textSize = if (state.applyHomeAppSizeToAllApps) state.homeTextSize.sp else 20.sp,
                         showNotificationDot = appInfo.showNotificationDot,
+                        useDarkBottomSheetStatusBarIcons = useDarkBottomSheetStatusBarIcons,
+                        useDarkBottomSheetNavigationBarIcons = useDarkBottomSheetNavigationBarIcons,
                         verticalPadding = state.homeAppVerticalPadding.dp
                     )
                 }

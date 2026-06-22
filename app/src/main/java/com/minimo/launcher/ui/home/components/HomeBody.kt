@@ -44,11 +44,14 @@ fun HomeBody(
     viewModel: HomeViewModel,
     homeLazyListState: LazyListState,
     nestedScrollConnection: NestedScrollConnection,
-    systemNavigationHeight: Dp
+    systemNavigationHeight: Dp,
+    useDarkBottomSheetStatusBarIcons: Boolean,
+    useDarkBottomSheetNavigationBarIcons: Boolean
 ) {
     val context = LocalContext.current
 
     val onSurfaceColor = MaterialTheme.colorScheme.onSurface
+
     val textColor =
         remember(state.enableWallpaper, state.lightTextOnWallpaper) {
             if (state.enableWallpaper) {
@@ -160,6 +163,8 @@ fun HomeBody(
                     onUninstallClick = { context.uninstallApp(appInfo) },
                     showNotificationDot = appInfo.showNotificationDot,
                     verticalPadding = state.homeAppVerticalPadding.dp,
+                    useDarkBottomSheetStatusBarIcons = useDarkBottomSheetStatusBarIcons,
+                    useDarkBottomSheetNavigationBarIcons = useDarkBottomSheetNavigationBarIcons,
                     textColor = textColor,
                     shadow = textShadow
                 )

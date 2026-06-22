@@ -54,6 +54,8 @@ fun AppNameItem(
     onUninstallClick: () -> Unit,
     verticalPadding: Dp = 16.dp,
     clickEnabled: Boolean = true,
+    useDarkBottomSheetStatusBarIcons: Boolean? = null,
+    useDarkBottomSheetNavigationBarIcons: Boolean? = null,
     textColor: Color = MaterialTheme.colorScheme.onSurface,
     shadow: Shadow? = null
 ) {
@@ -157,6 +159,8 @@ fun AppNameItem(
             appName = appName,
             isFavourite = isFavourite,
             isHidden = isHidden,
+            useDarkStatusBarIcons = useDarkBottomSheetStatusBarIcons,
+            useDarkNavigationBarIcons = useDarkBottomSheetNavigationBarIcons,
             onDismiss = { appBottomSheetVisible = false },
             onToggleFavouriteClick = {
                 appBottomSheetVisible = false

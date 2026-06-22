@@ -3,6 +3,7 @@ package com.minimo.launcher.ui.theme
 import android.app.Activity
 import android.app.WallpaperManager
 import android.content.Context
+import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
@@ -105,11 +106,15 @@ fun AppTheme(
             window.statusBarColor = surfaceColor
             window.navigationBarColor = surfaceColor
 
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                window.isNavigationBarContrastEnforced = false
+            }
+
             val insetsController = WindowCompat.getInsetsController(window, view)
 
             if (enableWallpaper && isHomeScreen) {
                 insetsController.isAppearanceLightStatusBars = !lightTextOnWallpaper
-                insetsController.isAppearanceLightNavigationBars = !lightTextOnWallpaper
+                // HomeScreen owns navigation icons because the app drawer can cover the nav area.
             } else {
                 insetsController.isAppearanceLightStatusBars = isLightTheme
                 insetsController.isAppearanceLightNavigationBars = isLightTheme

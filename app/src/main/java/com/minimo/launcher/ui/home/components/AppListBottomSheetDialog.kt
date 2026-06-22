@@ -12,13 +12,20 @@ fun AppListBottomSheetDialog(
     isFavourite: Boolean,
     isHidden: Boolean,
     onDismiss: () -> Unit,
+    useDarkStatusBarIcons: Boolean? = null,
+    useDarkNavigationBarIcons: Boolean? = null,
     onToggleFavouriteClick: () -> Unit,
     onRenameClick: () -> Unit,
     onToggleHideClick: () -> Unit,
     onAppInfoClick: () -> Unit,
     onUninstallClick: () -> Unit,
 ) {
-    AppBottomSheetDialog(appName = appName, onDismiss = onDismiss) {
+    AppBottomSheetDialog(
+        appName = appName,
+        onDismiss = onDismiss,
+        useDarkStatusBarIcons = useDarkStatusBarIcons,
+        useDarkNavigationBarIcons = useDarkNavigationBarIcons
+    ) {
         if (!isHidden) {
             AppBottomSheetText(
                 text = if (isFavourite) stringResource(R.string.remove_favourite) else stringResource(

@@ -1,5 +1,6 @@
 package com.minimo.launcher.ui.home
 
+import android.app.Activity
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
@@ -20,6 +21,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -31,16 +33,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
+import androidx.core.view.WindowCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -221,6 +226,28 @@ fun HomeScreen(
 
     val surfaceColor = MaterialTheme.colorScheme.surface
 
+    val isAppDrawerVisible =
+        state.isBottomSheetExpanded ||
+                bottomSheetScaffoldState.bottomSheetState.currentValue == SheetValue.Expanded ||
+                bottomSheetScaffoldState.bottomSheetState.targetValue == SheetValue.Expanded
+
+    val useDarkIconsOnSurface = useDarkIconsOnColor(surfaceColor)
+    val useDarkNavigationIcons = shouldUseDarkNavigationIcons(
+        isAppDrawerVisible = isAppDrawerVisible,
+        enableWallpaper = state.enableWallpaper,
+        lightTextOnWallpaper = state.lightTextOnWallpaper,
+        useDarkIconsOnSurface = useDarkIconsOnSurface
+    )
+
+    ApplyNavigationBarIconColor(useDarkNavigationIcons)
+
+    val useDarkBottomSheetStatusBarIcons =
+        shouldUseDarkStatusBarIcons(
+            enableWallpaper = state.enableWallpaper,
+            lightTextOnWallpaper = state.lightTextOnWallpaper,
+            useDarkIconsOnSurface = useDarkIconsOnSurface
+        )
+
     val boxBackgroundColor = remember(state.enableWallpaper, state.dimWallpaper, surfaceColor) {
         if (state.enableWallpaper) {
             if (state.dimWallpaper) {
@@ -285,6 +312,8 @@ fun HomeScreen(
                     onSettingsClick = onSettingsClick,
                     hideKeyboardWithClearFocus = ::hideKeyboardWithClearFocus,
                     swipeDownThreshold = swipeDownThreshold,
+                    useDarkBottomSheetStatusBarIcons = useDarkBottomSheetStatusBarIcons,
+                    useDarkBottomSheetNavigationBarIcons = useDarkIconsOnSurface,
                     onCloseSheet = {
                         coroutineScope.launch {
                             bottomSheetScaffoldState.bottomSheetState.partialExpand()
@@ -303,7 +332,9 @@ fun HomeScreen(
                     viewModel = viewModel,
                     homeLazyListState = homeLazyListState,
                     nestedScrollConnection = nestedScrollConnection,
-                    systemNavigationHeight = systemNavigationHeight
+                    systemNavigationHeight = systemNavigationHeight,
+                    useDarkBottomSheetStatusBarIcons = useDarkBottomSheetStatusBarIcons,
+                    useDarkBottomSheetNavigationBarIcons = useDarkIconsOnSurface
                 )
             }
         }
@@ -321,3 +352,41 @@ fun HomeScreen(
         )
     }
 }
+
+@Composable
+private fun ApplyNavigationBarIconColor(useDarkNavigationIcons: Boolean) {
+    val view = LocalView.current
+    DisposableEffect(view, useDarkNavigationIcons) {
+        if (!view.isInEditMode) {
+            val window = (view.context as Activity).window
+            // In Android's API, "light navigation bars" means dark nav icons.
+            WindowCompat.getInsetsController(window, view).isAppearanceLightNavigationBars =
+                useDarkNavigationIcons
+        }
+        onDispose { }
+    }
+}
+
+private fun shouldUseDarkNavigationIcons(
+    isAppDrawerVisible: Boolean,
+    enableWallpaper: Boolean,
+    lightTextOnWallpaper: Boolean,
+    useDarkIconsOnSurface: Boolean
+): Boolean {
+    // The app drawer covers the nav area with the theme surface; otherwise Home may show wallpaper.
+    return when {
+        isAppDrawerVisible -> useDarkIconsOnSurface
+        enableWallpaper -> !lightTextOnWallpaper
+        else -> useDarkIconsOnSurface
+    }
+}
+
+private fun shouldUseDarkStatusBarIcons(
+    enableWallpaper: Boolean,
+    lightTextOnWallpaper: Boolean,
+    useDarkIconsOnSurface: Boolean
+): Boolean {
+    return if (enableWallpaper) !lightTextOnWallpaper else useDarkIconsOnSurface
+}
+
+private fun useDarkIconsOnColor(color: Color): Boolean = color.luminance() > 0.5f
