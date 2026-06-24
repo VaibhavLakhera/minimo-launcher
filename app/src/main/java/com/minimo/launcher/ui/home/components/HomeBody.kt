@@ -45,6 +45,7 @@ fun HomeBody(
     homeLazyListState: LazyListState,
     nestedScrollConnection: NestedScrollConnection,
     systemNavigationHeight: Dp,
+    statusBarVisible: Boolean,
     useDarkBottomSheetStatusBarIcons: Boolean,
     useDarkBottomSheetNavigationBarIcons: Boolean
 ) {
@@ -163,6 +164,7 @@ fun HomeBody(
                     onUninstallClick = { context.uninstallApp(appInfo) },
                     showNotificationDot = appInfo.showNotificationDot,
                     verticalPadding = state.homeAppVerticalPadding.dp,
+                    bottomSheetStatusBarVisible = statusBarVisible,
                     useDarkBottomSheetStatusBarIcons = useDarkBottomSheetStatusBarIcons,
                     useDarkBottomSheetNavigationBarIcons = useDarkBottomSheetNavigationBarIcons,
                     textColor = textColor,

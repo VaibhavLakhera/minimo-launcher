@@ -4,17 +4,25 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.ime
+import androidx.compose.foundation.layout.isImeVisible
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -25,6 +33,7 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
@@ -34,6 +43,10 @@ import com.minimo.launcher.ui.home.HomeViewModel
 import com.minimo.launcher.utils.Constants
 import com.minimo.launcher.utils.launchAppInfo
 import com.minimo.launcher.utils.uninstallApp
+import kotlinx.coroutines.delay
+
+private const val STALE_IME_INSET_TIMEOUT_MILLIS = 350L
+private val BottomSearchKeyboardGap = 8.dp
 
 @Composable
 fun ColumnScope.AppDrawerSheet(
@@ -45,6 +58,7 @@ fun ColumnScope.AppDrawerSheet(
     onSettingsClick: () -> Unit,
     hideKeyboardWithClearFocus: () -> Unit,
     swipeDownThreshold: Float,
+    statusBarVisible: Boolean,
     useDarkBottomSheetStatusBarIcons: Boolean,
     useDarkBottomSheetNavigationBarIcons: Boolean,
     onCloseSheet: () -> Unit,
@@ -161,6 +175,7 @@ fun ColumnScope.AppDrawerSheet(
                         onUninstallClick = { context.uninstallApp(appInfo) },
                         textSize = if (state.applyHomeAppSizeToAllApps) state.homeTextSize.sp else 20.sp,
                         showNotificationDot = appInfo.showNotificationDot,
+                        bottomSheetStatusBarVisible = statusBarVisible,
                         useDarkBottomSheetStatusBarIcons = useDarkBottomSheetStatusBarIcons,
                         useDarkBottomSheetNavigationBarIcons = useDarkBottomSheetNavigationBarIcons,
                         verticalPadding = state.homeAppVerticalPadding.dp
@@ -180,8 +195,10 @@ fun ColumnScope.AppDrawerSheet(
     }
 
     if (!state.hideAppDrawerSearch && state.drawerSearchBarAtBottom) {
+        val bottomSearchImeExtraPadding = bottomSearchImeExtraPadding()
+
         Column(
-            modifier = Modifier.imePadding()
+            modifier = Modifier.padding(bottom = bottomSearchImeExtraPadding)
         ) {
             AppDrawerSearch(
                 focusRequester = focusRequester,
@@ -193,7 +210,35 @@ fun ColumnScope.AppDrawerSheet(
                 }
             )
 
-            Spacer(modifier = Modifier.height(systemNavigationHeight))
+            Spacer(modifier = Modifier.windowInsetsBottomHeight(WindowInsets.navigationBars))
         }
     }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun bottomSearchImeExtraPadding(): Dp {
+    val density = LocalDensity.current
+    val imeBottom = WindowInsets.ime.getBottom(density)
+    val navigationBottom = WindowInsets.navigationBars.getBottom(density)
+    val imeOnlyBottom = (imeBottom - navigationBottom).coerceAtLeast(0)
+    val isImeVisible = WindowInsets.isImeVisible
+
+    var suppressStaleImePadding by remember { mutableStateOf(false) }
+
+    LaunchedEffect(isImeVisible, imeOnlyBottom) {
+        if (isImeVisible || imeOnlyBottom == 0) {
+            suppressStaleImePadding = false
+        } else {
+            delay(STALE_IME_INSET_TIMEOUT_MILLIS)
+            suppressStaleImePadding = true
+        }
+    }
+
+    val effectiveImeBottom =
+        if (!isImeVisible && suppressStaleImePadding) 0 else imeOnlyBottom
+    val keyboardGap =
+        if (isImeVisible && effectiveImeBottom > 0) BottomSearchKeyboardGap else 0.dp
+
+    return with(density) { effectiveImeBottom.toDp() } + keyboardGap
 }

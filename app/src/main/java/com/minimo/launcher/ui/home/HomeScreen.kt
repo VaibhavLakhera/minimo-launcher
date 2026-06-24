@@ -66,6 +66,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel,
+    statusBarVisible: Boolean,
     onSettingsClick: () -> Unit
 ) {
     val context = LocalContext.current
@@ -312,6 +313,7 @@ fun HomeScreen(
                     onSettingsClick = onSettingsClick,
                     hideKeyboardWithClearFocus = ::hideKeyboardWithClearFocus,
                     swipeDownThreshold = swipeDownThreshold,
+                    statusBarVisible = statusBarVisible,
                     useDarkBottomSheetStatusBarIcons = useDarkBottomSheetStatusBarIcons,
                     useDarkBottomSheetNavigationBarIcons = useDarkIconsOnSurface,
                     onCloseSheet = {
@@ -333,6 +335,7 @@ fun HomeScreen(
                     homeLazyListState = homeLazyListState,
                     nestedScrollConnection = nestedScrollConnection,
                     systemNavigationHeight = systemNavigationHeight,
+                    statusBarVisible = statusBarVisible,
                     useDarkBottomSheetStatusBarIcons = useDarkBottomSheetStatusBarIcons,
                     useDarkBottomSheetNavigationBarIcons = useDarkIconsOnSurface
                 )

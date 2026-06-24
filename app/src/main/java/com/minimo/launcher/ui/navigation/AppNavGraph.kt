@@ -47,6 +47,7 @@ object Routes {
 @Composable
 fun AppNavGraph(
     navController: NavHostController,
+    statusBarVisible: Boolean,
     onBackPressed: () -> Unit
 ) {
     NavHost(
@@ -88,6 +89,7 @@ fun AppNavGraph(
         composable(route = Routes.HOME) {
             HomeScreen(
                 viewModel = hiltViewModel(it),
+                statusBarVisible = statusBarVisible,
                 onSettingsClick = {
                     navController.navigate(Routes.SETTINGS)
                 }

@@ -22,6 +22,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogWindowProvider
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import com.minimo.launcher.ui.theme.Dimens
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -29,6 +32,7 @@ import com.minimo.launcher.ui.theme.Dimens
 fun AppBottomSheetDialog(
     appName: String,
     onDismiss: () -> Unit,
+    statusBarVisible: Boolean = true,
     useDarkStatusBarIcons: Boolean? = null,
     useDarkNavigationBarIcons: Boolean? = null,
     content: @Composable ColumnScope.() -> Unit,
@@ -52,7 +56,7 @@ fun AppBottomSheetDialog(
         dragHandle = null,
         properties = properties
     ) {
-        DisableBottomSheetNavigationBarContrast()
+        ApplyBottomSheetWindowPreferences(statusBarVisible)
 
         Text(
             text = appName,
@@ -72,13 +76,23 @@ fun AppBottomSheetDialog(
 }
 
 @Composable
-private fun DisableBottomSheetNavigationBarContrast() {
+private fun ApplyBottomSheetWindowPreferences(statusBarVisible: Boolean) {
     val view = LocalView.current
     SideEffect {
+        val window = ((view as? DialogWindowProvider) ?: (view.parent as? DialogWindowProvider))
+            ?.window ?: return@SideEffect
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            ((view as? DialogWindowProvider) ?: (view.parent as? DialogWindowProvider))
-                ?.window
-                ?.isNavigationBarContrastEnforced = false
+            window.isNavigationBarContrastEnforced = false
+        }
+
+        val insetsController = WindowCompat.getInsetsController(window, view)
+        if (statusBarVisible) {
+            insetsController.show(WindowInsetsCompat.Type.statusBars())
+        } else {
+            insetsController.systemBarsBehavior =
+                WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            insetsController.hide(WindowInsetsCompat.Type.statusBars())
         }
     }
 }

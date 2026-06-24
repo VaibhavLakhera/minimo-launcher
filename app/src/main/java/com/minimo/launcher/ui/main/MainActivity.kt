@@ -59,6 +59,7 @@ class MainActivity : ComponentActivity() {
             ) {
                 AppNavGraph(
                     navController = navController,
+                    statusBarVisible = state.statusBarVisible,
                     onBackPressed = {
                         onBackPressedDispatcher.onBackPressed()
                     }
