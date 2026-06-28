@@ -36,6 +36,7 @@ class CustomisationViewModel @Inject constructor(
                             themeMode = prefs.themeMode,
                             fontPreference = prefs.fontPreference,
                             homeAppsAlignmentHorizontal = prefs.homeAppsAlignmentHorizontal,
+                            drawerAppsAlignmentHorizontal = prefs.drawerAppsAlignmentHorizontal,
                             homeAppsAlignmentVertical = prefs.homeAppsAlignmentVertical,
                             homeClockAlignment = prefs.homeClockAlignment,
                             showHomeClock = prefs.showHomeClock,
@@ -69,7 +70,6 @@ class CustomisationViewModel @Inject constructor(
                             swipeLeftAppPreference = prefs.swipeLeftAppPreference,
                             swipeRightAppPreference = prefs.swipeRightAppPreference,
                             keyboardOpenDelay = prefs.keyboardOpenDelay,
-                            keyboardCloseDelay = prefs.keyboardCloseDelay,
                             enableFastScroller = prefs.enableFastScroller
                         )
                     }
@@ -151,6 +151,12 @@ class CustomisationViewModel @Inject constructor(
     fun onHomeAppsAlignmentHorizontalChanged(alignment: HomeAppsAlignmentHorizontal) {
         viewModelScope.launch {
             preferenceHelper.setHomeAppsAlignmentHorizontal(alignment)
+        }
+    }
+
+    fun onDrawerAppsAlignmentHorizontalChanged(alignment: HomeAppsAlignmentHorizontal) {
+        viewModelScope.launch {
+            preferenceHelper.setDrawerAppsAlignmentHorizontal(alignment)
         }
     }
 
@@ -375,12 +381,6 @@ class CustomisationViewModel @Inject constructor(
     fun onKeyboardOpenDelayChanged(delay: Long) {
         viewModelScope.launch {
             preferenceHelper.setKeyboardOpenDelay(delay)
-        }
-    }
-
-    fun onKeyboardCloseDelayChanged(delay: Long) {
-        viewModelScope.launch {
-            preferenceHelper.setKeyboardCloseDelay(delay)
         }
     }
 

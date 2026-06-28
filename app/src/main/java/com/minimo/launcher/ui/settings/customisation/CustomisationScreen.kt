@@ -7,12 +7,17 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -73,7 +78,6 @@ import com.minimo.launcher.ui.theme.Dimens
 import com.minimo.launcher.ui.theme.ThemeMode
 import com.minimo.launcher.utils.AndroidUtils
 import com.minimo.launcher.utils.Constants
-import com.minimo.launcher.utils.Constants.KEYBOARD_CLOSE_DELAY_RANGE
 import com.minimo.launcher.utils.Constants.KEYBOARD_OPEN_DELAY_RANGE
 import com.minimo.launcher.utils.HomeAppsAlignmentHorizontal
 import com.minimo.launcher.utils.HomeAppsAlignmentVertical
@@ -114,9 +118,6 @@ fun CustomisationScreen(
     var showKeyboardOpenDelayDialog by remember { mutableStateOf(false) }
     var keyboardOpenDelayInput by remember { mutableStateOf(state.keyboardOpenDelay.toString()) }
 
-    var showKeyboardCloseDelayDialog by remember { mutableStateOf(false) }
-    var keyboardCloseDelayInput by remember { mutableStateOf(state.keyboardCloseDelay.toString()) }
-
     val lifecycleOwner = LocalLifecycleOwner.current
 
     LaunchedEffect(Unit) {
@@ -141,6 +142,7 @@ fun CustomisationScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(MaterialTheme.colorScheme.surface)
+                    .windowInsetsPadding(WindowInsets.statusBars.union(WindowInsets.displayCutout))
                     .padding(horizontal = 4.dp)
                     .height(64.dp),
                 contentAlignment = Alignment.Center
@@ -320,6 +322,29 @@ fun CustomisationScreen(
                 onOptionSelected = viewModel::onHomeAppsAlignmentVerticalChanged
             )
 
+            AppsAlignmentHorizontalDropdown(
+                titleRes = R.string.drawer_apps_alignment_horizontal,
+                selectedOption = StringUtils.homeAppsAlignmentHorizontalText(
+                    context = context,
+                    alignment = state.drawerAppsAlignmentHorizontal
+                ),
+                options = listOf(
+                    HomeAppsAlignmentHorizontal.Start to StringUtils.homeAppsAlignmentHorizontalText(
+                        context,
+                        HomeAppsAlignmentHorizontal.Start
+                    ),
+                    HomeAppsAlignmentHorizontal.Center to StringUtils.homeAppsAlignmentHorizontalText(
+                        context,
+                        HomeAppsAlignmentHorizontal.Center
+                    ),
+                    HomeAppsAlignmentHorizontal.End to StringUtils.homeAppsAlignmentHorizontalText(
+                        context,
+                        HomeAppsAlignmentHorizontal.End
+                    ),
+                ),
+                onOptionSelected = viewModel::onDrawerAppsAlignmentHorizontalChanged
+            )
+
             HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
 
             ToggleItem(
@@ -450,17 +475,6 @@ fun CustomisationScreen(
                     onClick = {
                         keyboardOpenDelayInput = state.keyboardOpenDelay.toString()
                         showKeyboardOpenDelayDialog = true
-                    }
-                )
-
-                Spacer(modifier = Modifier.height(4.dp))
-
-                KeyboardDelayItem(
-                    title = stringResource(R.string.keyboard_close_delay),
-                    delayMs = state.keyboardCloseDelay,
-                    onClick = {
-                        keyboardCloseDelayInput = state.keyboardCloseDelay.toString()
-                        showKeyboardCloseDelayDialog = true
                     }
                 )
             }
@@ -709,22 +723,6 @@ fun CustomisationScreen(
             )
         }
 
-        if (showKeyboardCloseDelayDialog) {
-            KeyboardDelayDialog(
-                title = stringResource(R.string.keyboard_close_delay),
-                currentDelay = keyboardCloseDelayInput,
-                delayRange = KEYBOARD_CLOSE_DELAY_RANGE,
-                defaultDelay = Constants.DEFAULT_KEYBOARD_CLOSE_DELAY,
-                onDelayChange = { keyboardCloseDelayInput = it },
-                onUpdate = { delay ->
-                    viewModel.onKeyboardCloseDelayChanged(delay)
-                    showKeyboardCloseDelayDialog = false
-                },
-                onDismiss = {
-                    showKeyboardCloseDelayDialog = false
-                }
-            )
-        }
 
         if (showClockAppPicker) {
             AppPickerDialog(

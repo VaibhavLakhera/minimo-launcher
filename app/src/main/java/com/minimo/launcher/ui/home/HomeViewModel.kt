@@ -18,7 +18,6 @@ import com.minimo.launcher.utils.Constants
 import com.minimo.launcher.utils.HomeAppsAlignmentHorizontal
 import com.minimo.launcher.utils.HomeAppsAlignmentVertical
 import com.minimo.launcher.utils.HomeClockAlignment
-import com.minimo.launcher.utils.HomePressedNotifier
 import com.minimo.launcher.utils.MinimoSettingsPosition
 import com.minimo.launcher.utils.NotificationDotsNotifier
 import com.minimo.launcher.utils.ScreenTimeHelper
@@ -29,14 +28,10 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -49,7 +44,6 @@ class HomeViewModel @Inject constructor(
     private val appInfoDao: AppInfoDao,
     private val appUtils: AppUtils,
     private val preferenceHelper: PreferenceHelper,
-    private val homePressedNotifier: HomePressedNotifier,
     private val notificationDotsNotifier: NotificationDotsNotifier,
     @ApplicationContext
     private val applicationContext: Context,
@@ -60,9 +54,6 @@ class HomeViewModel @Inject constructor(
 ) : ViewModel() {
     private val _state = MutableStateFlow(HomeScreenState())
     val state: StateFlow<HomeScreenState> = _state
-
-    private val _triggerHomePressed = MutableStateFlow(false)
-    val triggerHomePressed: StateFlow<Boolean> = _triggerHomePressed.asStateFlow()
 
     private val _launchApp = Channel<AppInfo>(Channel.BUFFERED)
     val launchApp: Flow<AppInfo> = _launchApp.receiveAsFlow()
@@ -166,6 +157,13 @@ class HomeViewModel @Inject constructor(
                                 HomeAppsAlignmentHorizontal.End -> Arrangement.End
                             }
 
+                        val drawerAppsArrangementHorizontal =
+                            when (prefs.drawerAppsAlignmentHorizontal) {
+                                HomeAppsAlignmentHorizontal.Start -> Arrangement.Start
+                                HomeAppsAlignmentHorizontal.Center -> Arrangement.Center
+                                HomeAppsAlignmentHorizontal.End -> Arrangement.End
+                            }
+
                         val homeAppsArrangementVertical = when (prefs.homeAppsAlignmentVertical) {
                             HomeAppsAlignmentVertical.Top -> Arrangement.Top
                             HomeAppsAlignmentVertical.Center -> Arrangement.Center
@@ -215,6 +213,7 @@ class HomeViewModel @Inject constructor(
 
                         state.copy(
                             appsArrangementHorizontal = homeAppsArrangementHorizontal,
+                            drawerAppsArrangementHorizontal = drawerAppsArrangementHorizontal,
                             appsArrangementVertical = homeAppsArrangementVertical,
                             homeClockAlignment = homeClockAlignment,
                             showHomeClock = prefs.showHomeClock,
@@ -243,7 +242,6 @@ class HomeViewModel @Inject constructor(
                             swipeLeftAppPreference = prefs.swipeLeftAppPreference,
                             swipeRightAppPreference = prefs.swipeRightAppPreference,
                             keyboardOpenDelay = prefs.keyboardOpenDelay,
-                            keyboardCloseDelay = prefs.keyboardCloseDelay,
                             enableFastScroller = prefs.enableFastScroller,
                             allApps = newAllApps,
                             filteredAllApps = newFilteredApps,
@@ -252,8 +250,6 @@ class HomeViewModel @Inject constructor(
                     }
                 }
         }
-
-        listenForHomePressedEvent()
     }
 
     private fun getCombinedAllApps(
@@ -285,30 +281,8 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun listenForHomePressedEvent() {
-        homePressedNotifier.homePressedEvent
-            .onEach {
-                _triggerHomePressed.update { true }
-
-                // Reset the flag after a delay to accept future triggers.
-                // Delay is added so that bottom sheet will properly animate back to the closed position.
-                viewModelScope.launch {
-                    delay(1500)
-                    _triggerHomePressed.update { false }
-                }
-            }
-            .launchIn(viewModelScope)
-    }
-
-    fun setBottomSheetExpanded(isExpanded: Boolean) {
-        _state.update {
-            it.copy(
-                isBottomSheetExpanded = isExpanded
-            )
-        }
-
-        // Clear out the search text when bottom sheet is collapsed
-        if (!isExpanded && _state.value.searchText.isNotBlank()) {
+    fun onAppDrawerClosed() {
+        if (_state.value.searchText.isNotBlank()) {
             onSearchTextChange("")
         }
     }
@@ -332,12 +306,6 @@ class HomeViewModel @Inject constructor(
                     newOrderIndex
                 )
             }
-        }
-    }
-
-    fun onLaunchAppClick(app: AppInfo) {
-        viewModelScope.launch {
-            _launchApp.send(app)
         }
     }
 
@@ -396,7 +364,7 @@ class HomeViewModel @Inject constructor(
                 filteredAllApps = filteredAllApps,
             )
         }
-        if (_state.value.autoOpenApp && filteredAllApps.size == 1) {
+        if (searchText.isNotBlank() && _state.value.autoOpenApp && filteredAllApps.size == 1) {
             _launchApp.trySend(filteredAllApps[0])
         }
     }

@@ -13,6 +13,7 @@ import androidx.compose.runtime.getValue
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.minimo.launcher.ui.home.HomeViewModel
 import com.minimo.launcher.ui.navigation.AppNavGraph
 import com.minimo.launcher.ui.navigation.Routes
 import com.minimo.launcher.ui.theme.AppTheme
@@ -27,6 +28,7 @@ class MainActivity : ComponentActivity() {
     lateinit var appsManager: AppsManager
 
     private val viewModel: MainViewModel by viewModels()
+    private val homeViewModel: HomeViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
@@ -59,6 +61,8 @@ class MainActivity : ComponentActivity() {
             ) {
                 AppNavGraph(
                     navController = navController,
+                    homeViewModel = homeViewModel,
+                    statusBarVisible = state.statusBarVisible,
                     onBackPressed = {
                         onBackPressedDispatcher.onBackPressed()
                     }

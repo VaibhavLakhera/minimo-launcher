@@ -6,7 +6,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -17,6 +17,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.minimo.launcher.utils.BatteryChangeObserver
+import com.minimo.launcher.utils.currentBatteryPercent
 import com.minimo.launcher.utils.launchAppFromPreference
 import com.minimo.launcher.utils.openPowerUsageSummary
 
@@ -31,9 +32,9 @@ fun BatteryPercentView(
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
-    var batteryPercent by remember { mutableIntStateOf(0) }
+    var batteryPercent by remember(context) { mutableStateOf(context.currentBatteryPercent()) }
 
-    DisposableEffect(lifecycleOwner) {
+    DisposableEffect(context, lifecycleOwner) {
         val observer = BatteryChangeObserver(context) { percent ->
             batteryPercent = percent
         }
@@ -50,7 +51,7 @@ fun BatteryPercentView(
                 context.openPowerUsageSummary()
             }
         },
-        text = "$batteryPercent%",
+        text = batteryPercent?.let { "$it%" } ?: "",
         fontSize = fontSize,
         fontWeight = fontWeight,
         color = textColor,

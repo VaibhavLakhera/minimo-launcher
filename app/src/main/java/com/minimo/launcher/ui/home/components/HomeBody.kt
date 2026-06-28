@@ -29,6 +29,7 @@ import com.minimo.launcher.ui.components.TimeAndDateView
 import com.minimo.launcher.ui.home.HomeScreenState
 import com.minimo.launcher.ui.home.HomeViewModel
 import com.minimo.launcher.ui.theme.Dimens
+import com.minimo.launcher.utils.launchApp
 import com.minimo.launcher.utils.launchAppFromPreference
 import com.minimo.launcher.utils.launchAppInfo
 import com.minimo.launcher.utils.openDefaultCalendarApp
@@ -44,11 +45,15 @@ fun HomeBody(
     viewModel: HomeViewModel,
     homeLazyListState: LazyListState,
     nestedScrollConnection: NestedScrollConnection,
-    systemNavigationHeight: Dp
+    systemNavigationHeight: Dp,
+    statusBarVisible: Boolean,
+    useDarkBottomSheetStatusBarIcons: Boolean,
+    useDarkBottomSheetNavigationBarIcons: Boolean
 ) {
     val context = LocalContext.current
 
     val onSurfaceColor = MaterialTheme.colorScheme.onSurface
+
     val textColor =
         remember(state.enableWallpaper, state.lightTextOnWallpaper) {
             if (state.enableWallpaper) {
@@ -146,7 +151,13 @@ fun HomeBody(
                     isFavourite = appInfo.isFavourite,
                     isHidden = appInfo.isHidden,
                     isWorkProfile = appInfo.isWorkProfile,
-                    onClick = { viewModel.onLaunchAppClick(appInfo) },
+                    onClick = {
+                        context.launchApp(
+                            appInfo.packageName,
+                            appInfo.className,
+                            appInfo.userHandle
+                        )
+                    },
                     onToggleFavouriteClick = {
                         viewModel.onToggleFavouriteAppClick(
                             appInfo
@@ -160,6 +171,9 @@ fun HomeBody(
                     onUninstallClick = { context.uninstallApp(appInfo) },
                     showNotificationDot = appInfo.showNotificationDot,
                     verticalPadding = state.homeAppVerticalPadding.dp,
+                    bottomSheetStatusBarVisible = statusBarVisible,
+                    useDarkBottomSheetStatusBarIcons = useDarkBottomSheetStatusBarIcons,
+                    useDarkBottomSheetNavigationBarIcons = useDarkBottomSheetNavigationBarIcons,
                     textColor = textColor,
                     shadow = textShadow
                 )

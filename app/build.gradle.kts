@@ -8,14 +8,14 @@ plugins {
 
 android {
     namespace = "com.minimo.launcher"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.minimo.launcher"
         minSdk = 26
         targetSdk = 36
-        versionCode = 101
-        versionName = "1.29.1"
+        versionCode = 118
+        versionName = "1.30.0"
     }
 
     buildFeatures {
@@ -74,8 +74,10 @@ room {
     schemaDirectory("$projectDir/schemas")
 }
 
+val playStoreImplementation by configurations
+
 dependencies {
-    implementation(platform("androidx.compose:compose-bom:2026.05.01"))
+    implementation(platform("androidx.compose:compose-bom:2026.06.00"))
 
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.material:material-icons-core")
@@ -89,8 +91,8 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:2.9.8")
 
     implementation("androidx.activity:activity-compose:1.13.0")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.10.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.10.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.11.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.11.0")
 
     implementation("com.google.dagger:hilt-android:2.59.2")
     ksp("com.google.dagger:hilt-compiler:2.59.2")
@@ -104,6 +106,6 @@ dependencies {
 
     implementation("com.jakewharton.timber:timber:5.0.1")
 
-    "playStoreImplementation"("com.android.billingclient:billing-ktx:8.3.0")
-    "playStoreImplementation"("com.google.android.play:review-ktx:2.0.2")
+    playStoreImplementation("com.android.billingclient:billing-ktx:8.3.0")
+    playStoreImplementation("com.google.android.play:review-ktx:2.0.2")
 }

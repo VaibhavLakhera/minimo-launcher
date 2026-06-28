@@ -12,6 +12,7 @@ data class CustomisationState(
     val themeMode: ThemeMode? = null,
     val fontPreference: String = "",
     val homeAppsAlignmentHorizontal: HomeAppsAlignmentHorizontal? = null,
+    val drawerAppsAlignmentHorizontal: HomeAppsAlignmentHorizontal? = null,
     val homeAppsAlignmentVertical: HomeAppsAlignmentVertical? = null,
     val homeClockAlignment: HomeClockAlignment? = null,
     val showHomeClock: Boolean = false,
@@ -51,6 +52,5 @@ data class CustomisationState(
     val swipeRightAppName: String = "",
     val minimoSettingsPosition: MinimoSettingsPosition = MinimoSettingsPosition.Auto,
     val keyboardOpenDelay: Long = Constants.DEFAULT_KEYBOARD_OPEN_DELAY,
-    val keyboardCloseDelay: Long = Constants.DEFAULT_KEYBOARD_CLOSE_DELAY,
     val enableFastScroller: Boolean = false
 )

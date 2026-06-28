@@ -14,10 +14,10 @@ data class HomeScreenState(
     val favouriteShortcuts: List<ShortcutInfo> = emptyList(),
     val allApps: List<AppInfo> = emptyList(),
     val filteredAllApps: List<AppInfo> = emptyList(),
-    val isBottomSheetExpanded: Boolean = false,
     val renameAppDialog: AppInfo? = null,
     val searchText: String = "",
     val appsArrangementHorizontal: Arrangement.Horizontal = Arrangement.Start,
+    val drawerAppsArrangementHorizontal: Arrangement.Horizontal = Arrangement.Start,
     val appsArrangementVertical: Arrangement.Vertical = Arrangement.Center,
     val showHomeClock: Boolean = false,
     val homeClockAlignment: Alignment.Horizontal = Alignment.Start,
@@ -47,6 +47,5 @@ data class HomeScreenState(
     val swipeRightAppPreference: String = "",
     val minimoSettingsPosition: MinimoSettingsPosition = MinimoSettingsPosition.Auto,
     val keyboardOpenDelay: Long = Constants.DEFAULT_KEYBOARD_OPEN_DELAY,
-    val keyboardCloseDelay: Long = Constants.DEFAULT_KEYBOARD_CLOSE_DELAY,
     val enableFastScroller: Boolean = false
 )
