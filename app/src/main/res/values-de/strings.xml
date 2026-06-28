@@ -45,7 +45,6 @@
     <string name="show_keyboard">Tastatur anzeigen</string>
     <string name="show_keyboard_when_the_drawer_is_opened">Tastatur anzeigen, wenn die App-Schublade geöffnet wird</string>
     <string name="keyboard_open_delay">Tastaturöffnungsverzögerung</string>
-    <string name="keyboard_close_delay">Tastaturschließverzögerung</string>
     <string name="delay_in_milliseconds">Verzögerung in Millisekunden</string>
     <string name="keyboard_delay_min">Min: %1$dms</string>
     <string name="keyboard_delay_max">Max: %1$dms</string>

@@ -15,22 +15,15 @@ import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.BottomSheetScaffold
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SheetValue
-import androidx.compose.material3.rememberBottomSheetScaffoldState
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
@@ -38,136 +31,50 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Velocity
-import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.repeatOnLifecycle
 import com.minimo.launcher.R
 import com.minimo.launcher.ui.components.RenameDialog
-import com.minimo.launcher.ui.home.components.AppDrawerSheet
 import com.minimo.launcher.ui.home.components.HomeBody
-import com.minimo.launcher.utils.launchApp
 import com.minimo.launcher.utils.launchAppFromPreference
 import com.minimo.launcher.utils.lockScreen
 import com.minimo.launcher.utils.showNotificationDrawer
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel,
     statusBarVisible: Boolean,
-    onSettingsClick: () -> Unit
+    onOpenAppDrawer: () -> Unit
 ) {
     val context = LocalContext.current
-    val lifecycleOwner = LocalLifecycleOwner.current
-    val focusManager = LocalFocusManager.current
-    val keyboardController = LocalSoftwareKeyboardController.current
-
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val triggerHomePressed by viewModel.triggerHomePressed.collectAsStateWithLifecycle()
-
-    val coroutineScope = rememberCoroutineScope()
-    val bottomSheetScaffoldState = rememberBottomSheetScaffoldState()
-
-    val focusRequester = remember { FocusRequester() }
-
     val homeLazyListState = rememberLazyListState()
-    val allAppsLazyListState = rememberLazyListState()
 
-    // Calculate dynamic threshold based on window container height & width
+    // Calculate dynamic threshold based on window container height & width.
     val screenSize = LocalWindowInfo.current.containerSize
-    val swipeVerticalThresholdPx = screenSize.height * 0.8f // 8% of window height
-    val swipeHorizontalThresholdPx = screenSize.width * 0.15f // 15% of window width
+    val swipeVerticalThresholdPx = screenSize.height * 0.8f
+    val swipeHorizontalThresholdPx = screenSize.width * 0.15f
 
     val swipeUpThreshold = -swipeVerticalThresholdPx
     val swipeDownThreshold = swipeVerticalThresholdPx
     val swipeLeftThreshold = -swipeHorizontalThresholdPx
     val swipeRightThreshold = swipeHorizontalThresholdPx
 
-    fun hideKeyboardWithClearFocus() {
-        focusManager.clearFocus()
-        keyboardController?.hide()
-    }
-
     BackHandler {
-        coroutineScope.launch {
-            if (bottomSheetScaffoldState.bottomSheetState.currentValue != SheetValue.PartiallyExpanded) {
-                hideKeyboardWithClearFocus()
-                bottomSheetScaffoldState.bottomSheetState.partialExpand()
-            } else {
-                allAppsLazyListState.scrollToItem(0)
-                bottomSheetScaffoldState.bottomSheetState.expand()
-            }
-        }
-    }
-
-    LaunchedEffect(triggerHomePressed) {
-        if (triggerHomePressed) {
-            if (bottomSheetScaffoldState.bottomSheetState.currentValue != SheetValue.PartiallyExpanded) {
-                bottomSheetScaffoldState.bottomSheetState.partialExpand()
-            }
-        }
-    }
-
-    LaunchedEffect(Unit) {
-        lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-            viewModel.launchApp.collect { app ->
-                hideKeyboardWithClearFocus()
-                context.launchApp(app.packageName, app.className, app.userHandle)
-            }
-        }
-    }
-
-    LaunchedEffect(bottomSheetScaffoldState.bottomSheetState.targetValue) {
-        when (bottomSheetScaffoldState.bottomSheetState.targetValue) {
-            SheetValue.Expanded -> {
-                if (!state.isBottomSheetExpanded) {
-                    viewModel.setBottomSheetExpanded(true)
-
-                    // Request focus only when the autoOpenKeyboardAllApps is true and drawer search bar is not hidden
-                    if (state.autoOpenKeyboardAllApps && !state.hideAppDrawerSearch) {
-                        // Add a small delay to let the bottom sheet animation get a head start.
-                        // This prevents the focus request and keyboard layout from halting the sheet's expansion.
-                        delay(state.keyboardOpenDelay)
-                        focusRequester.requestFocus()
-                        keyboardController?.show()
-                    }
-                }
-            }
-
-            else -> {
-                delay(state.keyboardCloseDelay)
-                viewModel.setBottomSheetExpanded(false)
-                focusManager.clearFocus()
-            }
-        }
-    }
-
-    LaunchedEffect(allAppsLazyListState) {
-        snapshotFlow { allAppsLazyListState.isScrollInProgress }
-            .distinctUntilChanged()
-            .collect { isScrolling ->
-                if (isScrolling && allAppsLazyListState.canScrollBackward) {
-                    hideKeyboardWithClearFocus()
-                }
-            }
+        onOpenAppDrawer()
     }
 
     var swipeYAccumulator by remember { mutableFloatStateOf(0f) }
     var swipeXAccumulator by remember { mutableFloatStateOf(0f) }
 
-    val nestedScrollConnection = remember(homeLazyListState, swipeVerticalThresholdPx) {
+    val nestedScrollConnection = remember(
+        homeLazyListState,
+        swipeVerticalThresholdPx
+    ) {
         object : NestedScrollConnection {
             override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
                 return Offset.Zero
@@ -194,18 +101,12 @@ fun HomeScreen(
                 if (swipeYAccumulator > swipeDownThreshold) {
                     context.showNotificationDrawer()
                 } else if (swipeYAccumulator < swipeUpThreshold) {
-                    coroutineScope.launch {
-                        allAppsLazyListState.scrollToItem(0)
-                        bottomSheetScaffoldState.bottomSheetState.expand()
-                    }
+                    onOpenAppDrawer()
                 } else {
                     if (available.y > 1000f && !homeLazyListState.canScrollBackward) {
                         context.showNotificationDrawer()
                     } else if (available.y < -1000f && !homeLazyListState.canScrollForward) {
-                        coroutineScope.launch {
-                            allAppsLazyListState.scrollToItem(0)
-                            bottomSheetScaffoldState.bottomSheetState.expand()
-                        }
+                        onOpenAppDrawer()
                     }
                 }
                 swipeYAccumulator = 0f
@@ -221,20 +122,12 @@ fun HomeScreen(
 
     val systemNavigationHeight =
         WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
-
     val safeDrawingTop =
         WindowInsets.statusBars.union(WindowInsets.displayCutout)
-
     val surfaceColor = MaterialTheme.colorScheme.surface
-
-    val isAppDrawerVisible =
-        state.isBottomSheetExpanded ||
-                bottomSheetScaffoldState.bottomSheetState.currentValue == SheetValue.Expanded ||
-                bottomSheetScaffoldState.bottomSheetState.targetValue == SheetValue.Expanded
 
     val useDarkIconsOnSurface = useDarkIconsOnColor(surfaceColor)
     val useDarkNavigationIcons = shouldUseDarkNavigationIcons(
-        isAppDrawerVisible = isAppDrawerVisible,
         enableWallpaper = state.enableWallpaper,
         lightTextOnWallpaper = state.lightTextOnWallpaper,
         useDarkIconsOnSurface = useDarkIconsOnSurface
@@ -298,34 +191,9 @@ fun HomeScreen(
                 )
             }
     ) {
-        BottomSheetScaffold(
-            scaffoldState = bottomSheetScaffoldState,
-            sheetSwipeEnabled = false,
-            sheetDragHandle = null,
-            sheetShadowElevation = 0.dp,
-            sheetContent = {
-                AppDrawerSheet(
-                    state = state,
-                    viewModel = viewModel,
-                    focusRequester = focusRequester,
-                    allAppsLazyListState = allAppsLazyListState,
-                    systemNavigationHeight = systemNavigationHeight,
-                    onSettingsClick = onSettingsClick,
-                    hideKeyboardWithClearFocus = ::hideKeyboardWithClearFocus,
-                    swipeDownThreshold = swipeDownThreshold,
-                    statusBarVisible = statusBarVisible,
-                    useDarkBottomSheetStatusBarIcons = useDarkBottomSheetStatusBarIcons,
-                    useDarkBottomSheetNavigationBarIcons = useDarkIconsOnSurface,
-                    onCloseSheet = {
-                        coroutineScope.launch {
-                            bottomSheetScaffoldState.bottomSheetState.partialExpand()
-                        }
-                    }
-                )
-            },
-            sheetPeekHeight = 0.dp,
-            sheetContainerColor = MaterialTheme.colorScheme.surface,
-            containerColor = scaffoldContainerColor
+        Scaffold(
+            containerColor = scaffoldContainerColor,
+            contentWindowInsets = WindowInsets(0, 0, 0, 0)
         ) { paddingValues ->
             if (state.initialLoaded) {
                 HomeBody(
@@ -371,17 +239,11 @@ private fun ApplyNavigationBarIconColor(useDarkNavigationIcons: Boolean) {
 }
 
 private fun shouldUseDarkNavigationIcons(
-    isAppDrawerVisible: Boolean,
     enableWallpaper: Boolean,
     lightTextOnWallpaper: Boolean,
     useDarkIconsOnSurface: Boolean
 ): Boolean {
-    // The app drawer covers the nav area with the theme surface; otherwise Home may show wallpaper.
-    return when {
-        isAppDrawerVisible -> useDarkIconsOnSurface
-        enableWallpaper -> !lightTextOnWallpaper
-        else -> useDarkIconsOnSurface
-    }
+    return if (enableWallpaper) !lightTextOnWallpaper else useDarkIconsOnSurface
 }
 
 private fun shouldUseDarkStatusBarIcons(

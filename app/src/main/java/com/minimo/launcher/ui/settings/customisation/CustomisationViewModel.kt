@@ -70,7 +70,6 @@ class CustomisationViewModel @Inject constructor(
                             swipeLeftAppPreference = prefs.swipeLeftAppPreference,
                             swipeRightAppPreference = prefs.swipeRightAppPreference,
                             keyboardOpenDelay = prefs.keyboardOpenDelay,
-                            keyboardCloseDelay = prefs.keyboardCloseDelay,
                             enableFastScroller = prefs.enableFastScroller
                         )
                     }
@@ -382,12 +381,6 @@ class CustomisationViewModel @Inject constructor(
     fun onKeyboardOpenDelayChanged(delay: Long) {
         viewModelScope.launch {
             preferenceHelper.setKeyboardOpenDelay(delay)
-        }
-    }
-
-    fun onKeyboardCloseDelayChanged(delay: Long) {
-        viewModelScope.launch {
-            preferenceHelper.setKeyboardCloseDelay(delay)
         }
     }
 

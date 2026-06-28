@@ -2,6 +2,7 @@ package com.minimo.launcher.ui.intro
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
@@ -32,7 +33,8 @@ internal fun IntroPage2(
         CenterAlignedTopAppBar(
             title = {
                 Text(stringResource(id = R.string.favourite_apps))
-            }
+            },
+            windowInsets = WindowInsets(0, 0, 0, 0)
         )
         SearchItem(
             modifier = Modifier.fillMaxWidth(),

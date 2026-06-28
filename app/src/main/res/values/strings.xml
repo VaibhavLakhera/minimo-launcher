@@ -43,7 +43,6 @@
     <string name="show_keyboard">Show Keyboard</string>
     <string name="show_keyboard_when_the_drawer_is_opened">Show keyboard when the drawer is opened</string>
     <string name="keyboard_open_delay">Keyboard Open Delay</string>
-    <string name="keyboard_close_delay">Keyboard Close Delay</string>
     <string name="delay_in_milliseconds">Delay in milliseconds</string>
     <string name="keyboard_delay_min">Min: %1$dms</string>
     <string name="keyboard_delay_max">Max: %1$dms</string>

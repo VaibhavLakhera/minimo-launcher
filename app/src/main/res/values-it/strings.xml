@@ -45,7 +45,6 @@
     <string name="show_keyboard">Mostra tastiera</string>
     <string name="show_keyboard_when_the_drawer_is_opened">Mostra la tastiera quando il drawer viene aperto</string>
     <string name="keyboard_open_delay">Ritardo apertura tastiera</string>
-    <string name="keyboard_close_delay">Ritardo chiusura tastiera</string>
     <string name="delay_in_milliseconds">Ritardo in millisecondi</string>
     <string name="keyboard_delay_min">Min: %1$dms</string>
     <string name="keyboard_delay_max">Max: %1$dms</string>

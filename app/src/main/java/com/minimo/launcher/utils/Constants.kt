@@ -12,9 +12,6 @@ object Constants {
     const val DEFAULT_KEYBOARD_OPEN_DELAY = 150L
     val KEYBOARD_OPEN_DELAY_RANGE by lazy { 0L..1500L }
 
-    const val DEFAULT_KEYBOARD_CLOSE_DELAY = 250L
-    val KEYBOARD_CLOSE_DELAY_RANGE by lazy { 0L..1500L }
-
     // A dummy package used to show "Minimo Settings" in the app drawer when "Hide App Drawer Search" toggle is on.
     const val MINIMO_SETTINGS_PACKAGE = "APP::com.minimo.launcher.settings"
 }

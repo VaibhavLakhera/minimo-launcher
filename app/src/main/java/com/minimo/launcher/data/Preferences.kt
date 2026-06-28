@@ -50,7 +50,6 @@ data class HomePreferences(
     val swipeLeftAppPreference: String = "",
     val swipeRightAppPreference: String = "",
     val keyboardOpenDelay: Long = Constants.DEFAULT_KEYBOARD_OPEN_DELAY,
-    val keyboardCloseDelay: Long = Constants.DEFAULT_KEYBOARD_CLOSE_DELAY,
     val enableFastScroller: Boolean = false
 )
 
@@ -92,6 +91,5 @@ data class CustomisationPreferences(
     val swipeLeftAppPreference: String = "",
     val swipeRightAppPreference: String = "",
     val keyboardOpenDelay: Long = Constants.DEFAULT_KEYBOARD_OPEN_DELAY,
-    val keyboardCloseDelay: Long = Constants.DEFAULT_KEYBOARD_CLOSE_DELAY,
     val enableFastScroller: Boolean = false
 )

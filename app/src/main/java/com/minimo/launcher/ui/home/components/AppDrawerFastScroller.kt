@@ -9,7 +9,6 @@ import androidx.compose.foundation.gestures.drag
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -98,6 +97,8 @@ fun AppDrawerFastScroller(
         mapping
     }
 
+    if (letters.isEmpty()) return
+
     var isInteracting by remember { mutableStateOf(false) }
     var currentDragPosition by remember { mutableFloatStateOf(0f) }
     var lettersColumnTop by remember { mutableFloatStateOf(0f) }
@@ -137,15 +138,14 @@ fun AppDrawerFastScroller(
 
     val width = 40.dp
     val letterHeight = 20.dp
+    val verticalPadding = 16.dp
+    val scrollerHeight = (letterHeight * letters.size.toFloat()) + (verticalPadding * 2)
 
     Box(
         modifier = modifier
-            .fillMaxHeight()
+            .height(scrollerHeight)
             .width(width)
-            .background(
-                color = Color.Transparent,
-                shape = RoundedCornerShape(20.dp)
-            )
+            .background(color = Color.Transparent)
             .pointerInput(apps) {
                 awaitPointerEventScope {
                     while (true) {
@@ -179,7 +179,7 @@ fun AppDrawerFastScroller(
                 .align(Alignment.Center)
                 .wrapContentHeight()
                 .width(width)
-                .padding(vertical = 16.dp)
+                .padding(vertical = verticalPadding)
                 .onGloballyPositioned { layoutCoordinates ->
                     lettersColumnTop = layoutCoordinates.positionInParent().y
                     lettersColumnHeight = layoutCoordinates.size.height

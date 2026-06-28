@@ -5,6 +5,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -16,12 +17,16 @@ import com.minimo.launcher.R
 
 @Composable
 fun AppDrawerSearch(
+    modifier: Modifier = Modifier,
     focusRequester: FocusRequester,
     searchText: String,
     onSearchTextChange: (String) -> Unit,
-    onSettingsClick: () -> Unit,
+    onSettingsClick: () -> Unit
 ) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         SearchItem(
             modifier = Modifier
                 .weight(1f)
@@ -35,6 +40,7 @@ fun AppDrawerSearch(
         ) {
             Icon(
                 imageVector = Icons.Filled.Settings,
+                tint = MaterialTheme.colorScheme.onSurface,
                 contentDescription = stringResource(R.string.settings)
             )
         }

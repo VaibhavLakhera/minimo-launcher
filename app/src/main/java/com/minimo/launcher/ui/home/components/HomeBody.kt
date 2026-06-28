@@ -29,6 +29,7 @@ import com.minimo.launcher.ui.components.TimeAndDateView
 import com.minimo.launcher.ui.home.HomeScreenState
 import com.minimo.launcher.ui.home.HomeViewModel
 import com.minimo.launcher.ui.theme.Dimens
+import com.minimo.launcher.utils.launchApp
 import com.minimo.launcher.utils.launchAppFromPreference
 import com.minimo.launcher.utils.launchAppInfo
 import com.minimo.launcher.utils.openDefaultCalendarApp
@@ -150,7 +151,13 @@ fun HomeBody(
                     isFavourite = appInfo.isFavourite,
                     isHidden = appInfo.isHidden,
                     isWorkProfile = appInfo.isWorkProfile,
-                    onClick = { viewModel.onLaunchAppClick(appInfo) },
+                    onClick = {
+                        context.launchApp(
+                            appInfo.packageName,
+                            appInfo.className,
+                            appInfo.userHandle
+                        )
+                    },
                     onToggleFavouriteClick = {
                         viewModel.onToggleFavouriteAppClick(
                             appInfo
