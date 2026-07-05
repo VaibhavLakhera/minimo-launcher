@@ -9,6 +9,9 @@ object Constants {
     const val DEFAULT_HOME_VERTICAL_PADDING = 16
     val HOME_VERTICAL_PADDING_RANGE by lazy { 4f..20f }
 
+    const val DEFAULT_DIM_WALLPAPER_PERCENTAGE = 20
+    val DIM_WALLPAPER_PERCENTAGE_RANGE by lazy { 20f..80f }
+
     const val DEFAULT_KEYBOARD_OPEN_DELAY = 150L
     val KEYBOARD_OPEN_DELAY_RANGE by lazy { 0L..1500L }
 

@@ -142,10 +142,15 @@ fun HomeScreen(
             useDarkIconsOnSurface = useDarkIconsOnSurface
         )
 
-    val boxBackgroundColor = remember(state.enableWallpaper, state.dimWallpaper, surfaceColor) {
+    val boxBackgroundColor = remember(
+        state.enableWallpaper,
+        state.dimWallpaper,
+        state.dimWallpaperPercentage,
+        surfaceColor
+    ) {
         if (state.enableWallpaper) {
             if (state.dimWallpaper) {
-                Color.Black.copy(alpha = 0.20f)
+                Color.Black.copy(alpha = state.dimWallpaperPercentage / 100f)
             } else {
                 Color.Transparent
             }

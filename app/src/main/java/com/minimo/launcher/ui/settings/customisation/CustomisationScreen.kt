@@ -65,6 +65,7 @@ import com.minimo.launcher.ui.settings.customisation.components.AppsAlignmentHor
 import com.minimo.launcher.ui.settings.customisation.components.AppsAlignmentVerticalDropdown
 import com.minimo.launcher.ui.settings.customisation.components.ClockAlignmentDropdown
 import com.minimo.launcher.ui.settings.customisation.components.ClockModeDropdown
+import com.minimo.launcher.ui.settings.customisation.components.DimPercentageSlider
 import com.minimo.launcher.ui.settings.customisation.components.EnableAccessibilityDialog
 import com.minimo.launcher.ui.settings.customisation.components.EnableAppUsageDialog
 import com.minimo.launcher.ui.settings.customisation.components.EnableNotificationsDialog
@@ -240,6 +241,15 @@ fun CustomisationScreen(
                     isChecked = state.dimWallpaper,
                     onToggleClick = viewModel::onToggleDimWallpaper
                 )
+
+                if (state.dimWallpaper) {
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    DimPercentageSlider(
+                        dimPercentage = state.dimWallpaperPercentage,
+                        onDimPercentageChanged = viewModel::onDimWallpaperPercentageChanged
+                    )
+                }
             }
 
             ToggleItem(

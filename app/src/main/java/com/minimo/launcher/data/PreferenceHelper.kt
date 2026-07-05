@@ -32,6 +32,8 @@ class PreferenceHelper @Inject constructor(
         private val KEY_LIGHT_TEXT_ON_WALLPAPER =
             booleanPreferencesKey("KEY_LIGHT_TEXT_ON_WALLPAPER")
         private val KEY_DIM_WALLPAPER = booleanPreferencesKey("KEY_DIM_WALLPAPER")
+        private val KEY_DIM_WALLPAPER_PERCENTAGE =
+            intPreferencesKey("KEY_DIM_WALLPAPER_PERCENTAGE")
         internal val KEY_HOME_APPS_ALIGN_HORIZONTAL = stringPreferencesKey("KEY_HOME_APPS_ALIGN")
         internal val KEY_DRAWER_APPS_ALIGN_HORIZONTAL =
             stringPreferencesKey("KEY_DRAWER_APPS_ALIGN_HORIZONTAL")
@@ -229,6 +231,12 @@ class PreferenceHelper @Inject constructor(
         }
     }
 
+    suspend fun setDimWallpaperPercentage(percentage: Int) {
+        preferences.edit {
+            it[KEY_DIM_WALLPAPER_PERCENTAGE] = percentage
+        }
+    }
+
     suspend fun setAutoOpenApp(enable: Boolean) {
         preferences.edit {
             it[KEY_AUTO_OPEN_APP] = enable
@@ -370,6 +378,8 @@ class PreferenceHelper @Inject constructor(
                 showScreenTimeWidget = prefs[KEY_SHOW_SCREEN_TIME_WIDGET] ?: false,
                 lightTextOnWallpaper = prefs[KEY_LIGHT_TEXT_ON_WALLPAPER] ?: true,
                 dimWallpaper = prefs[KEY_DIM_WALLPAPER] ?: false,
+                dimWallpaperPercentage = prefs[KEY_DIM_WALLPAPER_PERCENTAGE]
+                    ?: Constants.DEFAULT_DIM_WALLPAPER_PERCENTAGE,
                 clockAppPreference = prefs[KEY_CLOCK_APP_PREFERENCE] ?: "",
                 batteryAppPreference = prefs[KEY_BATTERY_APP_PREFERENCE] ?: "",
                 calendarAppPreference = prefs[KEY_CALENDAR_APP_PREFERENCE] ?: "",
@@ -409,6 +419,8 @@ class PreferenceHelper @Inject constructor(
                 enableWallpaper = prefs[KEY_ENABLE_WALLPAPER] ?: false,
                 lightTextOnWallpaper = prefs[KEY_LIGHT_TEXT_ON_WALLPAPER] ?: true,
                 dimWallpaper = prefs[KEY_DIM_WALLPAPER] ?: false,
+                dimWallpaperPercentage = prefs[KEY_DIM_WALLPAPER_PERCENTAGE]
+                    ?: Constants.DEFAULT_DIM_WALLPAPER_PERCENTAGE,
                 autoOpenApp = prefs[KEY_AUTO_OPEN_APP] ?: false,
                 notificationDot = prefs[KEY_NOTIFICATION_DOT] ?: false,
                 homeAppVerticalPadding = prefs[KEY_HOME_APP_VERTICAL_PADDING] ?: Constants.DEFAULT_HOME_VERTICAL_PADDING,

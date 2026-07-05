@@ -56,6 +56,7 @@ class CustomisationViewModel @Inject constructor(
                             enableWallpaper = prefs.enableWallpaper,
                             lightTextOnWallpaper = prefs.lightTextOnWallpaper,
                             dimWallpaper = prefs.dimWallpaper,
+                            dimWallpaperPercentage = prefs.dimWallpaperPercentage.toFloat(),
                             autoOpenApp = prefs.autoOpenApp,
                             notificationDot = prefs.notificationDot,
                             homeAppVerticalPadding = prefs.homeAppVerticalPadding.toFloat(),
@@ -247,6 +248,12 @@ class CustomisationViewModel @Inject constructor(
     fun onToggleDimWallpaper() {
         viewModelScope.launch {
             preferenceHelper.setDimWallpaper(_state.value.dimWallpaper.not())
+        }
+    }
+
+    fun onDimWallpaperPercentageChanged(percentage: Int) {
+        viewModelScope.launch {
+            preferenceHelper.setDimWallpaperPercentage(percentage)
         }
     }
 

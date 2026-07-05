@@ -38,6 +38,7 @@ data class CustomisationState(
     val showScreenTimeWidget: Boolean = false,
     val lightTextOnWallpaper: Boolean = true,
     val dimWallpaper: Boolean = false,
+    val dimWallpaperPercentage: Float = Constants.DEFAULT_DIM_WALLPAPER_PERCENTAGE.toFloat(),
     val clockAppPreference: String = "",
     val clockAppName: String = "",
     val batteryAppPreference: String = "",
