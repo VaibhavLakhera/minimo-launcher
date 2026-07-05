@@ -40,6 +40,7 @@
     <string name="app_info">Información de la app</string>
     <string name="uninstall">Desinstalar</string>
     <string name="show_status_bar">Mostrar barra de estado</string>
+    <string name="show_navigation_bar">Mostrar barra de navegación</string>
     <string name="show_keyboard">Mostrar teclado</string>
     <string name="show_keyboard_when_the_drawer_is_opened">Mostrar el teclado al abrir el cajón</string>
     <string name="keyboard_open_delay">Retraso de apertura del teclado</string>

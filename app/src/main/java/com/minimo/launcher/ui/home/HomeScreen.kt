@@ -48,6 +48,7 @@ import com.minimo.launcher.utils.showNotificationDrawer
 fun HomeScreen(
     viewModel: HomeViewModel,
     statusBarVisible: Boolean,
+    navigationBarVisible: Boolean,
     onOpenAppDrawer: () -> Unit
 ) {
     val context = LocalContext.current
@@ -209,6 +210,7 @@ fun HomeScreen(
                     nestedScrollConnection = nestedScrollConnection,
                     systemNavigationHeight = systemNavigationHeight,
                     statusBarVisible = statusBarVisible,
+                    navigationBarVisible = navigationBarVisible,
                     useDarkBottomSheetStatusBarIcons = useDarkBottomSheetStatusBarIcons,
                     useDarkBottomSheetNavigationBarIcons = useDarkIconsOnSurface
                 )

@@ -30,6 +30,7 @@ class MainViewModel @Inject constructor(
                             themeMode = prefs.themeMode,
                             fontPreference = prefs.fontPreference,
                             statusBarVisible = prefs.showStatusBar,
+                            navigationBarVisible = prefs.showNavigationBar,
                             useDynamicTheme = prefs.dynamicTheme,
                             blackTheme = prefs.blackTheme,
                             setWallpaperToThemeColor = prefs.setWallpaperToThemeColor,

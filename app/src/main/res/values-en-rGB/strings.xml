@@ -40,6 +40,7 @@
     <string name="app_info">App Info</string>
     <string name="uninstall">Uninstall</string>
     <string name="show_status_bar">Show Status Bar</string>
+    <string name="show_navigation_bar">Show Navigation Bar</string>
     <string name="show_keyboard">Show Keyboard</string>
     <string name="show_keyboard_when_the_drawer_is_opened">Show keyboard when the drawer is opened</string>
     <string name="keyboard_open_delay">Keyboard Open Delay</string>

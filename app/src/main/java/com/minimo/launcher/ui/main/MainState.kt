@@ -6,6 +6,7 @@ data class MainState(
     val themeMode: ThemeMode = ThemeMode.System,
     val fontPreference: String = "",
     val statusBarVisible: Boolean = true,
+    val navigationBarVisible: Boolean = true,
     val useDynamicTheme: Boolean = false,
     val blackTheme: Boolean = false,
     val setWallpaperToThemeColor: Boolean = false,

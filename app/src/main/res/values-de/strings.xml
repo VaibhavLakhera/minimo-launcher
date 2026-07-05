@@ -42,6 +42,7 @@
     <string name="app_info">App-Info</string>
     <string name="uninstall">Deinstallieren</string>
     <string name="show_status_bar">Statusleiste anzeigen</string>
+    <string name="show_navigation_bar">Navigationsleiste anzeigen</string>
     <string name="show_keyboard">Tastatur anzeigen</string>
     <string name="show_keyboard_when_the_drawer_is_opened">Tastatur anzeigen, wenn die App-Schublade geöffnet wird</string>
     <string name="keyboard_open_delay">Tastaturöffnungsverzögerung</string>

@@ -81,6 +81,7 @@ private const val POINTER_DRAG_CLOSE_GRACE_MILLIS = 150L
 fun AppDrawerScreen(
     viewModel: HomeViewModel,
     statusBarVisible: Boolean,
+    navigationBarVisible: Boolean,
     onCloseAppDrawer: () -> Unit,
     onSettingsClick: () -> Unit
 ) {
@@ -305,6 +306,7 @@ fun AppDrawerScreen(
                                     },
                                     showNotificationDot = appInfo.showNotificationDot,
                                     bottomSheetStatusBarVisible = statusBarVisible,
+                                    bottomSheetNavigationBarVisible = navigationBarVisible,
                                     useDarkBottomSheetStatusBarIcons = useDarkIconsOnSurface,
                                     useDarkBottomSheetNavigationBarIcons = useDarkIconsOnSurface,
                                     verticalPadding = state.homeAppVerticalPadding.dp

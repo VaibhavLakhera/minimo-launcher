@@ -13,6 +13,7 @@ fun AppListBottomSheetDialog(
     isHidden: Boolean,
     onDismiss: () -> Unit,
     statusBarVisible: Boolean = true,
+    navigationBarVisible: Boolean = true,
     useDarkStatusBarIcons: Boolean? = null,
     useDarkNavigationBarIcons: Boolean? = null,
     onToggleFavouriteClick: () -> Unit,
@@ -25,6 +26,7 @@ fun AppListBottomSheetDialog(
         appName = appName,
         onDismiss = onDismiss,
         statusBarVisible = statusBarVisible,
+        navigationBarVisible = navigationBarVisible,
         useDarkStatusBarIcons = useDarkStatusBarIcons,
         useDarkNavigationBarIcons = useDarkNavigationBarIcons
     ) {

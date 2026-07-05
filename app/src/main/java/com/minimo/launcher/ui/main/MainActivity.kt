@@ -51,6 +51,7 @@ class MainActivity : ComponentActivity() {
             AppTheme(
                 themeMode = state.themeMode,
                 statusBarVisible = state.statusBarVisible,
+                navigationBarVisible = state.navigationBarVisible,
                 useDynamicTheme = state.useDynamicTheme,
                 blackTheme = state.blackTheme,
                 setWallpaperToThemeColor = state.setWallpaperToThemeColor,
@@ -63,6 +64,7 @@ class MainActivity : ComponentActivity() {
                     navController = navController,
                     homeViewModel = homeViewModel,
                     statusBarVisible = state.statusBarVisible,
+                    navigationBarVisible = state.navigationBarVisible,
                     onBackPressed = {
                         onBackPressedDispatcher.onBackPressed()
                     }

@@ -46,6 +46,7 @@ fun AppNavGraph(
     navController: NavHostController,
     homeViewModel: HomeViewModel,
     statusBarVisible: Boolean,
+    navigationBarVisible: Boolean,
     onBackPressed: () -> Unit
 ) {
     NavHost(
@@ -84,6 +85,7 @@ fun AppNavGraph(
             HomeScreen(
                 viewModel = homeViewModel,
                 statusBarVisible = statusBarVisible,
+                navigationBarVisible = navigationBarVisible,
                 onOpenAppDrawer = {
                     navController.navigate(Routes.APP_DRAWER) {
                         launchSingleTop = true
@@ -113,6 +115,7 @@ fun AppNavGraph(
             AppDrawerScreen(
                 viewModel = homeViewModel,
                 statusBarVisible = statusBarVisible,
+                navigationBarVisible = navigationBarVisible,
                 onCloseAppDrawer = {
                     if (navController.currentDestination?.route == Routes.APP_DRAWER) {
                         navController.popBackStack(Routes.HOME, inclusive = false)

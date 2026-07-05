@@ -41,6 +41,7 @@ class CustomisationViewModel @Inject constructor(
                             homeClockAlignment = prefs.homeClockAlignment,
                             showHomeClock = prefs.showHomeClock,
                             showStatusBar = prefs.showStatusBar,
+                            showNavigationBar = prefs.showNavigationBar,
                             homeTextSize = prefs.homeTextSize.toFloat(),
                             autoOpenKeyboardAllApps = prefs.autoOpenKeyboardAllApps,
                             dynamicTheme = prefs.dynamicTheme,
@@ -200,6 +201,12 @@ class CustomisationViewModel @Inject constructor(
     fun onToggleShowStatusBar() {
         viewModelScope.launch {
             preferenceHelper.setShowStatusBar(_state.value.showStatusBar.not())
+        }
+    }
+
+    fun onToggleShowNavigationBar() {
+        viewModelScope.launch {
+            preferenceHelper.setShowNavigationBar(_state.value.showNavigationBar.not())
         }
     }
 

@@ -43,6 +43,7 @@ class PreferenceHelper @Inject constructor(
         private val KEY_HOME_CLOCK_MODE = stringPreferencesKey("KEY_HOME_CLOCK_MODE")
         private val KEY_SHOW_HOME_CLOCK = booleanPreferencesKey("KEY_SHOW_HOME_CLOCK")
         private val KEY_SHOW_STATUS_BAR = booleanPreferencesKey("KEY_SHOW_STATUS_BAR")
+        private val KEY_SHOW_NAVIGATION_BAR = booleanPreferencesKey("KEY_SHOW_NAVIGATION_BAR")
         private val KEY_HOME_TEXT_SIZE = intPreferencesKey("KEY_HOME_TEXT_SIZE")
         private val KEY_AUTO_OPEN_KEYBOARD_ALL_APPS =
             booleanPreferencesKey("KEY_AUTO_OPEN_KEYBOARD_ALL_APPS")
@@ -134,6 +135,12 @@ class PreferenceHelper @Inject constructor(
     suspend fun setShowStatusBar(show: Boolean) {
         preferences.edit {
             it[KEY_SHOW_STATUS_BAR] = show
+        }
+    }
+
+    suspend fun setShowNavigationBar(show: Boolean) {
+        preferences.edit {
+            it[KEY_SHOW_NAVIGATION_BAR] = show
         }
     }
 
@@ -343,6 +350,7 @@ class PreferenceHelper @Inject constructor(
                 themeMode = getThemeModeFromPref(prefs[KEY_THEME_MODE]),
                 fontPreference = prefs[KEY_FONT_PREFERENCE] ?: "",
                 showStatusBar = prefs[KEY_SHOW_STATUS_BAR] ?: true,
+                showNavigationBar = prefs[KEY_SHOW_NAVIGATION_BAR] ?: true,
                 dynamicTheme = prefs[KEY_DYNAMIC_THEME] ?: false,
                 blackTheme = getBlackThemeFromPref(prefs[KEY_BLACK_THEME], prefs[KEY_THEME_MODE]),
                 setWallpaperToThemeColor = prefs[KEY_SET_WALLPAPER_TO_THEME_COLOR] ?: false,
@@ -404,6 +412,7 @@ class PreferenceHelper @Inject constructor(
                 homeClockAlignment = getHomeClockAlignmentFromPref(prefs[KEY_HOME_CLOCK_ALIGNMENT]),
                 showHomeClock = prefs[KEY_SHOW_HOME_CLOCK] ?: false,
                 showStatusBar = prefs[KEY_SHOW_STATUS_BAR] ?: true,
+                showNavigationBar = prefs[KEY_SHOW_NAVIGATION_BAR] ?: true,
                 homeTextSize = prefs[KEY_HOME_TEXT_SIZE] ?: Constants.DEFAULT_HOME_TEXT_SIZE,
                 autoOpenKeyboardAllApps = prefs[KEY_AUTO_OPEN_KEYBOARD_ALL_APPS] ?: false,
                 dynamicTheme = prefs[KEY_DYNAMIC_THEME] ?: false,

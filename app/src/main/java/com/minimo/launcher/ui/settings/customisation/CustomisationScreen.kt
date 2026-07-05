@@ -467,6 +467,14 @@ fun CustomisationScreen(
                 onToggleClick = viewModel::onToggleShowStatusBar
             )
 
+            Spacer(modifier = Modifier.height(4.dp))
+
+            ToggleItem(
+                title = stringResource(R.string.show_navigation_bar),
+                isChecked = state.showNavigationBar,
+                onToggleClick = viewModel::onToggleShowNavigationBar
+            )
+
             HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
 
             ToggleItem(
