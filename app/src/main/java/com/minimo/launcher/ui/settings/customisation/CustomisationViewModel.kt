@@ -9,6 +9,7 @@ import com.minimo.launcher.utils.HomeAppsAlignmentHorizontal
 import com.minimo.launcher.utils.HomeAppsAlignmentVertical
 import com.minimo.launcher.utils.HomeClockAlignment
 import com.minimo.launcher.utils.HomeClockMode
+import com.minimo.launcher.utils.ScreenOrientation
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -35,6 +36,7 @@ class CustomisationViewModel @Inject constructor(
                         state.copy(
                             themeMode = prefs.themeMode,
                             fontPreference = prefs.fontPreference,
+                            screenOrientation = prefs.screenOrientation,
                             homeAppsAlignmentHorizontal = prefs.homeAppsAlignmentHorizontal,
                             drawerAppsAlignmentHorizontal = prefs.drawerAppsAlignmentHorizontal,
                             homeAppsAlignmentVertical = prefs.homeAppsAlignmentVertical,
@@ -148,6 +150,12 @@ class CustomisationViewModel @Inject constructor(
     fun onFontPreferenceChanged(font: String) {
         viewModelScope.launch {
             preferenceHelper.setFontPreference(font)
+        }
+    }
+
+    fun onScreenOrientationChanged(orientation: ScreenOrientation) {
+        viewModelScope.launch {
+            preferenceHelper.setScreenOrientation(orientation)
         }
     }
 

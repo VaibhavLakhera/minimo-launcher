@@ -22,6 +22,7 @@
     <string name="right">Right</string>
 
     <string name="theme">Theme</string>
+    <string name="orientation">Orientation</string>
     <string name="home_apps_alignment_horizontal">Home Apps Alignment Horizontal</string>
     <string name="clock_alignment">Clock Alignment</string>
     <string name="clock_mode">Clock Mode</string>
@@ -29,6 +30,8 @@
     <string name="system">System</string>
     <string name="dark">Dark</string>
     <string name="light">Light</string>
+    <string name="portrait">Portrait</string>
+    <string name="landscape">Landscape</string>
     <string name="full">Full</string>
     <string name="time_only">Time Only</string>
     <string name="date_only">Date Only</string>

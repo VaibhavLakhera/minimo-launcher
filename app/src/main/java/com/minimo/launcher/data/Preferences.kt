@@ -7,10 +7,12 @@ import com.minimo.launcher.utils.HomeAppsAlignmentVertical
 import com.minimo.launcher.utils.HomeClockAlignment
 import com.minimo.launcher.utils.HomeClockMode
 import com.minimo.launcher.utils.MinimoSettingsPosition
+import com.minimo.launcher.utils.ScreenOrientation
 
 data class MainPreferences(
     val themeMode: ThemeMode = ThemeMode.System,
     val fontPreference: String = "",
+    val screenOrientation: ScreenOrientation = ScreenOrientation.Portrait,
     val showStatusBar: Boolean = true,
     val showNavigationBar: Boolean = true,
     val dynamicTheme: Boolean = false,
@@ -59,6 +61,7 @@ data class HomePreferences(
 data class CustomisationPreferences(
     val themeMode: ThemeMode = ThemeMode.System,
     val fontPreference: String = "",
+    val screenOrientation: ScreenOrientation = ScreenOrientation.Portrait,
     val homeAppsAlignmentHorizontal: HomeAppsAlignmentHorizontal = HomeAppsAlignmentHorizontal.Start,
     val drawerAppsAlignmentHorizontal: HomeAppsAlignmentHorizontal = HomeAppsAlignmentHorizontal.Start,
     val homeAppsAlignmentVertical: HomeAppsAlignmentVertical = HomeAppsAlignmentVertical.Center,

@@ -29,6 +29,7 @@ class MainViewModel @Inject constructor(
                         it.copy(
                             themeMode = prefs.themeMode,
                             fontPreference = prefs.fontPreference,
+                            screenOrientation = prefs.screenOrientation,
                             statusBarVisible = prefs.showStatusBar,
                             navigationBarVisible = prefs.showNavigationBar,
                             useDynamicTheme = prefs.dynamicTheme,

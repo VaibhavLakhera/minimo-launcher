@@ -1,5 +1,7 @@
 package com.minimo.launcher.utils
 
+import android.content.pm.ActivityInfo
+
 object Constants {
     const val INTRO_MINIMUM_FAVOURITE_COUNT = 1
 
@@ -37,4 +39,10 @@ enum class HomeClockMode {
 
 enum class MinimoSettingsPosition {
     Auto, Top, Bottom
+}
+
+enum class ScreenOrientation(val label: String, val orientation: Int) {
+    Portrait("Portrait", ActivityInfo.SCREEN_ORIENTATION_PORTRAIT),
+    Landscape("Landscape", ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE),
+    Auto("Auto", ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)
 }

@@ -22,6 +22,7 @@
     <string name="right">Derecha</string>
 
     <string name="theme">Tema</string>
+    <string name="orientation">Orientación</string>
     <string name="home_apps_alignment_horizontal">Alineación horizontal de apps en inicio</string>
     <string name="clock_alignment">Alineación del reloj</string>
     <string name="clock_mode">Modo de reloj</string>
@@ -29,6 +30,8 @@
     <string name="system">Sistema</string>
     <string name="dark">Oscuro</string>
     <string name="light">Claro</string>
+    <string name="portrait">Vertical</string>
+    <string name="landscape">Horizontal</string>
     <string name="full">Completo</string>
     <string name="time_only">Solo hora</string>
     <string name="date_only">Solo fecha</string>

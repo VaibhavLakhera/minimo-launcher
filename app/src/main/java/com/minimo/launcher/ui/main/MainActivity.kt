@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -20,6 +21,9 @@ import com.minimo.launcher.ui.theme.AppTheme
 import com.minimo.launcher.utils.AppsManager
 import com.minimo.launcher.utils.HomePressedNotifier
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -34,6 +38,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
+        setupOrientationChangeListener()
         appsManager.registerCallback()
 
         setContent {
@@ -70,6 +75,17 @@ class MainActivity : ComponentActivity() {
                     }
                 )
             }
+        }
+    }
+
+    private fun setupOrientationChangeListener() {
+        lifecycleScope.launch {
+            viewModel.state
+                .map { it.screenOrientation.orientation }
+                .distinctUntilChanged()
+                .collect { orientation ->
+                    requestedOrientation = orientation
+                }
         }
     }
 

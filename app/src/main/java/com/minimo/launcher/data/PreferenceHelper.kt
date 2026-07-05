@@ -14,6 +14,7 @@ import com.minimo.launcher.utils.HomeAppsAlignmentVertical
 import com.minimo.launcher.utils.HomeClockAlignment
 import com.minimo.launcher.utils.HomeClockMode
 import com.minimo.launcher.utils.MinimoSettingsPosition
+import com.minimo.launcher.utils.ScreenOrientation
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -85,6 +86,7 @@ class PreferenceHelper @Inject constructor(
         private val KEY_KEYBOARD_OPEN_DELAY = longPreferencesKey("KEY_KEYBOARD_OPEN_DELAY")
         private val KEY_ENABLE_FAST_SCROLLER = booleanPreferencesKey("KEY_ENABLE_FAST_SCROLLER")
         private val KEY_BACK_OPENS_APP_DRAWER = booleanPreferencesKey("KEY_BACK_OPENS_APP_DRAWER")
+        private val KEY_SCREEN_ORIENTATION = stringPreferencesKey("KEY_SCREEN_ORIENTATION")
     }
 
     suspend fun setIsIntroCompleted(isCompleted: Boolean) {
@@ -327,6 +329,12 @@ class PreferenceHelper @Inject constructor(
         }
     }
 
+    suspend fun setScreenOrientation(orientation: ScreenOrientation) {
+        preferences.edit {
+            it[KEY_SCREEN_ORIENTATION] = orientation.label
+        }
+    }
+
     suspend fun setKeyboardOpenDelay(delay: Long) {
         preferences.edit {
             it[KEY_KEYBOARD_OPEN_DELAY] = delay
@@ -356,6 +364,7 @@ class PreferenceHelper @Inject constructor(
             MainPreferences(
                 themeMode = getThemeModeFromPref(prefs[KEY_THEME_MODE]),
                 fontPreference = prefs[KEY_FONT_PREFERENCE] ?: "",
+                screenOrientation = getScreenOrientationFromPref(prefs[KEY_SCREEN_ORIENTATION]),
                 showStatusBar = prefs[KEY_SHOW_STATUS_BAR] ?: true,
                 showNavigationBar = prefs[KEY_SHOW_NAVIGATION_BAR] ?: true,
                 dynamicTheme = prefs[KEY_DYNAMIC_THEME] ?: false,
@@ -414,6 +423,7 @@ class PreferenceHelper @Inject constructor(
             CustomisationPreferences(
                 themeMode = getThemeModeFromPref(prefs[KEY_THEME_MODE]),
                 fontPreference = prefs[KEY_FONT_PREFERENCE] ?: "",
+                screenOrientation = getScreenOrientationFromPref(prefs[KEY_SCREEN_ORIENTATION]),
                 homeAppsAlignmentHorizontal = getHomeAppsAlignmentHorizontalFromPref(prefs[KEY_HOME_APPS_ALIGN_HORIZONTAL]),
                 drawerAppsAlignmentHorizontal = getDrawerAppsAlignmentHorizontalFromPref(prefs[KEY_DRAWER_APPS_ALIGN_HORIZONTAL]),
                 homeAppsAlignmentVertical = getHomeAppsAlignmentVerticalFromPref(prefs[KEY_HOME_APPS_ALIGN_VERTICAL]),
@@ -475,6 +485,11 @@ class PreferenceHelper @Inject constructor(
     private fun getBlackThemeFromPref(blackTheme: Boolean?, themeMode: String?): Boolean {
         if (themeMode == "Black") return true
         return blackTheme ?: false
+    }
+
+    private fun getScreenOrientationFromPref(orientation: String?): ScreenOrientation {
+        return ScreenOrientation.entries.find { entry -> entry.label == orientation }
+            ?: ScreenOrientation.Portrait
     }
 
     private fun getHomeAppsAlignmentHorizontalFromPref(alignment: String?): HomeAppsAlignmentHorizontal {

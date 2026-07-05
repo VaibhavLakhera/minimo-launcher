@@ -24,6 +24,7 @@
     <string name="right">Rechts</string>
 
     <string name="theme">Design</string>
+    <string name="orientation">Ausrichtung</string>
     <string name="home_apps_alignment_horizontal">Horizontale Ausrichtung der Start-Apps</string>
     <string name="clock_alignment">Uhr-Ausrichtung</string>
     <string name="clock_mode">Uhrmodus</string>
@@ -31,6 +32,8 @@
     <string name="system">System</string>
     <string name="dark">Dunkel</string>
     <string name="light">Hell</string>
+    <string name="portrait">Hochformat</string>
+    <string name="landscape">Querformat</string>
     <string name="full">Vollständig</string>
     <string name="time_only">Nur Uhrzeit</string>
     <string name="date_only">Nur Datum</string>
