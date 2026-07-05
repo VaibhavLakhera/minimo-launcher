@@ -66,7 +66,9 @@ fun HomeScreen(
     val swipeRightThreshold = swipeHorizontalThresholdPx
 
     BackHandler {
-        onOpenAppDrawer()
+        if (state.backOpensAppDrawer) {
+            onOpenAppDrawer()
+        }
     }
 
     var swipeYAccumulator by remember { mutableFloatStateOf(0f) }

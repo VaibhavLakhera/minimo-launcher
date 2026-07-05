@@ -671,6 +671,15 @@ fun CustomisationScreen(
                 onToggleClick = viewModel::onToggleFastScroller
             )
 
+            HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
+
+            ToggleItem(
+                title = stringResource(R.string.back_opens_drawer),
+                subtitle = stringResource(R.string.back_opens_drawer_description),
+                isChecked = state.backOpensAppDrawer,
+                onToggleClick = viewModel::onToggleBackOpensAppDrawer
+            )
+
             Spacer(modifier = Modifier.height(8.dp))
         }
 

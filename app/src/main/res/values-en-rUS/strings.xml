@@ -130,6 +130,8 @@
     <string name="font">Font</string>
     <string name="fast_scroller">Fast Scroller</string>
     <string name="fast_scroller_description">Show an A-Z fast scroller on the app drawer</string>
+    <string name="back_opens_drawer">Back Opens Drawer</string>
+    <string name="back_opens_drawer_description">Press Back on home screen to open the app drawer</string>
     <string name="become_a_supporter">Become a Supporter</string>
     <string name="supporter_title">Supporter</string>
     <string name="supporter_description">This app is completely free and open source, and will remain that way. If you like the app and want to support the development, you can choose one of the options below.</string>

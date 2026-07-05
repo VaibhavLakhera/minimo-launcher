@@ -84,6 +84,7 @@ class PreferenceHelper @Inject constructor(
             stringPreferencesKey("KEY_MINIMO_SETTINGS_POSITION")
         private val KEY_KEYBOARD_OPEN_DELAY = longPreferencesKey("KEY_KEYBOARD_OPEN_DELAY")
         private val KEY_ENABLE_FAST_SCROLLER = booleanPreferencesKey("KEY_ENABLE_FAST_SCROLLER")
+        private val KEY_BACK_OPENS_APP_DRAWER = booleanPreferencesKey("KEY_BACK_OPENS_APP_DRAWER")
     }
 
     suspend fun setIsIntroCompleted(isCompleted: Boolean) {
@@ -338,6 +339,12 @@ class PreferenceHelper @Inject constructor(
         }
     }
 
+    suspend fun setBackOpensAppDrawer(enable: Boolean) {
+        preferences.edit {
+            it[KEY_BACK_OPENS_APP_DRAWER] = enable
+        }
+    }
+
     suspend fun setMinimoSettingsPosition(position: MinimoSettingsPosition) {
         preferences.edit {
             it[KEY_MINIMO_SETTINGS_POSITION] = position.name
@@ -396,7 +403,8 @@ class PreferenceHelper @Inject constructor(
                 swipeRightAppPreference = prefs[KEY_SWIPE_RIGHT_APP_PREFERENCE] ?: "",
                 keyboardOpenDelay = prefs[KEY_KEYBOARD_OPEN_DELAY]
                     ?: Constants.DEFAULT_KEYBOARD_OPEN_DELAY,
-                enableFastScroller = prefs[KEY_ENABLE_FAST_SCROLLER] ?: false
+                enableFastScroller = prefs[KEY_ENABLE_FAST_SCROLLER] ?: false,
+                backOpensAppDrawer = prefs[KEY_BACK_OPENS_APP_DRAWER] ?: true
             )
         }
     }
@@ -445,7 +453,8 @@ class PreferenceHelper @Inject constructor(
                 swipeRightAppPreference = prefs[KEY_SWIPE_RIGHT_APP_PREFERENCE] ?: "",
                 keyboardOpenDelay = prefs[KEY_KEYBOARD_OPEN_DELAY]
                     ?: Constants.DEFAULT_KEYBOARD_OPEN_DELAY,
-                enableFastScroller = prefs[KEY_ENABLE_FAST_SCROLLER] ?: false
+                enableFastScroller = prefs[KEY_ENABLE_FAST_SCROLLER] ?: false,
+                backOpensAppDrawer = prefs[KEY_BACK_OPENS_APP_DRAWER] ?: true
             )
         }
     }

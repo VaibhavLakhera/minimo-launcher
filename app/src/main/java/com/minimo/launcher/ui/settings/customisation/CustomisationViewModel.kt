@@ -72,7 +72,8 @@ class CustomisationViewModel @Inject constructor(
                             swipeLeftAppPreference = prefs.swipeLeftAppPreference,
                             swipeRightAppPreference = prefs.swipeRightAppPreference,
                             keyboardOpenDelay = prefs.keyboardOpenDelay,
-                            enableFastScroller = prefs.enableFastScroller
+                            enableFastScroller = prefs.enableFastScroller,
+                            backOpensAppDrawer = prefs.backOpensAppDrawer
                         )
                     }
 
@@ -401,6 +402,12 @@ class CustomisationViewModel @Inject constructor(
     fun onToggleFastScroller() {
         viewModelScope.launch {
             preferenceHelper.setEnableFastScroller(_state.value.enableFastScroller.not())
+        }
+    }
+
+    fun onToggleBackOpensAppDrawer() {
+        viewModelScope.launch {
+            preferenceHelper.setBackOpensAppDrawer(_state.value.backOpensAppDrawer.not())
         }
     }
 }

@@ -48,5 +48,6 @@ data class HomeScreenState(
     val swipeRightAppPreference: String = "",
     val minimoSettingsPosition: MinimoSettingsPosition = MinimoSettingsPosition.Auto,
     val keyboardOpenDelay: Long = Constants.DEFAULT_KEYBOARD_OPEN_DELAY,
-    val enableFastScroller: Boolean = false
+    val enableFastScroller: Boolean = false,
+    val backOpensAppDrawer: Boolean = true
 )

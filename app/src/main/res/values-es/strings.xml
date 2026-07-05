@@ -128,6 +128,8 @@
     <string name="font">Fuente</string>
     <string name="fast_scroller">Desplazamiento rápido</string>
     <string name="fast_scroller_description">Mostrar una barra de desplazamiento rápido A-Z en el cajón de apps</string>
+    <string name="back_opens_drawer">Atrás abre el cajón de apps</string>
+    <string name="back_opens_drawer_description">Pulsa Atrás en la pantalla de inicio para abrir el cajón de apps</string>
     <string name="become_a_supporter">Hazte colaborador</string>
     <string name="supporter_title">Colaborador</string>
     <string name="supporter_description">Esta app es completamente gratuita y de código abierto, y seguirá siéndolo. Si te gusta la app y quieres apoyar el desarrollo, puedes elegir una de las opciones a continuación.</string>

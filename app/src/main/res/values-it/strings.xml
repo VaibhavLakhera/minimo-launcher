@@ -130,6 +130,8 @@
     <string name="font">Carattere</string>
     <string name="fast_scroller">Scorrimento rapido</string>
     <string name="fast_scroller_description">Mostra uno scorrimento rapido A-Z nel drawer</string>
+    <string name="back_opens_drawer">Indietro apre il drawer</string>
+    <string name="back_opens_drawer_description">Premi Indietro nella schermata Home per aprire il drawer</string>
     <string name="become_a_supporter">Diventa un sostenitore</string>
     <string name="supporter_title">Sostenitore</string>
     <string name="supporter_description">Questa app è completamente gratuita e open source, e rimarrà tale. Se ti piace l\'app e vuoi supportare lo sviluppo, puoi scegliere una delle opzioni seguenti.</string>
