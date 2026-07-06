@@ -7,11 +7,14 @@ import com.minimo.launcher.utils.HomeAppsAlignmentVertical
 import com.minimo.launcher.utils.HomeClockAlignment
 import com.minimo.launcher.utils.HomeClockMode
 import com.minimo.launcher.utils.MinimoSettingsPosition
+import com.minimo.launcher.utils.ScreenOrientation
 
 data class MainPreferences(
     val themeMode: ThemeMode = ThemeMode.System,
     val fontPreference: String = "",
+    val screenOrientation: ScreenOrientation = ScreenOrientation.Portrait,
     val showStatusBar: Boolean = true,
+    val showNavigationBar: Boolean = true,
     val dynamicTheme: Boolean = false,
     val blackTheme: Boolean = false,
     val setWallpaperToThemeColor: Boolean = false,
@@ -43,6 +46,7 @@ data class HomePreferences(
     val showScreenTimeWidget: Boolean = false,
     val lightTextOnWallpaper: Boolean = true,
     val dimWallpaper: Boolean = false,
+    val dimWallpaperPercentage: Int = Constants.DEFAULT_DIM_WALLPAPER_PERCENTAGE,
     val clockAppPreference: String = "",
     val batteryAppPreference: String = "",
     val calendarAppPreference: String = "",
@@ -50,18 +54,21 @@ data class HomePreferences(
     val swipeLeftAppPreference: String = "",
     val swipeRightAppPreference: String = "",
     val keyboardOpenDelay: Long = Constants.DEFAULT_KEYBOARD_OPEN_DELAY,
-    val enableFastScroller: Boolean = false
+    val enableFastScroller: Boolean = false,
+    val backOpensAppDrawer: Boolean = true
 )
 
 data class CustomisationPreferences(
     val themeMode: ThemeMode = ThemeMode.System,
     val fontPreference: String = "",
+    val screenOrientation: ScreenOrientation = ScreenOrientation.Portrait,
     val homeAppsAlignmentHorizontal: HomeAppsAlignmentHorizontal = HomeAppsAlignmentHorizontal.Start,
     val drawerAppsAlignmentHorizontal: HomeAppsAlignmentHorizontal = HomeAppsAlignmentHorizontal.Start,
     val homeAppsAlignmentVertical: HomeAppsAlignmentVertical = HomeAppsAlignmentVertical.Center,
     val homeClockAlignment: HomeClockAlignment = HomeClockAlignment.Start,
     val showHomeClock: Boolean = false,
     val showStatusBar: Boolean = true,
+    val showNavigationBar: Boolean = true,
     val homeTextSize: Int = Constants.DEFAULT_HOME_TEXT_SIZE,
     val autoOpenKeyboardAllApps: Boolean = false,
     val dynamicTheme: Boolean = false,
@@ -77,6 +84,7 @@ data class CustomisationPreferences(
     val enableWallpaper: Boolean = false,
     val lightTextOnWallpaper: Boolean = true,
     val dimWallpaper: Boolean = false,
+    val dimWallpaperPercentage: Int = Constants.DEFAULT_DIM_WALLPAPER_PERCENTAGE,
     val autoOpenApp: Boolean = false,
     val notificationDot: Boolean = false,
     val homeAppVerticalPadding: Int = Constants.DEFAULT_HOME_VERTICAL_PADDING,
@@ -91,5 +99,6 @@ data class CustomisationPreferences(
     val swipeLeftAppPreference: String = "",
     val swipeRightAppPreference: String = "",
     val keyboardOpenDelay: Long = Constants.DEFAULT_KEYBOARD_OPEN_DELAY,
-    val enableFastScroller: Boolean = false
+    val enableFastScroller: Boolean = false,
+    val backOpensAppDrawer: Boolean = true
 )

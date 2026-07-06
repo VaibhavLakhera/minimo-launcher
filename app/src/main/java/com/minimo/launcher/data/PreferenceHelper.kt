@@ -14,6 +14,7 @@ import com.minimo.launcher.utils.HomeAppsAlignmentVertical
 import com.minimo.launcher.utils.HomeClockAlignment
 import com.minimo.launcher.utils.HomeClockMode
 import com.minimo.launcher.utils.MinimoSettingsPosition
+import com.minimo.launcher.utils.ScreenOrientation
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -32,6 +33,8 @@ class PreferenceHelper @Inject constructor(
         private val KEY_LIGHT_TEXT_ON_WALLPAPER =
             booleanPreferencesKey("KEY_LIGHT_TEXT_ON_WALLPAPER")
         private val KEY_DIM_WALLPAPER = booleanPreferencesKey("KEY_DIM_WALLPAPER")
+        private val KEY_DIM_WALLPAPER_PERCENTAGE =
+            intPreferencesKey("KEY_DIM_WALLPAPER_PERCENTAGE")
         internal val KEY_HOME_APPS_ALIGN_HORIZONTAL = stringPreferencesKey("KEY_HOME_APPS_ALIGN")
         internal val KEY_DRAWER_APPS_ALIGN_HORIZONTAL =
             stringPreferencesKey("KEY_DRAWER_APPS_ALIGN_HORIZONTAL")
@@ -41,6 +44,7 @@ class PreferenceHelper @Inject constructor(
         private val KEY_HOME_CLOCK_MODE = stringPreferencesKey("KEY_HOME_CLOCK_MODE")
         private val KEY_SHOW_HOME_CLOCK = booleanPreferencesKey("KEY_SHOW_HOME_CLOCK")
         private val KEY_SHOW_STATUS_BAR = booleanPreferencesKey("KEY_SHOW_STATUS_BAR")
+        private val KEY_SHOW_NAVIGATION_BAR = booleanPreferencesKey("KEY_SHOW_NAVIGATION_BAR")
         private val KEY_HOME_TEXT_SIZE = intPreferencesKey("KEY_HOME_TEXT_SIZE")
         private val KEY_AUTO_OPEN_KEYBOARD_ALL_APPS =
             booleanPreferencesKey("KEY_AUTO_OPEN_KEYBOARD_ALL_APPS")
@@ -81,6 +85,8 @@ class PreferenceHelper @Inject constructor(
             stringPreferencesKey("KEY_MINIMO_SETTINGS_POSITION")
         private val KEY_KEYBOARD_OPEN_DELAY = longPreferencesKey("KEY_KEYBOARD_OPEN_DELAY")
         private val KEY_ENABLE_FAST_SCROLLER = booleanPreferencesKey("KEY_ENABLE_FAST_SCROLLER")
+        private val KEY_BACK_OPENS_APP_DRAWER = booleanPreferencesKey("KEY_BACK_OPENS_APP_DRAWER")
+        private val KEY_SCREEN_ORIENTATION = stringPreferencesKey("KEY_SCREEN_ORIENTATION")
     }
 
     suspend fun setIsIntroCompleted(isCompleted: Boolean) {
@@ -132,6 +138,12 @@ class PreferenceHelper @Inject constructor(
     suspend fun setShowStatusBar(show: Boolean) {
         preferences.edit {
             it[KEY_SHOW_STATUS_BAR] = show
+        }
+    }
+
+    suspend fun setShowNavigationBar(show: Boolean) {
+        preferences.edit {
+            it[KEY_SHOW_NAVIGATION_BAR] = show
         }
     }
 
@@ -229,6 +241,12 @@ class PreferenceHelper @Inject constructor(
         }
     }
 
+    suspend fun setDimWallpaperPercentage(percentage: Int) {
+        preferences.edit {
+            it[KEY_DIM_WALLPAPER_PERCENTAGE] = percentage
+        }
+    }
+
     suspend fun setAutoOpenApp(enable: Boolean) {
         preferences.edit {
             it[KEY_AUTO_OPEN_APP] = enable
@@ -311,6 +329,12 @@ class PreferenceHelper @Inject constructor(
         }
     }
 
+    suspend fun setScreenOrientation(orientation: ScreenOrientation) {
+        preferences.edit {
+            it[KEY_SCREEN_ORIENTATION] = orientation.label
+        }
+    }
+
     suspend fun setKeyboardOpenDelay(delay: Long) {
         preferences.edit {
             it[KEY_KEYBOARD_OPEN_DELAY] = delay
@@ -320,6 +344,12 @@ class PreferenceHelper @Inject constructor(
     suspend fun setEnableFastScroller(enable: Boolean) {
         preferences.edit {
             it[KEY_ENABLE_FAST_SCROLLER] = enable
+        }
+    }
+
+    suspend fun setBackOpensAppDrawer(enable: Boolean) {
+        preferences.edit {
+            it[KEY_BACK_OPENS_APP_DRAWER] = enable
         }
     }
 
@@ -334,7 +364,9 @@ class PreferenceHelper @Inject constructor(
             MainPreferences(
                 themeMode = getThemeModeFromPref(prefs[KEY_THEME_MODE]),
                 fontPreference = prefs[KEY_FONT_PREFERENCE] ?: "",
+                screenOrientation = getScreenOrientationFromPref(prefs[KEY_SCREEN_ORIENTATION]),
                 showStatusBar = prefs[KEY_SHOW_STATUS_BAR] ?: true,
+                showNavigationBar = prefs[KEY_SHOW_NAVIGATION_BAR] ?: true,
                 dynamicTheme = prefs[KEY_DYNAMIC_THEME] ?: false,
                 blackTheme = getBlackThemeFromPref(prefs[KEY_BLACK_THEME], prefs[KEY_THEME_MODE]),
                 setWallpaperToThemeColor = prefs[KEY_SET_WALLPAPER_TO_THEME_COLOR] ?: false,
@@ -370,6 +402,8 @@ class PreferenceHelper @Inject constructor(
                 showScreenTimeWidget = prefs[KEY_SHOW_SCREEN_TIME_WIDGET] ?: false,
                 lightTextOnWallpaper = prefs[KEY_LIGHT_TEXT_ON_WALLPAPER] ?: true,
                 dimWallpaper = prefs[KEY_DIM_WALLPAPER] ?: false,
+                dimWallpaperPercentage = prefs[KEY_DIM_WALLPAPER_PERCENTAGE]
+                    ?: Constants.DEFAULT_DIM_WALLPAPER_PERCENTAGE,
                 clockAppPreference = prefs[KEY_CLOCK_APP_PREFERENCE] ?: "",
                 batteryAppPreference = prefs[KEY_BATTERY_APP_PREFERENCE] ?: "",
                 calendarAppPreference = prefs[KEY_CALENDAR_APP_PREFERENCE] ?: "",
@@ -378,7 +412,8 @@ class PreferenceHelper @Inject constructor(
                 swipeRightAppPreference = prefs[KEY_SWIPE_RIGHT_APP_PREFERENCE] ?: "",
                 keyboardOpenDelay = prefs[KEY_KEYBOARD_OPEN_DELAY]
                     ?: Constants.DEFAULT_KEYBOARD_OPEN_DELAY,
-                enableFastScroller = prefs[KEY_ENABLE_FAST_SCROLLER] ?: false
+                enableFastScroller = prefs[KEY_ENABLE_FAST_SCROLLER] ?: false,
+                backOpensAppDrawer = prefs[KEY_BACK_OPENS_APP_DRAWER] ?: true
             )
         }
     }
@@ -388,12 +423,14 @@ class PreferenceHelper @Inject constructor(
             CustomisationPreferences(
                 themeMode = getThemeModeFromPref(prefs[KEY_THEME_MODE]),
                 fontPreference = prefs[KEY_FONT_PREFERENCE] ?: "",
+                screenOrientation = getScreenOrientationFromPref(prefs[KEY_SCREEN_ORIENTATION]),
                 homeAppsAlignmentHorizontal = getHomeAppsAlignmentHorizontalFromPref(prefs[KEY_HOME_APPS_ALIGN_HORIZONTAL]),
                 drawerAppsAlignmentHorizontal = getDrawerAppsAlignmentHorizontalFromPref(prefs[KEY_DRAWER_APPS_ALIGN_HORIZONTAL]),
                 homeAppsAlignmentVertical = getHomeAppsAlignmentVerticalFromPref(prefs[KEY_HOME_APPS_ALIGN_VERTICAL]),
                 homeClockAlignment = getHomeClockAlignmentFromPref(prefs[KEY_HOME_CLOCK_ALIGNMENT]),
                 showHomeClock = prefs[KEY_SHOW_HOME_CLOCK] ?: false,
                 showStatusBar = prefs[KEY_SHOW_STATUS_BAR] ?: true,
+                showNavigationBar = prefs[KEY_SHOW_NAVIGATION_BAR] ?: true,
                 homeTextSize = prefs[KEY_HOME_TEXT_SIZE] ?: Constants.DEFAULT_HOME_TEXT_SIZE,
                 autoOpenKeyboardAllApps = prefs[KEY_AUTO_OPEN_KEYBOARD_ALL_APPS] ?: false,
                 dynamicTheme = prefs[KEY_DYNAMIC_THEME] ?: false,
@@ -409,6 +446,8 @@ class PreferenceHelper @Inject constructor(
                 enableWallpaper = prefs[KEY_ENABLE_WALLPAPER] ?: false,
                 lightTextOnWallpaper = prefs[KEY_LIGHT_TEXT_ON_WALLPAPER] ?: true,
                 dimWallpaper = prefs[KEY_DIM_WALLPAPER] ?: false,
+                dimWallpaperPercentage = prefs[KEY_DIM_WALLPAPER_PERCENTAGE]
+                    ?: Constants.DEFAULT_DIM_WALLPAPER_PERCENTAGE,
                 autoOpenApp = prefs[KEY_AUTO_OPEN_APP] ?: false,
                 notificationDot = prefs[KEY_NOTIFICATION_DOT] ?: false,
                 homeAppVerticalPadding = prefs[KEY_HOME_APP_VERTICAL_PADDING] ?: Constants.DEFAULT_HOME_VERTICAL_PADDING,
@@ -424,7 +463,8 @@ class PreferenceHelper @Inject constructor(
                 swipeRightAppPreference = prefs[KEY_SWIPE_RIGHT_APP_PREFERENCE] ?: "",
                 keyboardOpenDelay = prefs[KEY_KEYBOARD_OPEN_DELAY]
                     ?: Constants.DEFAULT_KEYBOARD_OPEN_DELAY,
-                enableFastScroller = prefs[KEY_ENABLE_FAST_SCROLLER] ?: false
+                enableFastScroller = prefs[KEY_ENABLE_FAST_SCROLLER] ?: false,
+                backOpensAppDrawer = prefs[KEY_BACK_OPENS_APP_DRAWER] ?: true
             )
         }
     }
@@ -445,6 +485,11 @@ class PreferenceHelper @Inject constructor(
     private fun getBlackThemeFromPref(blackTheme: Boolean?, themeMode: String?): Boolean {
         if (themeMode == "Black") return true
         return blackTheme ?: false
+    }
+
+    private fun getScreenOrientationFromPref(orientation: String?): ScreenOrientation {
+        return ScreenOrientation.entries.find { entry -> entry.label == orientation }
+            ?: ScreenOrientation.Portrait
     }
 
     private fun getHomeAppsAlignmentHorizontalFromPref(alignment: String?): HomeAppsAlignmentHorizontal {

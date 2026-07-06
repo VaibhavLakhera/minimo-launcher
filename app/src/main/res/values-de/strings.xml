@@ -24,6 +24,7 @@
     <string name="right">Rechts</string>
 
     <string name="theme">Design</string>
+    <string name="orientation">Ausrichtung</string>
     <string name="home_apps_alignment_horizontal">Horizontale Ausrichtung der Start-Apps</string>
     <string name="clock_alignment">Uhr-Ausrichtung</string>
     <string name="clock_mode">Uhrmodus</string>
@@ -31,6 +32,8 @@
     <string name="system">System</string>
     <string name="dark">Dunkel</string>
     <string name="light">Hell</string>
+    <string name="portrait">Hochformat</string>
+    <string name="landscape">Querformat</string>
     <string name="full">Vollständig</string>
     <string name="time_only">Nur Uhrzeit</string>
     <string name="date_only">Nur Datum</string>
@@ -42,6 +45,7 @@
     <string name="app_info">App-Info</string>
     <string name="uninstall">Deinstallieren</string>
     <string name="show_status_bar">Statusleiste anzeigen</string>
+    <string name="show_navigation_bar">Navigationsleiste anzeigen</string>
     <string name="show_keyboard">Tastatur anzeigen</string>
     <string name="show_keyboard_when_the_drawer_is_opened">Tastatur anzeigen, wenn die App-Schublade geöffnet wird</string>
     <string name="keyboard_open_delay">Tastaturöffnungsverzögerung</string>
@@ -113,6 +117,7 @@
     <string name="drawer_apps_alignment_horizontal">Horizontale Ausrichtung der Schubladen-Apps</string>
     <string name="enable_wallpaper">Hintergrundbild aktivieren</string>
     <string name="dim_wallpaper">Hintergrundbild abdunkeln</string>
+    <string name="dim_percentage">Dimm-Prozentsatz:</string>
     <string name="light_text_on_wallpaper">Heller Text auf Hintergrundbild</string>
     <string name="set_wallpaper_to_theme_color_dialog_message">Sind Sie sicher, dass Sie dies aktivieren möchten? Das Hintergrundbild des Telefons wird automatisch auf die Farbe des aktuellen Designs gesetzt.</string>
     <string name="select_app">App auswählen</string>
@@ -128,6 +133,8 @@
     <string name="font">Schriftart</string>
     <string name="fast_scroller">Schnellscroller</string>
     <string name="fast_scroller_description">Zeige einen A-Z-Schnellscroller in der App-Schublade</string>
+    <string name="back_opens_drawer">Zurück öffnet App-Schublade</string>
+    <string name="back_opens_drawer_description">Auf dem Startbildschirm Zurück drücken, um die App-Schublade zu öffnen</string>
     <string name="become_a_supporter">Unterstützer werden</string>
     <string name="supporter_title">Unterstützer</string>
     <string name="supporter_description">Diese App ist völlig kostenlos und Open Source und wird es auch bleiben. Wenn Ihnen die App gefällt und Sie die Entwicklung unterstützen möchten, können Sie eine der folgenden Optionen wählen.</string>

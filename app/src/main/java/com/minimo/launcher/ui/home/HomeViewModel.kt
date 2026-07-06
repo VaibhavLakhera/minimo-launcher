@@ -235,6 +235,7 @@ class HomeViewModel @Inject constructor(
                             showScreenTimeWidget = prefs.showScreenTimeWidget,
                             lightTextOnWallpaper = prefs.lightTextOnWallpaper,
                             dimWallpaper = prefs.dimWallpaper,
+                            dimWallpaperPercentage = prefs.dimWallpaperPercentage,
                             clockAppPreference = prefs.clockAppPreference,
                             batteryAppPreference = prefs.batteryAppPreference,
                             calendarAppPreference = prefs.calendarAppPreference,
@@ -243,6 +244,7 @@ class HomeViewModel @Inject constructor(
                             swipeRightAppPreference = prefs.swipeRightAppPreference,
                             keyboardOpenDelay = prefs.keyboardOpenDelay,
                             enableFastScroller = prefs.enableFastScroller,
+                            backOpensAppDrawer = prefs.backOpensAppDrawer,
                             allApps = newAllApps,
                             filteredAllApps = newFilteredApps,
                             searchText = clearSearchText

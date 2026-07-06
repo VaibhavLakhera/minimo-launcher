@@ -24,6 +24,7 @@
     <string name="right">Destra</string>
 
     <string name="theme">Tema</string>
+    <string name="orientation">Orientamento</string>
     <string name="home_apps_alignment_horizontal">Allineamento orizzontale app nella home</string>
     <string name="clock_alignment">Allineamento orologio</string>
     <string name="clock_mode">Modalità orologio</string>
@@ -31,6 +32,8 @@
     <string name="system">Sistema</string>
     <string name="dark">Scuro</string>
     <string name="light">Chiaro</string>
+    <string name="portrait">Verticale</string>
+    <string name="landscape">Orizzontale</string>
     <string name="full">Completo</string>
     <string name="time_only">Solo ora</string>
     <string name="date_only">Solo data</string>
@@ -42,6 +45,7 @@
     <string name="app_info">Info app</string>
     <string name="uninstall">Disinstalla</string>
     <string name="show_status_bar">Mostra barra di stato</string>
+    <string name="show_navigation_bar">Mostra barra di navigazione</string>
     <string name="show_keyboard">Mostra tastiera</string>
     <string name="show_keyboard_when_the_drawer_is_opened">Mostra la tastiera quando il drawer viene aperto</string>
     <string name="keyboard_open_delay">Ritardo apertura tastiera</string>
@@ -113,6 +117,7 @@
     <string name="drawer_apps_alignment_horizontal">Allineamento orizzontale app nel drawer</string>
     <string name="enable_wallpaper">Abilita sfondo</string>
     <string name="dim_wallpaper">Oscura sfondo</string>
+    <string name="dim_percentage">Percentuale oscuramento:</string>
     <string name="light_text_on_wallpaper">Testo chiaro sullo sfondo</string>
     <string name="set_wallpaper_to_theme_color_dialog_message">Sei sicuro di voler abilitare questa opzione? Lo sfondo del telefono verrà impostato automaticamente al colore del tema corrente.</string>
     <string name="select_app">Seleziona app</string>
@@ -128,6 +133,8 @@
     <string name="font">Carattere</string>
     <string name="fast_scroller">Scorrimento rapido</string>
     <string name="fast_scroller_description">Mostra uno scorrimento rapido A-Z nel drawer</string>
+    <string name="back_opens_drawer">Indietro apre il drawer</string>
+    <string name="back_opens_drawer_description">Premi Indietro nella schermata Home per aprire il drawer</string>
     <string name="become_a_supporter">Diventa un sostenitore</string>
     <string name="supporter_title">Sostenitore</string>
     <string name="supporter_description">Questa app è completamente gratuita e open source, e rimarrà tale. Se ti piace l\'app e vuoi supportare lo sviluppo, puoi scegliere una delle opzioni seguenti.</string>

@@ -14,6 +14,14 @@ object StringUtils {
         }
     }
 
+    fun screenOrientationText(context: Context, orientation: ScreenOrientation): String {
+        return when (orientation) {
+            ScreenOrientation.Portrait -> context.getString(R.string.portrait)
+            ScreenOrientation.Landscape -> context.getString(R.string.landscape)
+            ScreenOrientation.Auto -> context.getString(R.string.auto)
+        }
+    }
+
     fun homeAppsAlignmentHorizontalText(
         context: Context,
         alignment: HomeAppsAlignmentHorizontal?

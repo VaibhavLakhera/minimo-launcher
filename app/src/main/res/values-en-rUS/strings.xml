@@ -24,6 +24,7 @@
     <string name="right">Right</string>
 
     <string name="theme">Theme</string>
+    <string name="orientation">Orientation</string>
     <string name="home_apps_alignment_horizontal">Home Apps Alignment Horizontal</string>
     <string name="clock_alignment">Clock Alignment</string>
     <string name="clock_mode">Clock Mode</string>
@@ -31,6 +32,8 @@
     <string name="system">System</string>
     <string name="dark">Dark</string>
     <string name="light">Light</string>
+    <string name="portrait">Portrait</string>
+    <string name="landscape">Landscape</string>
     <string name="full">Full</string>
     <string name="time_only">Time Only</string>
     <string name="date_only">Date Only</string>
@@ -42,6 +45,7 @@
     <string name="app_info">App Info</string>
     <string name="uninstall">Uninstall</string>
     <string name="show_status_bar">Show Status Bar</string>
+    <string name="show_navigation_bar">Show Navigation Bar</string>
     <string name="show_keyboard">Show Keyboard</string>
     <string name="show_keyboard_when_the_drawer_is_opened">Show keyboard when the drawer is opened</string>
     <string name="keyboard_open_delay">Keyboard Open Delay</string>
@@ -113,6 +117,7 @@
     <string name="drawer_apps_alignment_horizontal">Drawer Apps Alignment Horizontal</string>
     <string name="enable_wallpaper">Enable Wallpaper</string>
     <string name="dim_wallpaper">Dim Wallpaper</string>
+    <string name="dim_percentage">Dim Percentage:</string>
     <string name="light_text_on_wallpaper">Light Text on Wallpaper</string>
     <string name="set_wallpaper_to_theme_color_dialog_message">Are you sure you want to enable this? The phone\'s wallpaper will automatically be set to the current theme\'s color.</string>
     <string name="select_app">Select App</string>
@@ -128,6 +133,8 @@
     <string name="font">Font</string>
     <string name="fast_scroller">Fast Scroller</string>
     <string name="fast_scroller_description">Show an A-Z fast scroller on the app drawer</string>
+    <string name="back_opens_drawer">Back Opens Drawer</string>
+    <string name="back_opens_drawer_description">Press Back on home screen to open the app drawer</string>
     <string name="become_a_supporter">Become a Supporter</string>
     <string name="supporter_title">Supporter</string>
     <string name="supporter_description">This app is completely free and open source, and will remain that way. If you like the app and want to support the development, you can choose one of the options below.</string>

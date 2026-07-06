@@ -9,6 +9,7 @@ import com.minimo.launcher.utils.HomeAppsAlignmentHorizontal
 import com.minimo.launcher.utils.HomeAppsAlignmentVertical
 import com.minimo.launcher.utils.HomeClockAlignment
 import com.minimo.launcher.utils.HomeClockMode
+import com.minimo.launcher.utils.ScreenOrientation
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -35,12 +36,14 @@ class CustomisationViewModel @Inject constructor(
                         state.copy(
                             themeMode = prefs.themeMode,
                             fontPreference = prefs.fontPreference,
+                            screenOrientation = prefs.screenOrientation,
                             homeAppsAlignmentHorizontal = prefs.homeAppsAlignmentHorizontal,
                             drawerAppsAlignmentHorizontal = prefs.drawerAppsAlignmentHorizontal,
                             homeAppsAlignmentVertical = prefs.homeAppsAlignmentVertical,
                             homeClockAlignment = prefs.homeClockAlignment,
                             showHomeClock = prefs.showHomeClock,
                             showStatusBar = prefs.showStatusBar,
+                            showNavigationBar = prefs.showNavigationBar,
                             homeTextSize = prefs.homeTextSize.toFloat(),
                             autoOpenKeyboardAllApps = prefs.autoOpenKeyboardAllApps,
                             dynamicTheme = prefs.dynamicTheme,
@@ -56,6 +59,7 @@ class CustomisationViewModel @Inject constructor(
                             enableWallpaper = prefs.enableWallpaper,
                             lightTextOnWallpaper = prefs.lightTextOnWallpaper,
                             dimWallpaper = prefs.dimWallpaper,
+                            dimWallpaperPercentage = prefs.dimWallpaperPercentage.toFloat(),
                             autoOpenApp = prefs.autoOpenApp,
                             notificationDot = prefs.notificationDot,
                             homeAppVerticalPadding = prefs.homeAppVerticalPadding.toFloat(),
@@ -70,7 +74,8 @@ class CustomisationViewModel @Inject constructor(
                             swipeLeftAppPreference = prefs.swipeLeftAppPreference,
                             swipeRightAppPreference = prefs.swipeRightAppPreference,
                             keyboardOpenDelay = prefs.keyboardOpenDelay,
-                            enableFastScroller = prefs.enableFastScroller
+                            enableFastScroller = prefs.enableFastScroller,
+                            backOpensAppDrawer = prefs.backOpensAppDrawer
                         )
                     }
 
@@ -148,6 +153,12 @@ class CustomisationViewModel @Inject constructor(
         }
     }
 
+    fun onScreenOrientationChanged(orientation: ScreenOrientation) {
+        viewModelScope.launch {
+            preferenceHelper.setScreenOrientation(orientation)
+        }
+    }
+
     fun onHomeAppsAlignmentHorizontalChanged(alignment: HomeAppsAlignmentHorizontal) {
         viewModelScope.launch {
             preferenceHelper.setHomeAppsAlignmentHorizontal(alignment)
@@ -202,6 +213,12 @@ class CustomisationViewModel @Inject constructor(
         }
     }
 
+    fun onToggleShowNavigationBar() {
+        viewModelScope.launch {
+            preferenceHelper.setShowNavigationBar(_state.value.showNavigationBar.not())
+        }
+    }
+
     fun onHomeTextSizeChanged(size: Int) {
         viewModelScope.launch {
             preferenceHelper.setHomeTextSize(size)
@@ -247,6 +264,12 @@ class CustomisationViewModel @Inject constructor(
     fun onToggleDimWallpaper() {
         viewModelScope.launch {
             preferenceHelper.setDimWallpaper(_state.value.dimWallpaper.not())
+        }
+    }
+
+    fun onDimWallpaperPercentageChanged(percentage: Int) {
+        viewModelScope.launch {
+            preferenceHelper.setDimWallpaperPercentage(percentage)
         }
     }
 
@@ -387,6 +410,12 @@ class CustomisationViewModel @Inject constructor(
     fun onToggleFastScroller() {
         viewModelScope.launch {
             preferenceHelper.setEnableFastScroller(_state.value.enableFastScroller.not())
+        }
+    }
+
+    fun onToggleBackOpensAppDrawer() {
+        viewModelScope.launch {
+            preferenceHelper.setBackOpensAppDrawer(_state.value.backOpensAppDrawer.not())
         }
     }
 }

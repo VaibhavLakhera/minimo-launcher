@@ -47,6 +47,7 @@ fun HomeBody(
     nestedScrollConnection: NestedScrollConnection,
     systemNavigationHeight: Dp,
     statusBarVisible: Boolean,
+    navigationBarVisible: Boolean,
     useDarkBottomSheetStatusBarIcons: Boolean,
     useDarkBottomSheetNavigationBarIcons: Boolean
 ) {
@@ -172,6 +173,7 @@ fun HomeBody(
                     showNotificationDot = appInfo.showNotificationDot,
                     verticalPadding = state.homeAppVerticalPadding.dp,
                     bottomSheetStatusBarVisible = statusBarVisible,
+                    bottomSheetNavigationBarVisible = navigationBarVisible,
                     useDarkBottomSheetStatusBarIcons = useDarkBottomSheetStatusBarIcons,
                     useDarkBottomSheetNavigationBarIcons = useDarkBottomSheetNavigationBarIcons,
                     textColor = textColor,

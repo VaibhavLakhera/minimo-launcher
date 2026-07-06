@@ -48,6 +48,7 @@ import com.minimo.launcher.utils.showNotificationDrawer
 fun HomeScreen(
     viewModel: HomeViewModel,
     statusBarVisible: Boolean,
+    navigationBarVisible: Boolean,
     onOpenAppDrawer: () -> Unit
 ) {
     val context = LocalContext.current
@@ -65,7 +66,9 @@ fun HomeScreen(
     val swipeRightThreshold = swipeHorizontalThresholdPx
 
     BackHandler {
-        onOpenAppDrawer()
+        if (state.backOpensAppDrawer) {
+            onOpenAppDrawer()
+        }
     }
 
     var swipeYAccumulator by remember { mutableFloatStateOf(0f) }
@@ -142,10 +145,15 @@ fun HomeScreen(
             useDarkIconsOnSurface = useDarkIconsOnSurface
         )
 
-    val boxBackgroundColor = remember(state.enableWallpaper, state.dimWallpaper, surfaceColor) {
+    val boxBackgroundColor = remember(
+        state.enableWallpaper,
+        state.dimWallpaper,
+        state.dimWallpaperPercentage,
+        surfaceColor
+    ) {
         if (state.enableWallpaper) {
             if (state.dimWallpaper) {
-                Color.Black.copy(alpha = 0.20f)
+                Color.Black.copy(alpha = state.dimWallpaperPercentage / 100f)
             } else {
                 Color.Transparent
             }
@@ -204,6 +212,7 @@ fun HomeScreen(
                     nestedScrollConnection = nestedScrollConnection,
                     systemNavigationHeight = systemNavigationHeight,
                     statusBarVisible = statusBarVisible,
+                    navigationBarVisible = navigationBarVisible,
                     useDarkBottomSheetStatusBarIcons = useDarkBottomSheetStatusBarIcons,
                     useDarkBottomSheetNavigationBarIcons = useDarkIconsOnSurface
                 )

@@ -7,16 +7,19 @@ import com.minimo.launcher.utils.HomeAppsAlignmentVertical
 import com.minimo.launcher.utils.HomeClockAlignment
 import com.minimo.launcher.utils.HomeClockMode
 import com.minimo.launcher.utils.MinimoSettingsPosition
+import com.minimo.launcher.utils.ScreenOrientation
 
 data class CustomisationState(
     val themeMode: ThemeMode? = null,
     val fontPreference: String = "",
+    val screenOrientation: ScreenOrientation = ScreenOrientation.Portrait,
     val homeAppsAlignmentHorizontal: HomeAppsAlignmentHorizontal? = null,
     val drawerAppsAlignmentHorizontal: HomeAppsAlignmentHorizontal? = null,
     val homeAppsAlignmentVertical: HomeAppsAlignmentVertical? = null,
     val homeClockAlignment: HomeClockAlignment? = null,
     val showHomeClock: Boolean = false,
     val showStatusBar: Boolean = true,
+    val showNavigationBar: Boolean = true,
     val homeTextSize: Float = Constants.DEFAULT_HOME_TEXT_SIZE.toFloat(),
     val autoOpenKeyboardAllApps: Boolean = false,
     val dynamicTheme: Boolean = false,
@@ -38,6 +41,7 @@ data class CustomisationState(
     val showScreenTimeWidget: Boolean = false,
     val lightTextOnWallpaper: Boolean = true,
     val dimWallpaper: Boolean = false,
+    val dimWallpaperPercentage: Float = Constants.DEFAULT_DIM_WALLPAPER_PERCENTAGE.toFloat(),
     val clockAppPreference: String = "",
     val clockAppName: String = "",
     val batteryAppPreference: String = "",
@@ -52,5 +56,6 @@ data class CustomisationState(
     val swipeRightAppName: String = "",
     val minimoSettingsPosition: MinimoSettingsPosition = MinimoSettingsPosition.Auto,
     val keyboardOpenDelay: Long = Constants.DEFAULT_KEYBOARD_OPEN_DELAY,
-    val enableFastScroller: Boolean = false
+    val enableFastScroller: Boolean = false,
+    val backOpensAppDrawer: Boolean = true
 )

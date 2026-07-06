@@ -65,6 +65,7 @@ import com.minimo.launcher.ui.settings.customisation.components.AppsAlignmentHor
 import com.minimo.launcher.ui.settings.customisation.components.AppsAlignmentVerticalDropdown
 import com.minimo.launcher.ui.settings.customisation.components.ClockAlignmentDropdown
 import com.minimo.launcher.ui.settings.customisation.components.ClockModeDropdown
+import com.minimo.launcher.ui.settings.customisation.components.DimPercentageSlider
 import com.minimo.launcher.ui.settings.customisation.components.EnableAccessibilityDialog
 import com.minimo.launcher.ui.settings.customisation.components.EnableAppUsageDialog
 import com.minimo.launcher.ui.settings.customisation.components.EnableNotificationsDialog
@@ -72,6 +73,7 @@ import com.minimo.launcher.ui.settings.customisation.components.EnableSetWallpap
 import com.minimo.launcher.ui.settings.customisation.components.FontDropdown
 import com.minimo.launcher.ui.settings.customisation.components.IgnoreSpecialCharacters
 import com.minimo.launcher.ui.settings.customisation.components.MinimoSettingsPositionDropdown
+import com.minimo.launcher.ui.settings.customisation.components.OrientationDropdown
 import com.minimo.launcher.ui.settings.customisation.components.ThemeDropdown
 import com.minimo.launcher.ui.settings.customisation.components.ToggleItem
 import com.minimo.launcher.ui.theme.Dimens
@@ -84,6 +86,7 @@ import com.minimo.launcher.utils.HomeAppsAlignmentVertical
 import com.minimo.launcher.utils.HomeClockAlignment
 import com.minimo.launcher.utils.HomeClockMode
 import com.minimo.launcher.utils.MinimoSettingsPosition
+import com.minimo.launcher.utils.ScreenOrientation
 import com.minimo.launcher.utils.StringUtils
 import com.minimo.launcher.utils.hasLockScreenPermission
 import com.minimo.launcher.utils.isAppUsagePermissionGranted
@@ -177,6 +180,28 @@ fun CustomisationScreen(
                 .fillMaxSize()
                 .padding(paddingValues),
         ) {
+            OrientationDropdown(
+                selectedOption = StringUtils.screenOrientationText(
+                    context = context,
+                    orientation = state.screenOrientation
+                ),
+                options = listOf(
+                    ScreenOrientation.Portrait to StringUtils.screenOrientationText(
+                        context,
+                        ScreenOrientation.Portrait
+                    ),
+                    ScreenOrientation.Landscape to StringUtils.screenOrientationText(
+                        context,
+                        ScreenOrientation.Landscape
+                    ),
+                    ScreenOrientation.Auto to StringUtils.screenOrientationText(
+                        context,
+                        ScreenOrientation.Auto
+                    )
+                ),
+                onOptionSelected = viewModel::onScreenOrientationChanged
+            )
+
             FontDropdown(
                 selectedFont = state.fontPreference,
                 onFontSelected = viewModel::onFontPreferenceChanged
@@ -240,6 +265,15 @@ fun CustomisationScreen(
                     isChecked = state.dimWallpaper,
                     onToggleClick = viewModel::onToggleDimWallpaper
                 )
+
+                if (state.dimWallpaper) {
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    DimPercentageSlider(
+                        dimPercentage = state.dimWallpaperPercentage,
+                        onDimPercentageChanged = viewModel::onDimWallpaperPercentageChanged
+                    )
+                }
             }
 
             ToggleItem(
@@ -457,6 +491,14 @@ fun CustomisationScreen(
                 onToggleClick = viewModel::onToggleShowStatusBar
             )
 
+            Spacer(modifier = Modifier.height(4.dp))
+
+            ToggleItem(
+                title = stringResource(R.string.show_navigation_bar),
+                isChecked = state.showNavigationBar,
+                onToggleClick = viewModel::onToggleShowNavigationBar
+            )
+
             HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
 
             ToggleItem(
@@ -651,6 +693,15 @@ fun CustomisationScreen(
                 subtitle = stringResource(R.string.fast_scroller_description),
                 isChecked = state.enableFastScroller,
                 onToggleClick = viewModel::onToggleFastScroller
+            )
+
+            HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
+
+            ToggleItem(
+                title = stringResource(R.string.back_opens_drawer),
+                subtitle = stringResource(R.string.back_opens_drawer_description),
+                isChecked = state.backOpensAppDrawer,
+                onToggleClick = viewModel::onToggleBackOpensAppDrawer
             )
 
             Spacer(modifier = Modifier.height(8.dp))

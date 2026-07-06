@@ -43,6 +43,7 @@ fun AppTheme(
     blackTheme: Boolean,
     useDynamicTheme: Boolean,
     statusBarVisible: Boolean,
+    navigationBarVisible: Boolean,
     setWallpaperToThemeColor: Boolean,
     enableWallpaper: Boolean,
     isHomeScreen: Boolean,
@@ -120,12 +121,21 @@ fun AppTheme(
                 insetsController.isAppearanceLightNavigationBars = isLightTheme
             }
 
+            if (!statusBarVisible || !navigationBarVisible) {
+                insetsController.systemBarsBehavior =
+                    WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            }
+
             if (statusBarVisible) {
                 insetsController.show(WindowInsetsCompat.Type.statusBars())
             } else {
-                insetsController.systemBarsBehavior =
-                    WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
                 insetsController.hide(WindowInsetsCompat.Type.statusBars())
+            }
+
+            if (navigationBarVisible) {
+                insetsController.show(WindowInsetsCompat.Type.navigationBars())
+            } else {
+                insetsController.hide(WindowInsetsCompat.Type.navigationBars())
             }
 
             window.setBackgroundDrawable(surfaceColor.toDrawable())

@@ -33,6 +33,7 @@ fun AppBottomSheetDialog(
     appName: String,
     onDismiss: () -> Unit,
     statusBarVisible: Boolean = true,
+    navigationBarVisible: Boolean = true,
     useDarkStatusBarIcons: Boolean? = null,
     useDarkNavigationBarIcons: Boolean? = null,
     content: @Composable ColumnScope.() -> Unit,
@@ -56,7 +57,10 @@ fun AppBottomSheetDialog(
         dragHandle = null,
         properties = properties
     ) {
-        ApplyBottomSheetWindowPreferences(statusBarVisible)
+        ApplyBottomSheetWindowPreferences(
+            statusBarVisible = statusBarVisible,
+            navigationBarVisible = navigationBarVisible
+        )
 
         Text(
             text = appName,
@@ -76,7 +80,10 @@ fun AppBottomSheetDialog(
 }
 
 @Composable
-private fun ApplyBottomSheetWindowPreferences(statusBarVisible: Boolean) {
+private fun ApplyBottomSheetWindowPreferences(
+    statusBarVisible: Boolean,
+    navigationBarVisible: Boolean
+) {
     val view = LocalView.current
     SideEffect {
         val window = ((view as? DialogWindowProvider) ?: (view.parent as? DialogWindowProvider))
@@ -87,12 +94,21 @@ private fun ApplyBottomSheetWindowPreferences(statusBarVisible: Boolean) {
         }
 
         val insetsController = WindowCompat.getInsetsController(window, view)
+        if (!statusBarVisible || !navigationBarVisible) {
+            insetsController.systemBarsBehavior =
+                WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        }
+
         if (statusBarVisible) {
             insetsController.show(WindowInsetsCompat.Type.statusBars())
         } else {
-            insetsController.systemBarsBehavior =
-                WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
             insetsController.hide(WindowInsetsCompat.Type.statusBars())
+        }
+
+        if (navigationBarVisible) {
+            insetsController.show(WindowInsetsCompat.Type.navigationBars())
+        } else {
+            insetsController.hide(WindowInsetsCompat.Type.navigationBars())
         }
     }
 }

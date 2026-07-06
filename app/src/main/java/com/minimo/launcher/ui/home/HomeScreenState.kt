@@ -39,6 +39,7 @@ data class HomeScreenState(
     val enableWallpaper: Boolean = false,
     val lightTextOnWallpaper: Boolean = true,
     val dimWallpaper: Boolean = false,
+    val dimWallpaperPercentage: Int = Constants.DEFAULT_DIM_WALLPAPER_PERCENTAGE,
     val clockAppPreference: String = "",
     val batteryAppPreference: String = "",
     val calendarAppPreference: String = "",
@@ -47,5 +48,6 @@ data class HomeScreenState(
     val swipeRightAppPreference: String = "",
     val minimoSettingsPosition: MinimoSettingsPosition = MinimoSettingsPosition.Auto,
     val keyboardOpenDelay: Long = Constants.DEFAULT_KEYBOARD_OPEN_DELAY,
-    val enableFastScroller: Boolean = false
+    val enableFastScroller: Boolean = false,
+    val backOpensAppDrawer: Boolean = true
 )
