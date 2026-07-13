@@ -8,6 +8,9 @@ object Constants {
     const val DEFAULT_HOME_TEXT_SIZE = 20
     val HOME_TEXT_SIZE_RANGE by lazy { 16f..50f }
 
+    const val DEFAULT_APP_ICON_SIZE_PERCENT = 160
+    val APP_ICON_SIZE_PERCENT_RANGE by lazy { 100f..180f }
+
     const val DEFAULT_HOME_VERTICAL_PADDING = 16
     val HOME_VERTICAL_PADDING_RANGE by lazy { 4f..20f }
 
@@ -23,6 +26,10 @@ object Constants {
 
 enum class HomeAppsAlignmentHorizontal {
     Start, Center, End
+}
+
+enum class AppIconAlignment {
+    Left, Right
 }
 
 enum class HomeAppsAlignmentVertical {

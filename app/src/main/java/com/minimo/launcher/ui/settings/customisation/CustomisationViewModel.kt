@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.minimo.launcher.data.AppInfoDao
 import com.minimo.launcher.data.PreferenceHelper
 import com.minimo.launcher.ui.theme.ThemeMode
+import com.minimo.launcher.utils.AppIconAlignment
 import com.minimo.launcher.utils.HomeAppsAlignmentHorizontal
 import com.minimo.launcher.utils.HomeAppsAlignmentVertical
 import com.minimo.launcher.utils.HomeClockAlignment
@@ -53,6 +54,11 @@ class CustomisationViewModel @Inject constructor(
                             showBatteryLevel = prefs.showBatteryLevel,
                             showHiddenAppsInSearch = prefs.showHiddenAppsInSearch,
                             drawerSearchBarAtBottom = prefs.drawerSearchBarAtBottom,
+                            showAppIconInHome = prefs.showAppIconInHome,
+                            showAppIconInDrawer = prefs.showAppIconInDrawer,
+                            homeAppIconAlignment = prefs.homeAppIconAlignment,
+                            drawerAppIconAlignment = prefs.drawerAppIconAlignment,
+                            appIconSizePercent = prefs.appIconSizePercent.toFloat(),
                             applyHomeAppSizeToAllApps = prefs.applyHomeAppSizeToAllApps,
                             blackTheme = prefs.blackTheme,
                             setWallpaperToThemeColor = prefs.setWallpaperToThemeColor,
@@ -288,6 +294,36 @@ class CustomisationViewModel @Inject constructor(
     fun onToggleDrawerSearchBarAtBottom() {
         viewModelScope.launch {
             preferenceHelper.setDrawerSearchBarAtBottom(_state.value.drawerSearchBarAtBottom.not())
+        }
+    }
+
+    fun onToggleShowAppIconInHome() {
+        viewModelScope.launch {
+            preferenceHelper.setShowAppIconInHome(_state.value.showAppIconInHome.not())
+        }
+    }
+
+    fun onToggleShowAppIconInDrawer() {
+        viewModelScope.launch {
+            preferenceHelper.setShowAppIconInDrawer(_state.value.showAppIconInDrawer.not())
+        }
+    }
+
+    fun onHomeAppIconAlignmentChanged(alignment: AppIconAlignment) {
+        viewModelScope.launch {
+            preferenceHelper.setHomeAppIconAlignment(alignment)
+        }
+    }
+
+    fun onDrawerAppIconAlignmentChanged(alignment: AppIconAlignment) {
+        viewModelScope.launch {
+            preferenceHelper.setDrawerAppIconAlignment(alignment)
+        }
+    }
+
+    fun onAppIconSizePercentChanged(percent: Int) {
+        viewModelScope.launch {
+            preferenceHelper.setAppIconSizePercent(percent)
         }
     }
 

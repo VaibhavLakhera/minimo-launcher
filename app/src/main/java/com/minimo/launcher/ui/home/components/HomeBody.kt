@@ -12,14 +12,18 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
@@ -146,6 +150,22 @@ fun HomeBody(
             verticalArrangement = state.appsArrangementVertical
         ) {
             items(items = state.favouriteApps, key = { it.id }) { appInfo ->
+                val textSize = state.homeTextSize.sp
+                val appIconSizeScale = state.appIconSizePercent / 100f
+                val iconSizePx = with(LocalDensity.current) {
+                    appIconSizeFor(textSize, appIconSizeScale).roundToPx()
+                }
+                val appIcon by produceState<ImageBitmap?>(
+                    initialValue = null,
+                    key1 = state.showAppIconInHome,
+                    key2 = appInfo.id,
+                    key3 = iconSizePx
+                ) {
+                    if (state.showAppIconInHome) {
+                        value = viewModel.loadAppIcon(appInfo, iconSizePx)
+                    }
+                }
+
                 AppNameItem(
                     modifier = Modifier.animateItem(),
                     appName = appInfo.name,
@@ -168,9 +188,13 @@ fun HomeBody(
                     onToggleHideClick = { viewModel.onToggleHideClick(appInfo) },
                     onAppInfoClick = { context.launchAppInfo(appInfo) },
                     appsArrangement = state.appsArrangementHorizontal,
-                    textSize = state.homeTextSize.sp,
+                    textSize = textSize,
                     onUninstallClick = { context.uninstallApp(appInfo) },
                     showNotificationDot = appInfo.showNotificationDot,
+                    showAppIcon = state.showAppIconInHome,
+                    appIcon = appIcon,
+                    appIconSizeScale = appIconSizeScale,
+                    appIconAlignment = state.homeAppIconAlignment,
                     verticalPadding = state.homeAppVerticalPadding.dp,
                     bottomSheetStatusBarVisible = statusBarVisible,
                     bottomSheetNavigationBarVisible = navigationBarVisible,

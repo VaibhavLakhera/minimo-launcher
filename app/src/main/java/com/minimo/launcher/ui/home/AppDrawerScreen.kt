@@ -30,6 +30,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -40,6 +41,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
@@ -47,6 +49,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.LocalView
@@ -66,6 +69,7 @@ import com.minimo.launcher.ui.home.components.AppDrawerFastScroller
 import com.minimo.launcher.ui.home.components.AppDrawerSearch
 import com.minimo.launcher.ui.home.components.AppNameItem
 import com.minimo.launcher.ui.home.components.MinimoSettingsItem
+import com.minimo.launcher.ui.home.components.appIconSizeFor
 import com.minimo.launcher.utils.Constants
 import com.minimo.launcher.utils.launchApp
 import com.minimo.launcher.utils.launchAppInfo
@@ -273,9 +277,32 @@ fun AppDrawerScreen(
                                         hideKeyboardWithClearFocus()
                                         onSettingsClick()
                                     },
-                                    verticalPadding = state.homeAppVerticalPadding.dp
+                                    verticalPadding = state.homeAppVerticalPadding.dp,
+                                    showAppIcon = state.showAppIconInDrawer,
+                                    appIconSizeScale = state.appIconSizePercent / 100f,
+                                    appIconAlignment = state.drawerAppIconAlignment
                                 )
                             } else {
+                                val textSize = if (state.applyHomeAppSizeToAllApps) {
+                                    state.homeTextSize.sp
+                                } else {
+                                    20.sp
+                                }
+                                val appIconSizeScale = state.appIconSizePercent / 100f
+                                val iconSizePx = with(LocalDensity.current) {
+                                    appIconSizeFor(textSize, appIconSizeScale).roundToPx()
+                                }
+                                val appIcon by produceState<ImageBitmap?>(
+                                    initialValue = null,
+                                    key1 = state.showAppIconInDrawer,
+                                    key2 = appInfo.id,
+                                    key3 = iconSizePx
+                                ) {
+                                    if (state.showAppIconInDrawer) {
+                                        value = viewModel.loadAppIcon(appInfo, iconSizePx)
+                                    }
+                                }
+
                                 AppNameItem(
                                     modifier = Modifier.animateItem(),
                                     appName = appInfo.name,
@@ -299,12 +326,12 @@ fun AppDrawerScreen(
                                     appsArrangement = state.drawerAppsArrangementHorizontal,
                                     onLongClick = ::hideKeyboardWithClearFocus,
                                     onUninstallClick = { context.uninstallApp(appInfo) },
-                                    textSize = if (state.applyHomeAppSizeToAllApps) {
-                                        state.homeTextSize.sp
-                                    } else {
-                                        20.sp
-                                    },
+                                    textSize = textSize,
                                     showNotificationDot = appInfo.showNotificationDot,
+                                    showAppIcon = state.showAppIconInDrawer,
+                                    appIcon = appIcon,
+                                    appIconSizeScale = appIconSizeScale,
+                                    appIconAlignment = state.drawerAppIconAlignment,
                                     bottomSheetStatusBarVisible = statusBarVisible,
                                     bottomSheetNavigationBarVisible = navigationBarVisible,
                                     useDarkBottomSheetStatusBarIcons = useDarkIconsOnSurface,

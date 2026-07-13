@@ -34,6 +34,13 @@ object StringUtils {
         }
     }
 
+    fun appIconAlignmentText(context: Context, alignment: AppIconAlignment): String {
+        return when (alignment) {
+            AppIconAlignment.Left -> context.getString(R.string.left)
+            AppIconAlignment.Right -> context.getString(R.string.right)
+        }
+    }
+
     fun homeAppsAlignmentVerticalText(
         context: Context,
         alignment: HomeAppsAlignmentVertical?

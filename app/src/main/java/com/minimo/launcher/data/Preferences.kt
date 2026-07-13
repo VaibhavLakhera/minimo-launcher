@@ -1,6 +1,7 @@
 package com.minimo.launcher.data
 
 import com.minimo.launcher.ui.theme.ThemeMode
+import com.minimo.launcher.utils.AppIconAlignment
 import com.minimo.launcher.utils.Constants
 import com.minimo.launcher.utils.HomeAppsAlignmentHorizontal
 import com.minimo.launcher.utils.HomeAppsAlignmentVertical
@@ -36,6 +37,11 @@ data class HomePreferences(
     val showBatteryLevel: Boolean = false,
     val showHiddenAppsInSearch: Boolean = true,
     val drawerSearchBarAtBottom: Boolean = false,
+    val showAppIconInHome: Boolean = false,
+    val showAppIconInDrawer: Boolean = false,
+    val homeAppIconAlignment: AppIconAlignment = AppIconAlignment.Left,
+    val drawerAppIconAlignment: AppIconAlignment = AppIconAlignment.Left,
+    val appIconSizePercent: Int = Constants.DEFAULT_APP_ICON_SIZE_PERCENT,
     val applyHomeAppSizeToAllApps: Boolean = false,
     val autoOpenApp: Boolean = false,
     val homeAppVerticalPadding: Int = Constants.DEFAULT_HOME_VERTICAL_PADDING,
@@ -78,6 +84,11 @@ data class CustomisationPreferences(
     val showBatteryLevel: Boolean = false,
     val showHiddenAppsInSearch: Boolean = true,
     val drawerSearchBarAtBottom: Boolean = false,
+    val showAppIconInHome: Boolean = false,
+    val showAppIconInDrawer: Boolean = false,
+    val homeAppIconAlignment: AppIconAlignment = AppIconAlignment.Left,
+    val drawerAppIconAlignment: AppIconAlignment = AppIconAlignment.Left,
+    val appIconSizePercent: Int = Constants.DEFAULT_APP_ICON_SIZE_PERCENT,
     val applyHomeAppSizeToAllApps: Boolean = false,
     val blackTheme: Boolean = false,
     val setWallpaperToThemeColor: Boolean = false,

@@ -6,10 +6,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
@@ -25,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
@@ -34,6 +37,8 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import com.minimo.launcher.R
 import com.minimo.launcher.ui.theme.Dimens
+import com.minimo.launcher.utils.AppIconAlignment
+import com.minimo.launcher.utils.Constants
 
 @Composable
 fun AppNameItem(
@@ -45,6 +50,10 @@ fun AppNameItem(
     appsArrangement: Arrangement.Horizontal,
     textSize: TextUnit,
     showNotificationDot: Boolean,
+    showAppIcon: Boolean = false,
+    appIcon: ImageBitmap? = null,
+    appIconSizeScale: Float = Constants.DEFAULT_APP_ICON_SIZE_PERCENT / 100f,
+    appIconAlignment: AppIconAlignment = AppIconAlignment.Left,
     onClick: () -> Unit,
     onToggleFavouriteClick: () -> Unit,
     onRenameClick: () -> Unit,
@@ -64,8 +73,8 @@ fun AppNameItem(
     var appBottomSheetVisible by remember { mutableStateOf(false) }
     val lineHeight by remember { derivedStateOf { textSize * 1.2 } }
 
-    val paddingValues = remember(isWorkProfile, showNotificationDot) {
-        if (isWorkProfile || showNotificationDot) {
+    val paddingValues = remember(isWorkProfile, showNotificationDot, showAppIcon) {
+        if (!showAppIcon && (isWorkProfile || showNotificationDot)) {
             PaddingValues(
                 start = if (isWorkProfile) 0.dp else Dimens.APP_HORIZONTAL_SPACING,
                 end = if (showNotificationDot) 0.dp else Dimens.APP_HORIZONTAL_SPACING,
@@ -92,7 +101,15 @@ fun AppNameItem(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = appsArrangement
     ) {
-        if (isWorkProfile) {
+        if (showAppIcon && appIconAlignment == AppIconAlignment.Left) {
+            AppIcon(
+                image = appIcon,
+                size = appIconSizeFor(textSize, appIconSizeScale),
+                isWorkProfile = isWorkProfile,
+                showNotificationDot = showNotificationDot
+            )
+            Spacer(modifier = Modifier.width(Dimens.APP_ICON_LABEL_SPACING))
+        } else if (!showAppIcon && isWorkProfile) {
             Box(modifier = Modifier.padding(horizontal = 8.dp)) {
                 if (shadow != null) {
                     Icon(
@@ -119,6 +136,11 @@ fun AppNameItem(
 
         Text(
             text = appName,
+            modifier = if (showAppIcon && appIconAlignment == AppIconAlignment.Right) {
+                Modifier.weight(1f, fill = false)
+            } else {
+                Modifier
+            },
             color = textColor,
             fontSize = textSize,
             lineHeight = lineHeight,
@@ -127,7 +149,17 @@ fun AppNameItem(
             style = LocalTextStyle.current.copy(shadow = shadow)
         )
 
-        if (showNotificationDot) {
+        if (showAppIcon && appIconAlignment == AppIconAlignment.Right) {
+            Spacer(modifier = Modifier.width(Dimens.APP_ICON_LABEL_SPACING))
+            AppIcon(
+                image = appIcon,
+                size = appIconSizeFor(textSize, appIconSizeScale),
+                isWorkProfile = isWorkProfile,
+                showNotificationDot = showNotificationDot
+            )
+        }
+
+        if (!showAppIcon && showNotificationDot) {
             Box(modifier = Modifier.padding(horizontal = 11.dp)) {
                 if (shadow != null) {
                     Box(

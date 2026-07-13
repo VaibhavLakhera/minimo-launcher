@@ -1,6 +1,7 @@
 package com.minimo.launcher.ui.settings.customisation
 
 import com.minimo.launcher.ui.theme.ThemeMode
+import com.minimo.launcher.utils.AppIconAlignment
 import com.minimo.launcher.utils.Constants
 import com.minimo.launcher.utils.HomeAppsAlignmentHorizontal
 import com.minimo.launcher.utils.HomeAppsAlignmentVertical
@@ -32,6 +33,11 @@ data class CustomisationState(
     val showBatteryLevel: Boolean = false,
     val showHiddenAppsInSearch: Boolean = true,
     val drawerSearchBarAtBottom: Boolean = false,
+    val showAppIconInHome: Boolean = false,
+    val showAppIconInDrawer: Boolean = false,
+    val homeAppIconAlignment: AppIconAlignment = AppIconAlignment.Left,
+    val drawerAppIconAlignment: AppIconAlignment = AppIconAlignment.Left,
+    val appIconSizePercent: Float = Constants.DEFAULT_APP_ICON_SIZE_PERCENT.toFloat(),
     val applyHomeAppSizeToAllApps: Boolean = false,
     val autoOpenApp: Boolean = false,
     val notificationDot: Boolean = false,

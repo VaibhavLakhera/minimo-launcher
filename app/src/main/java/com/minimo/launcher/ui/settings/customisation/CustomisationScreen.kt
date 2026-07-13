@@ -60,6 +60,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.minimo.launcher.R
 import com.minimo.launcher.ui.settings.app_picker.AppPickerDialog
+import com.minimo.launcher.ui.settings.customisation.components.AppIconAlignmentDropdown
+import com.minimo.launcher.ui.settings.customisation.components.AppIconSizeSlider
 import com.minimo.launcher.ui.settings.customisation.components.AppSizeSlider
 import com.minimo.launcher.ui.settings.customisation.components.AppsAlignmentHorizontalDropdown
 import com.minimo.launcher.ui.settings.customisation.components.AppsAlignmentVerticalDropdown
@@ -79,6 +81,7 @@ import com.minimo.launcher.ui.settings.customisation.components.ToggleItem
 import com.minimo.launcher.ui.theme.Dimens
 import com.minimo.launcher.ui.theme.ThemeMode
 import com.minimo.launcher.utils.AndroidUtils
+import com.minimo.launcher.utils.AppIconAlignment
 import com.minimo.launcher.utils.Constants
 import com.minimo.launcher.utils.Constants.KEYBOARD_OPEN_DELAY_RANGE
 import com.minimo.launcher.utils.HomeAppsAlignmentHorizontal
@@ -292,11 +295,77 @@ fun CustomisationScreen(
 
             Spacer(modifier = Modifier.height(8.dp))
 
+            ToggleItem(
+                title = stringResource(R.string.app_icon_in_home),
+                isChecked = state.showAppIconInHome,
+                onToggleClick = viewModel::onToggleShowAppIconInHome
+            )
+
+            if (state.showAppIconInHome) {
+                AppIconAlignmentDropdown(
+                    titleRes = R.string.home_icon_alignment,
+                    selectedOption = StringUtils.appIconAlignmentText(
+                        context,
+                        state.homeAppIconAlignment
+                    ),
+                    options = listOf(
+                        AppIconAlignment.Left to StringUtils.appIconAlignmentText(
+                            context,
+                            AppIconAlignment.Left
+                        ),
+                        AppIconAlignment.Right to StringUtils.appIconAlignmentText(
+                            context,
+                            AppIconAlignment.Right
+                        )
+                    ),
+                    onOptionSelected = viewModel::onHomeAppIconAlignmentChanged
+                )
+            }
+
+            ToggleItem(
+                title = stringResource(R.string.app_icon_in_drawer),
+                isChecked = state.showAppIconInDrawer,
+                onToggleClick = viewModel::onToggleShowAppIconInDrawer
+            )
+
+            if (state.showAppIconInDrawer) {
+                AppIconAlignmentDropdown(
+                    titleRes = R.string.drawer_icon_alignment,
+                    selectedOption = StringUtils.appIconAlignmentText(
+                        context,
+                        state.drawerAppIconAlignment
+                    ),
+                    options = listOf(
+                        AppIconAlignment.Left to StringUtils.appIconAlignmentText(
+                            context,
+                            AppIconAlignment.Left
+                        ),
+                        AppIconAlignment.Right to StringUtils.appIconAlignmentText(
+                            context,
+                            AppIconAlignment.Right
+                        )
+                    ),
+                    onOptionSelected = viewModel::onDrawerAppIconAlignmentChanged
+                )
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            AppIconSizeSlider(
+                appIconSizePercent = state.appIconSizePercent,
+                onAppIconSizePercentChanged = viewModel::onAppIconSizePercentChanged
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
             AppSizeSlider(
                 homeTextSize = state.homeTextSize,
                 onHomeTextSizeChanged = viewModel::onHomeTextSizeChanged,
                 homeAppVerticalPadding = state.homeAppVerticalPadding,
-                onHomeVerticalPaddingChanged = viewModel::onHomeVerticalPaddingChanged
+                onHomeVerticalPaddingChanged = viewModel::onHomeVerticalPaddingChanged,
+                showAppIcon = state.showAppIconInHome,
+                appIconSizeScale = state.appIconSizePercent / 100f,
+                appIconAlignment = state.homeAppIconAlignment
             )
 
             Spacer(modifier = Modifier.height(8.dp))
