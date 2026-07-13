@@ -68,6 +68,7 @@ class MainActivity : ComponentActivity() {
                 AppNavGraph(
                     navController = navController,
                     homeViewModel = homeViewModel,
+                    enableWallpaper = state.enableWallpaper,
                     statusBarVisible = state.statusBarVisible,
                     navigationBarVisible = state.navigationBarVisible,
                     onBackPressed = {

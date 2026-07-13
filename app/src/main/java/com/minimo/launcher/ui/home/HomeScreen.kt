@@ -47,6 +47,7 @@ import com.minimo.launcher.utils.showNotificationDrawer
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel,
+    enableWallpaper: Boolean,
     statusBarVisible: Boolean,
     navigationBarVisible: Boolean,
     onOpenAppDrawer: () -> Unit
@@ -131,7 +132,7 @@ fun HomeScreen(
 
     val useDarkIconsOnSurface = useDarkIconsOnColor(surfaceColor)
     val useDarkNavigationIcons = shouldUseDarkNavigationIcons(
-        enableWallpaper = state.enableWallpaper,
+        enableWallpaper = enableWallpaper,
         lightTextOnWallpaper = state.lightTextOnWallpaper,
         useDarkIconsOnSurface = useDarkIconsOnSurface
     )
@@ -140,18 +141,18 @@ fun HomeScreen(
 
     val useDarkBottomSheetStatusBarIcons =
         shouldUseDarkStatusBarIcons(
-            enableWallpaper = state.enableWallpaper,
+            enableWallpaper = enableWallpaper,
             lightTextOnWallpaper = state.lightTextOnWallpaper,
             useDarkIconsOnSurface = useDarkIconsOnSurface
         )
 
     val boxBackgroundColor = remember(
-        state.enableWallpaper,
+        enableWallpaper,
         state.dimWallpaper,
         state.dimWallpaperPercentage,
         surfaceColor
     ) {
-        if (state.enableWallpaper) {
+        if (enableWallpaper) {
             if (state.dimWallpaper) {
                 Color.Black.copy(alpha = state.dimWallpaperPercentage / 100f)
             } else {
@@ -162,8 +163,8 @@ fun HomeScreen(
         }
     }
 
-    val scaffoldContainerColor = remember(state.enableWallpaper, surfaceColor) {
-        if (state.enableWallpaper) {
+    val scaffoldContainerColor = remember(enableWallpaper, surfaceColor) {
+        if (enableWallpaper) {
             Color.Transparent
         } else {
             surfaceColor
