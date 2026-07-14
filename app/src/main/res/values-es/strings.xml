@@ -56,6 +56,11 @@
     <string name="dynamic_colours">Colores dinámicos</string>
     <string name="adapt_theme_colours_based_on_system_settings">Adaptar los colores del tema según los ajustes del sistema</string>
     <string name="home_app_size">Tamaño de apps en inicio:</string>
+    <string name="app_icon_in_home">Icono de app en Inicio</string>
+    <string name="app_icon_in_drawer">Icono de app en el cajón</string>
+    <string name="home_icon_alignment">Alineación de iconos en Inicio</string>
+    <string name="drawer_icon_alignment">Alineación de iconos en el cajón</string>
+    <string name="app_icon_size">Tamaño del icono de la app:</string>
     <string name="sample_app">App de ejemplo</string>
     <string name="show_home_clock">Mostrar reloj en inicio</string>
     <string name="enable_device_admin_first">¡Activa primero el administrador del dispositivo!</string>

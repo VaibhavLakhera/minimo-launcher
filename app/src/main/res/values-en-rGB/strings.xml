@@ -56,6 +56,11 @@
     <string name="dynamic_colours">Dynamic Colours</string>
     <string name="adapt_theme_colours_based_on_system_settings">Adapt theme colours based on system settings</string>
     <string name="home_app_size">Home App Size:</string>
+    <string name="app_icon_in_home">App Icon on Home</string>
+    <string name="app_icon_in_drawer">App Icon in Drawer</string>
+    <string name="home_icon_alignment">Home Icon Alignment</string>
+    <string name="drawer_icon_alignment">Drawer Icon Alignment</string>
+    <string name="app_icon_size">App Icon Size:</string>
     <string name="sample_app">Sample App</string>
     <string name="show_home_clock">Show Home Clock</string>
     <string name="enable_device_admin_first">Enable Device Admin First!</string>

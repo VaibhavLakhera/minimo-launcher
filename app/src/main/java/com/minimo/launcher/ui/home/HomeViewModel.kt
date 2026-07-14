@@ -13,6 +13,7 @@ import com.minimo.launcher.data.ShortcutInfoDao
 import com.minimo.launcher.data.usecase.UpdateAllAppsUseCase
 import com.minimo.launcher.data.usecase.UpdateAllShortcutsUseCase
 import com.minimo.launcher.ui.entities.AppInfo
+import com.minimo.launcher.utils.AppIconRepository
 import com.minimo.launcher.utils.AppUtils
 import com.minimo.launcher.utils.Constants
 import com.minimo.launcher.utils.HomeAppsAlignmentHorizontal
@@ -50,7 +51,8 @@ class HomeViewModel @Inject constructor(
     private val screenTimeHelper: ScreenTimeHelper,
     private val shortcutInfoDao: ShortcutInfoDao,
     private val updateAllShortcutsUseCase: UpdateAllShortcutsUseCase,
-    private val shortcutsUtils: ShortcutsUtils
+    private val shortcutsUtils: ShortcutsUtils,
+    private val appIconRepository: AppIconRepository
 ) : ViewModel() {
     private val _state = MutableStateFlow(HomeScreenState())
     val state: StateFlow<HomeScreenState> = _state
@@ -149,6 +151,13 @@ class HomeViewModel @Inject constructor(
             preferenceHelper.getHomePreferencesFlow()
                 .distinctUntilChanged()
                 .collect { prefs ->
+                    if (!prefs.showAppIconInHome &&
+                        !prefs.showAppIconInDrawer &&
+                        (_state.value.showAppIconInHome || _state.value.showAppIconInDrawer)
+                    ) {
+                        appIconRepository.clear()
+                    }
+
                     _state.update { state ->
                         val homeAppsArrangementHorizontal =
                             when (prefs.homeAppsAlignmentHorizontal) {
@@ -225,6 +234,11 @@ class HomeViewModel @Inject constructor(
                             showBatteryLevel = prefs.showBatteryLevel,
                             showHiddenAppsInSearch = prefs.showHiddenAppsInSearch,
                             drawerSearchBarAtBottom = prefs.drawerSearchBarAtBottom,
+                            showAppIconInHome = prefs.showAppIconInHome,
+                            showAppIconInDrawer = prefs.showAppIconInDrawer,
+                            homeAppIconAlignment = prefs.homeAppIconAlignment,
+                            drawerAppIconAlignment = prefs.drawerAppIconAlignment,
+                            appIconSizePercent = prefs.appIconSizePercent,
                             applyHomeAppSizeToAllApps = prefs.applyHomeAppSizeToAllApps,
                             autoOpenApp = prefs.autoOpenApp,
                             homeAppVerticalPadding = prefs.homeAppVerticalPadding,
@@ -253,6 +267,13 @@ class HomeViewModel @Inject constructor(
                 }
         }
     }
+
+    suspend fun loadAppIcon(app: AppInfo, sizePx: Int) = appIconRepository.loadIcon(
+        packageName = app.packageName,
+        className = app.className,
+        userHandle = app.userHandle,
+        sizePx = sizePx
+    )
 
     private fun getCombinedAllApps(
         dbApps: List<AppInfo>,

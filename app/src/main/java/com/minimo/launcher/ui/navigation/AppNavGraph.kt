@@ -45,6 +45,7 @@ object Routes {
 fun AppNavGraph(
     navController: NavHostController,
     homeViewModel: HomeViewModel,
+    enableWallpaper: Boolean,
     statusBarVisible: Boolean,
     navigationBarVisible: Boolean,
     onBackPressed: () -> Unit
@@ -84,6 +85,7 @@ fun AppNavGraph(
         composable(route = Routes.HOME) {
             HomeScreen(
                 viewModel = homeViewModel,
+                enableWallpaper = enableWallpaper,
                 statusBarVisible = statusBarVisible,
                 navigationBarVisible = navigationBarVisible,
                 onOpenAppDrawer = {

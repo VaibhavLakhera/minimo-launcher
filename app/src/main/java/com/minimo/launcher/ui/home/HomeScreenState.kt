@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.ui.Alignment
 import com.minimo.launcher.ui.entities.AppInfo
 import com.minimo.launcher.ui.entities.ShortcutInfo
+import com.minimo.launcher.utils.AppIconAlignment
 import com.minimo.launcher.utils.Constants
 import com.minimo.launcher.utils.HomeClockMode
 import com.minimo.launcher.utils.MinimoSettingsPosition
@@ -29,6 +30,11 @@ data class HomeScreenState(
     val showBatteryLevel: Boolean = false,
     val showHiddenAppsInSearch: Boolean = true,
     val drawerSearchBarAtBottom: Boolean = false,
+    val showAppIconInHome: Boolean = false,
+    val showAppIconInDrawer: Boolean = false,
+    val homeAppIconAlignment: AppIconAlignment = AppIconAlignment.Left,
+    val drawerAppIconAlignment: AppIconAlignment = AppIconAlignment.Left,
+    val appIconSizePercent: Int = Constants.DEFAULT_APP_ICON_SIZE_PERCENT,
     val applyHomeAppSizeToAllApps: Boolean = false,
     val autoOpenApp: Boolean = false,
     val homeAppVerticalPadding: Int = Constants.DEFAULT_HOME_VERTICAL_PADDING,

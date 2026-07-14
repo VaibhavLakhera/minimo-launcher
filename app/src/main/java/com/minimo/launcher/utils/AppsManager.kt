@@ -29,7 +29,8 @@ class AppsManager @Inject constructor(
     private val addUpdateAppsUseCase: AddUpdateAppsUseCase,
     private val removeAppsUseCase: RemoveAppsUseCase,
     private val updateAllAppsUseCase: UpdateAllAppsUseCase,
-    private val updateAllShortcutsUseCase: UpdateAllShortcutsUseCase
+    private val updateAllShortcutsUseCase: UpdateAllShortcutsUseCase,
+    private val appIconRepository: AppIconRepository
 ) : LauncherApps.Callback() {
     private val launcherApps = context.getSystemService(LauncherApps::class.java)
     private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
@@ -40,6 +41,7 @@ class AppsManager @Inject constructor(
             when (intent?.action) {
                 Intent.ACTION_MANAGED_PROFILE_ADDED,
                 Intent.ACTION_MANAGED_PROFILE_REMOVED -> {
+                    appIconRepository.clear()
                     coroutineScope.launch {
                         mutex.withLock {
                             updateAllAppsUseCase.invoke()
@@ -62,6 +64,7 @@ class AppsManager @Inject constructor(
 
     override fun onPackageRemoved(packageName: String?, user: UserHandle?) {
         if (packageName == null || user == null) return
+        appIconRepository.removeIcon(packageName, user.hashCode())
         coroutineScope.launch {
             mutex.withLock {
                 removeAppsUseCase.invoke(packageName, user.hashCode())
@@ -71,6 +74,7 @@ class AppsManager @Inject constructor(
 
     override fun onPackageAdded(packageName: String?, user: UserHandle?) {
         if (packageName == null || user == null) return
+        appIconRepository.removeIcon(packageName, user.hashCode())
         coroutineScope.launch {
             mutex.withLock {
                 addUpdateAppsUseCase.invoke(
@@ -84,6 +88,7 @@ class AppsManager @Inject constructor(
 
     override fun onPackageChanged(packageName: String?, user: UserHandle?) {
         if (packageName == null || user == null) return
+        appIconRepository.removeIcon(packageName, user.hashCode())
         coroutineScope.launch {
             mutex.withLock {
                 addUpdateAppsUseCase.invoke(
@@ -101,6 +106,7 @@ class AppsManager @Inject constructor(
         replacing: Boolean
     ) {
         if (packageNames == null || user == null) return
+        packageNames.forEach { appIconRepository.removeIcon(it, user.hashCode()) }
         coroutineScope.launch {
             mutex.withLock {
                 packageNames.forEach { packageName ->
@@ -120,6 +126,7 @@ class AppsManager @Inject constructor(
         replacing: Boolean
     ) {
         if (packageNames == null || user == null) return
+        packageNames.forEach { appIconRepository.removeIcon(it, user.hashCode()) }
         coroutineScope.launch {
             mutex.withLock {
                 packageNames.forEach { packageName ->
@@ -134,6 +141,7 @@ class AppsManager @Inject constructor(
 
     override fun onPackagesUnsuspended(packageNames: Array<out String>?, user: UserHandle?) {
         if (packageNames == null || user == null) return
+        packageNames.forEach { appIconRepository.removeIcon(it, user.hashCode()) }
         coroutineScope.launch {
             mutex.withLock {
                 packageNames.forEach { packageName ->

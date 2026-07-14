@@ -8,6 +8,7 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.minimo.launcher.ui.theme.ThemeMode
+import com.minimo.launcher.utils.AppIconAlignment
 import com.minimo.launcher.utils.Constants
 import com.minimo.launcher.utils.HomeAppsAlignmentHorizontal
 import com.minimo.launcher.utils.HomeAppsAlignmentVertical
@@ -57,6 +58,16 @@ class PreferenceHelper @Inject constructor(
             booleanPreferencesKey("KEY_SHOW_HIDDEN_APPS_IN_SEARCH")
         private val KEY_DRAWER_SEARCH_BAR_AT_BOTTOM =
             booleanPreferencesKey("KEY_DRAWER_SEARCH_BAR_AT_BOTTOM")
+        private val KEY_SHOW_APP_ICON_IN_HOME =
+            booleanPreferencesKey("KEY_SHOW_APP_ICON_IN_HOME")
+        private val KEY_SHOW_APP_ICON_IN_DRAWER =
+            booleanPreferencesKey("KEY_SHOW_APP_ICON_IN_DRAWER")
+        private val KEY_HOME_APP_ICON_ALIGNMENT =
+            stringPreferencesKey("KEY_HOME_APP_ICON_ALIGNMENT")
+        private val KEY_DRAWER_APP_ICON_ALIGNMENT =
+            stringPreferencesKey("KEY_DRAWER_APP_ICON_ALIGNMENT")
+        private val KEY_APP_ICON_SIZE_PERCENT =
+            intPreferencesKey("KEY_APP_ICON_SIZE_PERCENT")
         private val KEY_APPLY_HOME_APP_SIZE_TO_ALL_APPS =
             booleanPreferencesKey("KEY_APPLY_HOME_APP_SIZE_TO_ALL_APPS")
         private val KEY_BLACK_THEME = booleanPreferencesKey("KEY_BLACK_THEME")
@@ -202,6 +213,36 @@ class PreferenceHelper @Inject constructor(
     suspend fun setDrawerSearchBarAtBottom(enable: Boolean) {
         preferences.edit {
             it[KEY_DRAWER_SEARCH_BAR_AT_BOTTOM] = enable
+        }
+    }
+
+    suspend fun setShowAppIconInHome(enable: Boolean) {
+        preferences.edit {
+            it[KEY_SHOW_APP_ICON_IN_HOME] = enable
+        }
+    }
+
+    suspend fun setShowAppIconInDrawer(enable: Boolean) {
+        preferences.edit {
+            it[KEY_SHOW_APP_ICON_IN_DRAWER] = enable
+        }
+    }
+
+    suspend fun setHomeAppIconAlignment(alignment: AppIconAlignment) {
+        preferences.edit {
+            it[KEY_HOME_APP_ICON_ALIGNMENT] = alignment.name
+        }
+    }
+
+    suspend fun setDrawerAppIconAlignment(alignment: AppIconAlignment) {
+        preferences.edit {
+            it[KEY_DRAWER_APP_ICON_ALIGNMENT] = alignment.name
+        }
+    }
+
+    suspend fun setAppIconSizePercent(percent: Int) {
+        preferences.edit {
+            it[KEY_APP_ICON_SIZE_PERCENT] = percent
         }
     }
 
@@ -392,6 +433,16 @@ class PreferenceHelper @Inject constructor(
                 showBatteryLevel = prefs[KEY_SHOW_BATTERY_LEVEL] ?: false,
                 showHiddenAppsInSearch = prefs[KEY_SHOW_HIDDEN_APPS_IN_SEARCH] ?: true,
                 drawerSearchBarAtBottom = prefs[KEY_DRAWER_SEARCH_BAR_AT_BOTTOM] ?: false,
+                showAppIconInHome = prefs[KEY_SHOW_APP_ICON_IN_HOME] ?: false,
+                showAppIconInDrawer = prefs[KEY_SHOW_APP_ICON_IN_DRAWER] ?: false,
+                homeAppIconAlignment = getAppIconAlignmentFromPref(
+                    prefs[KEY_HOME_APP_ICON_ALIGNMENT]
+                ),
+                drawerAppIconAlignment = getAppIconAlignmentFromPref(
+                    prefs[KEY_DRAWER_APP_ICON_ALIGNMENT]
+                ),
+                appIconSizePercent = prefs[KEY_APP_ICON_SIZE_PERCENT]
+                    ?: Constants.DEFAULT_APP_ICON_SIZE_PERCENT,
                 applyHomeAppSizeToAllApps = prefs[KEY_APPLY_HOME_APP_SIZE_TO_ALL_APPS] ?: false,
                 autoOpenApp = prefs[KEY_AUTO_OPEN_APP] ?: false,
                 homeAppVerticalPadding = prefs[KEY_HOME_APP_VERTICAL_PADDING] ?: Constants.DEFAULT_HOME_VERTICAL_PADDING,
@@ -440,6 +491,16 @@ class PreferenceHelper @Inject constructor(
                 showBatteryLevel = prefs[KEY_SHOW_BATTERY_LEVEL] ?: false,
                 showHiddenAppsInSearch = prefs[KEY_SHOW_HIDDEN_APPS_IN_SEARCH] ?: true,
                 drawerSearchBarAtBottom = prefs[KEY_DRAWER_SEARCH_BAR_AT_BOTTOM] ?: false,
+                showAppIconInHome = prefs[KEY_SHOW_APP_ICON_IN_HOME] ?: false,
+                showAppIconInDrawer = prefs[KEY_SHOW_APP_ICON_IN_DRAWER] ?: false,
+                homeAppIconAlignment = getAppIconAlignmentFromPref(
+                    prefs[KEY_HOME_APP_ICON_ALIGNMENT]
+                ),
+                drawerAppIconAlignment = getAppIconAlignmentFromPref(
+                    prefs[KEY_DRAWER_APP_ICON_ALIGNMENT]
+                ),
+                appIconSizePercent = prefs[KEY_APP_ICON_SIZE_PERCENT]
+                    ?: Constants.DEFAULT_APP_ICON_SIZE_PERCENT,
                 applyHomeAppSizeToAllApps = prefs[KEY_APPLY_HOME_APP_SIZE_TO_ALL_APPS] ?: false,
                 blackTheme = getBlackThemeFromPref(prefs[KEY_BLACK_THEME], prefs[KEY_THEME_MODE]),
                 setWallpaperToThemeColor = prefs[KEY_SET_WALLPAPER_TO_THEME_COLOR] ?: false,
@@ -504,6 +565,10 @@ class PreferenceHelper @Inject constructor(
             return HomeAppsAlignmentHorizontal.valueOf(alignment)
         }
         return HomeAppsAlignmentHorizontal.Start
+    }
+
+    private fun getAppIconAlignmentFromPref(alignment: String?): AppIconAlignment {
+        return AppIconAlignment.entries.find { it.name == alignment } ?: AppIconAlignment.Left
     }
 
     private fun getHomeAppsAlignmentVerticalFromPref(alignment: String?): HomeAppsAlignmentVertical {
