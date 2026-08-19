@@ -240,6 +240,7 @@ class HomeViewModel @Inject constructor(
                             homeAppVerticalPadding = prefs.homeAppVerticalPadding,
                             ignoreSpecialCharacters = prefs.ignoreSpecialCharacters,
                             hideAppDrawerSearch = prefs.hideAppDrawerSearch,
+                            hideSettingsIcon = prefs.hideSettingsIcon,
                             minimoSettingsPosition = prefs.minimoSettingsPosition,
                             enableWallpaper = prefs.enableWallpaper,
                             enableWallpaperOnDrawer = prefs.enableWallpaperOnDrawer,
@@ -255,6 +256,8 @@ class HomeViewModel @Inject constructor(
                             enableFastScroller = prefs.enableFastScroller,
                             fastScrollerAlignment = prefs.fastScrollerAlignment,
                             backOpensAppDrawer = prefs.backOpensAppDrawer,
+                            compactAppTouchArea = prefs.compactAppTouchArea,
+                            keyboardDoneOpensFirstApp = prefs.keyboardDoneOpensFirstApp,
                             allApps = newAllApps,
                             filteredAllApps = newFilteredApps,
                             searchText = clearSearchText
@@ -458,6 +461,13 @@ class HomeViewModel @Inject constructor(
         if (searchText.isNotBlank() && _state.value.autoOpenApp && filteredAllApps.size == 1) {
             onAppLaunchRequest(filteredAllApps[0])
         }
+    }
+
+    fun onKeyboardDone() {
+        val state = _state.value
+        if (state.searchText.isBlank()) return
+
+        state.filteredAllApps.firstOrNull()?.let(::onAppLaunchRequest)
     }
 
     /**

@@ -50,7 +50,8 @@ fun HomeScreen(
     enableWallpaper: Boolean,
     statusBarVisible: Boolean,
     navigationBarVisible: Boolean,
-    onOpenAppDrawer: () -> Unit
+    onOpenAppDrawer: () -> Unit,
+    onSettingsClick: () -> Unit
 ) {
     val context = LocalContext.current
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -150,12 +151,15 @@ fun HomeScreen(
         modifier = Modifier
             .fillMaxSize()
             .windowInsetsPadding(safeDrawingTop)
-            .pointerInput(state.doubleTapToLock) {
-                detectTapGestures(onDoubleTap = {
-                    if (state.doubleTapToLock) {
-                        context.lockScreen()
-                    }
-                })
+            .pointerInput(state.doubleTapToLock, onSettingsClick) {
+                detectTapGestures(
+                    onDoubleTap = {
+                        if (state.doubleTapToLock) {
+                            context.lockScreen()
+                        }
+                    },
+                    onLongPress = { onSettingsClick() }
+                )
             }
             .pointerInput(swipeHorizontalThresholdPx) {
                 detectHorizontalDragGestures(

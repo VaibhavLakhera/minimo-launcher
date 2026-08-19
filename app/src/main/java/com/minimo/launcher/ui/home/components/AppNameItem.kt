@@ -50,6 +50,7 @@ fun AppNameItem(
     appsArrangement: Arrangement.Horizontal,
     textSize: TextUnit,
     showNotificationDot: Boolean,
+    compactTouchArea: Boolean = false,
     showAppIcon: Boolean = false,
     appIcon: ImageBitmap? = null,
     appIconSizeScale: Float = Constants.DEFAULT_APP_ICON_SIZE_PERCENT / 100f,
@@ -74,7 +75,12 @@ fun AppNameItem(
     var appBottomSheetVisible by remember { mutableStateOf(false) }
     val lineHeight by remember { derivedStateOf { textSize * 1.2 } }
 
-    val paddingValues = remember(isWorkProfile, showNotificationDot, showAppIcon) {
+    val paddingValues = remember(
+        isWorkProfile,
+        showNotificationDot,
+        showAppIcon,
+        verticalPadding
+    ) {
         if (!showAppIcon && (isWorkProfile || showNotificationDot)) {
             PaddingValues(
                 start = if (isWorkProfile) 0.dp else Dimens.APP_HORIZONTAL_SPACING,
@@ -87,104 +93,114 @@ fun AppNameItem(
         }
     }
 
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .combinedClickable(
-                enabled = clickEnabled,
-                onClick = onClick,
-                onLongClick = {
-                    onLongClick()
-                    appBottomSheetVisible = true
-                }
-            )
-            .padding(paddingValues),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = appsArrangement
+    val contentAlignment = when (appsArrangement) {
+        Arrangement.Center -> Alignment.Center
+        Arrangement.End -> Alignment.CenterEnd
+        else -> Alignment.CenterStart
+    }
+
+    Box(
+        modifier = modifier.fillMaxWidth(),
+        contentAlignment = contentAlignment
     ) {
-        if (showAppIcon && appIconAlignment == AppIconAlignment.Left) {
-            AppIcon(
-                image = appIcon,
-                size = appIconSizeFor(textSize, appIconSizeScale),
-                isWorkProfile = isWorkProfile,
-                showNotificationDot = showNotificationDot
-            )
-            Spacer(modifier = Modifier.width(Dimens.APP_ICON_LABEL_SPACING))
-        } else if (!showAppIcon && isWorkProfile) {
-            Box(modifier = Modifier.padding(horizontal = 8.dp)) {
-                if (shadow != null) {
+        Row(
+            modifier = (if (compactTouchArea) Modifier else Modifier.fillMaxWidth())
+                .combinedClickable(
+                    enabled = clickEnabled,
+                    onClick = onClick,
+                    onLongClick = {
+                        onLongClick()
+                        appBottomSheetVisible = true
+                    }
+                )
+                .padding(paddingValues),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = if (compactTouchArea) Arrangement.Start else appsArrangement
+        ) {
+            if (showAppIcon && appIconAlignment == AppIconAlignment.Left) {
+                AppIcon(
+                    image = appIcon,
+                    size = appIconSizeFor(textSize, appIconSizeScale),
+                    isWorkProfile = isWorkProfile,
+                    showNotificationDot = showNotificationDot
+                )
+                Spacer(modifier = Modifier.width(Dimens.APP_ICON_LABEL_SPACING))
+            } else if (!showAppIcon && isWorkProfile) {
+                Box(modifier = Modifier.padding(horizontal = 8.dp)) {
+                    if (shadow != null) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_work_profile),
+                            modifier = Modifier
+                                .size(16.dp)
+                                .offset(
+                                    x = with(LocalDensity.current) { shadow.offset.x.toDp() },
+                                    y = with(LocalDensity.current) { shadow.offset.y.toDp() }
+                                )
+                                .blur(with(LocalDensity.current) { shadow.blurRadius.toDp() }),
+                            tint = shadow.color,
+                            contentDescription = null
+                        )
+                    }
                     Icon(
                         painter = painterResource(id = R.drawable.ic_work_profile),
-                        modifier = Modifier
-                            .size(16.dp)
-                            .offset(
-                                x = with(LocalDensity.current) { shadow.offset.x.toDp() },
-                                y = with(LocalDensity.current) { shadow.offset.y.toDp() }
-                            )
-                            .blur(with(LocalDensity.current) { shadow.blurRadius.toDp() }),
-                        tint = shadow.color,
+                        modifier = Modifier.size(16.dp),
+                        tint = textColor,
                         contentDescription = null
                     )
                 }
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_work_profile),
-                    modifier = Modifier.size(16.dp),
-                    tint = textColor,
-                    contentDescription = null
+            }
+
+            Text(
+                text = appName,
+                modifier = if (showAppIcon && appIconAlignment == AppIconAlignment.Right) {
+                    Modifier.weight(1f, fill = false)
+                } else {
+                    Modifier
+                },
+                color = textColor,
+                fontSize = textSize,
+                lineHeight = lineHeight,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                style = LocalTextStyle.current.copy(shadow = shadow)
+            )
+
+            if (showAppIcon && appIconAlignment == AppIconAlignment.Right) {
+                Spacer(modifier = Modifier.width(Dimens.APP_ICON_LABEL_SPACING))
+                AppIcon(
+                    image = appIcon,
+                    size = appIconSizeFor(textSize, appIconSizeScale),
+                    isWorkProfile = isWorkProfile,
+                    showNotificationDot = showNotificationDot
                 )
             }
-        }
 
-        Text(
-            text = appName,
-            modifier = if (showAppIcon && appIconAlignment == AppIconAlignment.Right) {
-                Modifier.weight(1f, fill = false)
-            } else {
-                Modifier
-            },
-            color = textColor,
-            fontSize = textSize,
-            lineHeight = lineHeight,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            style = LocalTextStyle.current.copy(shadow = shadow)
-        )
-
-        if (showAppIcon && appIconAlignment == AppIconAlignment.Right) {
-            Spacer(modifier = Modifier.width(Dimens.APP_ICON_LABEL_SPACING))
-            AppIcon(
-                image = appIcon,
-                size = appIconSizeFor(textSize, appIconSizeScale),
-                isWorkProfile = isWorkProfile,
-                showNotificationDot = showNotificationDot
-            )
-        }
-
-        if (!showAppIcon && showNotificationDot) {
-            Box(modifier = Modifier.padding(horizontal = 11.dp)) {
-                if (shadow != null) {
+            if (!showAppIcon && showNotificationDot) {
+                Box(modifier = Modifier.padding(horizontal = 11.dp)) {
+                    if (shadow != null) {
+                        Box(
+                            modifier = Modifier
+                                .size(10.dp)
+                                .offset(
+                                    x = with(LocalDensity.current) { shadow.offset.x.toDp() },
+                                    y = with(LocalDensity.current) { shadow.offset.y.toDp() }
+                                )
+                                .blur(with(LocalDensity.current) { shadow.blurRadius.toDp() })
+                                .background(
+                                    color = shadow.color,
+                                    shape = CircleShape
+                                )
+                        )
+                    }
                     Box(
                         modifier = Modifier
                             .size(10.dp)
-                            .offset(
-                                x = with(LocalDensity.current) { shadow.offset.x.toDp() },
-                                y = with(LocalDensity.current) { shadow.offset.y.toDp() }
-                            )
-                            .blur(with(LocalDensity.current) { shadow.blurRadius.toDp() })
                             .background(
-                                color = shadow.color,
+                                color = textColor,
                                 shape = CircleShape
                             )
                     )
                 }
-                Box(
-                    modifier = Modifier
-                        .size(10.dp)
-                        .background(
-                            color = textColor,
-                            shape = CircleShape
-                        )
-                )
             }
         }
     }

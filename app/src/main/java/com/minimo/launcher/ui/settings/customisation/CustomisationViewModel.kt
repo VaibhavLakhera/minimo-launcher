@@ -73,6 +73,7 @@ class CustomisationViewModel @Inject constructor(
                             homeAppVerticalPadding = prefs.homeAppVerticalPadding.toFloat(),
                             ignoreSpecialCharacters = prefs.ignoreSpecialCharacters,
                             hideAppDrawerSearch = prefs.hideAppDrawerSearch,
+                            hideSettingsIcon = prefs.hideSettingsIcon,
                             minimoSettingsPosition = prefs.minimoSettingsPosition,
                             showScreenTimeWidget = prefs.showScreenTimeWidget,
                             clockAppPreference = prefs.clockAppPreference,
@@ -84,7 +85,9 @@ class CustomisationViewModel @Inject constructor(
                             keyboardOpenDelay = prefs.keyboardOpenDelay,
                             enableFastScroller = prefs.enableFastScroller,
                             fastScrollerAlignment = prefs.fastScrollerAlignment,
-                            backOpensAppDrawer = prefs.backOpensAppDrawer
+                            backOpensAppDrawer = prefs.backOpensAppDrawer,
+                            compactAppTouchArea = prefs.compactAppTouchArea,
+                            keyboardDoneOpensFirstApp = prefs.keyboardDoneOpensFirstApp
                         )
                     }
 
@@ -393,6 +396,12 @@ class CustomisationViewModel @Inject constructor(
         }
     }
 
+    fun onToggleHideSettingsIcon() {
+        viewModelScope.launch {
+            preferenceHelper.setHideSettingsIcon(_state.value.hideSettingsIcon.not())
+        }
+    }
+
     fun onToggleShowScreenTimeWidget() {
         viewModelScope.launch {
             preferenceHelper.showScreenTimeWidget(_state.value.showScreenTimeWidget.not())
@@ -468,6 +477,20 @@ class CustomisationViewModel @Inject constructor(
     fun onToggleBackOpensAppDrawer() {
         viewModelScope.launch {
             preferenceHelper.setBackOpensAppDrawer(_state.value.backOpensAppDrawer.not())
+        }
+    }
+
+    fun onToggleCompactAppTouchArea() {
+        viewModelScope.launch {
+            preferenceHelper.setCompactAppTouchArea(_state.value.compactAppTouchArea.not())
+        }
+    }
+
+    fun onToggleKeyboardDoneOpensFirstApp() {
+        viewModelScope.launch {
+            preferenceHelper.setKeyboardDoneOpensFirstApp(
+                _state.value.keyboardDoneOpensFirstApp.not()
+            )
         }
     }
 }

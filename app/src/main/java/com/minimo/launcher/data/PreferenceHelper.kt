@@ -81,6 +81,7 @@ class PreferenceHelper @Inject constructor(
         private val KEY_IGNORE_SPECIAL_CHARACTERS_IN_SEARCH =
             stringPreferencesKey("KEY_IGNORE_SPECIAL_CHARACTERS_IN_SEARCH")
         private val KEY_HIDE_APP_DRAWER_SEARCH = booleanPreferencesKey("KEY_HIDE_APP_DRAWER_SEARCH")
+        private val KEY_HIDE_SETTINGS_ICON = booleanPreferencesKey("KEY_HIDE_SETTINGS_ICON")
         private val KEY_SHOW_SCREEN_TIME_WIDGET =
             booleanPreferencesKey("KEY_SHOW_SCREEN_TIME_WIDGET")
         private val KEY_CLOCK_APP_PREFERENCE = stringPreferencesKey("KEY_CLOCK_APP_PREFERENCE")
@@ -102,6 +103,10 @@ class PreferenceHelper @Inject constructor(
         private val KEY_FAST_SCROLLER_ALIGNMENT =
             stringPreferencesKey("KEY_FAST_SCROLLER_ALIGNMENT")
         private val KEY_BACK_OPENS_APP_DRAWER = booleanPreferencesKey("KEY_BACK_OPENS_APP_DRAWER")
+        private val KEY_COMPACT_APP_TOUCH_AREA =
+            booleanPreferencesKey("KEY_COMPACT_APP_TOUCH_AREA")
+        private val KEY_KEYBOARD_DONE_OPENS_FIRST_APP =
+            booleanPreferencesKey("KEY_KEYBOARD_DONE_OPENS_FIRST_APP")
         private val KEY_SCREEN_ORIENTATION = stringPreferencesKey("KEY_SCREEN_ORIENTATION")
     }
 
@@ -333,6 +338,12 @@ class PreferenceHelper @Inject constructor(
         }
     }
 
+    suspend fun setHideSettingsIcon(hide: Boolean) {
+        preferences.edit {
+            it[KEY_HIDE_SETTINGS_ICON] = hide
+        }
+    }
+
     suspend fun showScreenTimeWidget(enable: Boolean) {
         preferences.edit {
             it[KEY_SHOW_SCREEN_TIME_WIDGET] = enable
@@ -411,6 +422,18 @@ class PreferenceHelper @Inject constructor(
         }
     }
 
+    suspend fun setCompactAppTouchArea(enable: Boolean) {
+        preferences.edit {
+            it[KEY_COMPACT_APP_TOUCH_AREA] = enable
+        }
+    }
+
+    suspend fun setKeyboardDoneOpensFirstApp(enable: Boolean) {
+        preferences.edit {
+            it[KEY_KEYBOARD_DONE_OPENS_FIRST_APP] = enable
+        }
+    }
+
     suspend fun setMinimoSettingsPosition(position: MinimoSettingsPosition) {
         preferences.edit {
             it[KEY_MINIMO_SETTINGS_POSITION] = position.name
@@ -469,6 +492,7 @@ class PreferenceHelper @Inject constructor(
                 homeAppVerticalPadding = prefs[KEY_HOME_APP_VERTICAL_PADDING] ?: Constants.DEFAULT_HOME_VERTICAL_PADDING,
                 ignoreSpecialCharacters = prefs[KEY_IGNORE_SPECIAL_CHARACTERS_IN_SEARCH] ?: "",
                 hideAppDrawerSearch = prefs[KEY_HIDE_APP_DRAWER_SEARCH] ?: false,
+                hideSettingsIcon = prefs[KEY_HIDE_SETTINGS_ICON] ?: false,
                 minimoSettingsPosition = getMinimoSettingsPositionFromPref(prefs[KEY_MINIMO_SETTINGS_POSITION]),
                 enableWallpaper = prefs[KEY_ENABLE_WALLPAPER] ?: false,
                 enableWallpaperOnDrawer = prefs[KEY_ENABLE_WALLPAPER_ON_DRAWER] ?: false,
@@ -486,7 +510,10 @@ class PreferenceHelper @Inject constructor(
                 fastScrollerAlignment = getFastScrollerAlignmentFromPref(
                     prefs[KEY_FAST_SCROLLER_ALIGNMENT]
                 ),
-                backOpensAppDrawer = prefs[KEY_BACK_OPENS_APP_DRAWER] ?: true
+                backOpensAppDrawer = prefs[KEY_BACK_OPENS_APP_DRAWER] ?: true,
+                compactAppTouchArea = prefs[KEY_COMPACT_APP_TOUCH_AREA] ?: false,
+                keyboardDoneOpensFirstApp =
+                    prefs[KEY_KEYBOARD_DONE_OPENS_FIRST_APP] ?: false
             )
         }
     }
@@ -537,6 +564,7 @@ class PreferenceHelper @Inject constructor(
                 homeAppVerticalPadding = prefs[KEY_HOME_APP_VERTICAL_PADDING] ?: Constants.DEFAULT_HOME_VERTICAL_PADDING,
                 ignoreSpecialCharacters = prefs[KEY_IGNORE_SPECIAL_CHARACTERS_IN_SEARCH] ?: "",
                 hideAppDrawerSearch = prefs[KEY_HIDE_APP_DRAWER_SEARCH] ?: false,
+                hideSettingsIcon = prefs[KEY_HIDE_SETTINGS_ICON] ?: false,
                 minimoSettingsPosition = getMinimoSettingsPositionFromPref(prefs[KEY_MINIMO_SETTINGS_POSITION]),
                 showScreenTimeWidget = prefs[KEY_SHOW_SCREEN_TIME_WIDGET] ?: false,
                 clockAppPreference = prefs[KEY_CLOCK_APP_PREFERENCE] ?: "",
@@ -551,7 +579,10 @@ class PreferenceHelper @Inject constructor(
                 fastScrollerAlignment = getFastScrollerAlignmentFromPref(
                     prefs[KEY_FAST_SCROLLER_ALIGNMENT]
                 ),
-                backOpensAppDrawer = prefs[KEY_BACK_OPENS_APP_DRAWER] ?: true
+                backOpensAppDrawer = prefs[KEY_BACK_OPENS_APP_DRAWER] ?: true,
+                compactAppTouchArea = prefs[KEY_COMPACT_APP_TOUCH_AREA] ?: false,
+                keyboardDoneOpensFirstApp =
+                    prefs[KEY_KEYBOARD_DONE_OPENS_FIRST_APP] ?: false
             )
         }
     }

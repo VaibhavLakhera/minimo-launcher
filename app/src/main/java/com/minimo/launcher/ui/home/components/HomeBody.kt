@@ -195,6 +195,7 @@ fun HomeBody(
                     textSize = textSize,
                     onUninstallClick = { context.uninstallApp(appInfo) },
                     showNotificationDot = appInfo.showNotificationDot,
+                    compactTouchArea = state.compactAppTouchArea,
                     showAppIcon = state.showAppIconInHome,
                     appIcon = appIcon,
                     appIconSizeScale = appIconSizeScale,

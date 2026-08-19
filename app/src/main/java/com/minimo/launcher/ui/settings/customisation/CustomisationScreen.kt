@@ -802,6 +802,33 @@ fun CustomisationScreen(
                 onToggleClick = viewModel::onToggleBackOpensAppDrawer
             )
 
+            HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
+
+            ToggleItem(
+                title = stringResource(R.string.hide_settings_icon),
+                subtitle = stringResource(R.string.hide_settings_icon_description),
+                isChecked = state.hideSettingsIcon,
+                onToggleClick = viewModel::onToggleHideSettingsIcon
+            )
+
+            HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
+
+            ToggleItem(
+                title = stringResource(R.string.compact_app_touch_area),
+                subtitle = stringResource(R.string.compact_app_touch_area_description),
+                isChecked = state.compactAppTouchArea,
+                onToggleClick = viewModel::onToggleCompactAppTouchArea
+            )
+
+            HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
+
+            ToggleItem(
+                title = stringResource(R.string.done_opens_first_app),
+                subtitle = stringResource(R.string.done_opens_first_app_description),
+                isChecked = state.keyboardDoneOpensFirstApp,
+                onToggleClick = viewModel::onToggleKeyboardDoneOpensFirstApp
+            )
+
             Spacer(modifier = Modifier.height(8.dp))
         }
 

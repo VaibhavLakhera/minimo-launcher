@@ -46,6 +46,7 @@ data class CustomisationState(
     val homeAppVerticalPadding: Float = Constants.DEFAULT_HOME_VERTICAL_PADDING.toFloat(),
     val ignoreSpecialCharacters: String = "",
     val hideAppDrawerSearch: Boolean = false,
+    val hideSettingsIcon: Boolean = false,
     val showScreenTimeWidget: Boolean = false,
     val lightTextOnWallpaper: Boolean = true,
     val dimWallpaper: Boolean = false,
@@ -66,5 +67,7 @@ data class CustomisationState(
     val keyboardOpenDelay: Long = Constants.DEFAULT_KEYBOARD_OPEN_DELAY,
     val enableFastScroller: Boolean = false,
     val fastScrollerAlignment: FastScrollerAlignment = FastScrollerAlignment.Right,
-    val backOpensAppDrawer: Boolean = true
+    val backOpensAppDrawer: Boolean = true,
+    val compactAppTouchArea: Boolean = false,
+    val keyboardDoneOpensFirstApp: Boolean = false
 )

@@ -156,6 +156,7 @@ fun AppDrawerFastScroller(
                 awaitPointerEventScope {
                     while (true) {
                         val down = awaitFirstDown()
+                        down.consume()
                         onInteractionStart()
                         isInteracting = true
 

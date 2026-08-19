@@ -136,6 +136,11 @@ fun AppNavGraph(
                     navController.navigate(Routes.APP_DRAWER) {
                         launchSingleTop = true
                     }
+                },
+                onSettingsClick = {
+                    navController.navigate(Routes.SETTINGS) {
+                        launchSingleTop = true
+                    }
                 }
             )
         }

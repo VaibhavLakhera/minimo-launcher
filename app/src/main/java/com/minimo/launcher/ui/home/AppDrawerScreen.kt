@@ -2,6 +2,7 @@ package com.minimo.launcher.ui.home
 
 import android.app.Activity
 import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -191,6 +192,10 @@ fun AppDrawerScreen(
     var swipeYAccumulator by remember { mutableFloatStateOf(0f) }
     val closeGestureEnabledState = rememberUpdatedState(pointerDragCloseEnabled)
     val onCloseAppDrawerState = rememberUpdatedState(::closeAppDrawer)
+    val onSettingsClickState = rememberUpdatedState {
+        hideKeyboardWithClearFocus()
+        onSettingsClick()
+    }
     val nestedScrollConnection = remember(allAppsLazyListState, dragDownCloseThresholdPx) {
         object : NestedScrollConnection {
             override fun onPostScroll(
@@ -253,7 +258,12 @@ fun AppDrawerScreen(
             .fillMaxSize()
             .markPointerDragForDrawerClose(
                 onPointerDragCloseEnabledChange = { pointerDragCloseEnabled = it }
-            ),
+            )
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onLongPress = { onSettingsClickState.value() }
+                )
+            },
         containerColor = Color.Transparent,
         contentWindowInsets = if (bottomSearchVisible) {
             ScaffoldDefaults
@@ -279,6 +289,15 @@ fun AppDrawerScreen(
                         focusRequester = focusRequester,
                         searchText = state.searchText,
                         onSearchTextChange = viewModel::onSearchTextChange,
+                        onKeyboardDone = if (state.keyboardDoneOpensFirstApp) {
+                            {
+                                hideKeyboardWithClearFocus()
+                                viewModel.onKeyboardDone()
+                            }
+                        } else {
+                            null
+                        },
+                        showSettingsIcon = !state.hideSettingsIcon,
                         onSettingsClick = {
                             hideKeyboardWithClearFocus()
                             onSettingsClick()
@@ -371,6 +390,7 @@ fun AppDrawerScreen(
                                     onUninstallClick = { context.uninstallApp(appInfo) },
                                     textSize = textSize,
                                     showNotificationDot = appInfo.showNotificationDot,
+                                    compactTouchArea = state.compactAppTouchArea,
                                     showAppIcon = state.showAppIconInDrawer,
                                     appIcon = appIcon,
                                     appIconSizeScale = appIconSizeScale,
@@ -424,6 +444,15 @@ fun AppDrawerScreen(
                         focusRequester = focusRequester,
                         searchText = state.searchText,
                         onSearchTextChange = viewModel::onSearchTextChange,
+                        onKeyboardDone = if (state.keyboardDoneOpensFirstApp) {
+                            {
+                                hideKeyboardWithClearFocus()
+                                viewModel.onKeyboardDone()
+                            }
+                        } else {
+                            null
+                        },
+                        showSettingsIcon = !state.hideSettingsIcon,
                         onSettingsClick = {
                             hideKeyboardWithClearFocus()
                             onSettingsClick()
