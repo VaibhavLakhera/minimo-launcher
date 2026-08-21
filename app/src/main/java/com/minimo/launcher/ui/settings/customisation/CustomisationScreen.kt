@@ -110,6 +110,9 @@ fun CustomisationScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     var showEnableAccessibilityDialog by remember { mutableStateOf(false) }
+    var hasLockScreenPermission by remember {
+        mutableStateOf(context.hasLockScreenPermission())
+    }
     var showEnableNotificationPermissionDialog by remember { mutableStateOf(false) }
     var showEnableAppUsagePermissionDialog by remember { mutableStateOf(false) }
     var showSetWallpaperToThemeColorDialog by remember { mutableStateOf(false) }
@@ -129,9 +132,7 @@ fun CustomisationScreen(
 
     LaunchedEffect(Unit) {
         lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-            if (!context.hasLockScreenPermission()) {
-                viewModel.onLockScreenPermissionNotEnableOnStarted()
-            }
+            hasLockScreenPermission = context.hasLockScreenPermission()
 
             if (!context.isNotificationPermissionGranted()) {
                 viewModel.onNotificationPermissionNotGrantedOnStarted()
@@ -604,21 +605,36 @@ fun CustomisationScreen(
             ToggleItem(
                 title = stringResource(R.string.double_tap_to_lock),
                 subtitle = stringResource(R.string.on_home_screen_double_tap_on_empty_space_to_lock),
-                isChecked = state.doubleTapToLock,
+                // Show the effective state without erasing the saved user choice when the OS
+                // temporarily reports the lock-screen permission as unavailable.
+                isChecked = state.doubleTapToLock && hasLockScreenPermission,
                 onToggleClick = {
-                    if (state.doubleTapToLock) {
-                        viewModel.onToggleDoubleTapToLock()
-                        context.removeLockScreenPermission()
-                    } else {
-                        if (context.hasLockScreenPermission()) {
-                            viewModel.onToggleDoubleTapToLock()
-                        } else {
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                                showEnableAccessibilityDialog = true
-                            } else {
-                                viewModel.onToggleDoubleTapToLock()
-                                context.requestLockScreenPermission()
-                            }
+                    // Recheck on each tap because the permission may have changed outside the app.
+                    val permissionGranted = context.hasLockScreenPermission()
+                    hasLockScreenPermission = permissionGranted
+
+                    when {
+                        // The feature is active, so this tap explicitly disables the preference.
+                        // On Android 8, removeLockScreenPermission also revokes device admin.
+                        state.doubleTapToLock && permissionGranted -> {
+                            viewModel.onDoubleTapToLockChanged(false)
+                            context.removeLockScreenPermission()
+                        }
+
+                        // Permission already exists; no system settings round trip is required.
+                        permissionGranted -> {
+                            viewModel.onDoubleTapToLockChanged(true)
+                        }
+
+                        // Android 9+ requires the user to enable Minimo's accessibility service.
+                        Build.VERSION.SDK_INT >= Build.VERSION_CODES.P -> {
+                            showEnableAccessibilityDialog = true
+                        }
+
+                        // Android 8 uses the legacy device-admin permission flow directly.
+                        else -> {
+                            viewModel.onDoubleTapToLockChanged(true)
+                            context.requestLockScreenPermission()
                         }
                     }
                 }
@@ -835,7 +851,9 @@ fun CustomisationScreen(
         if (showEnableAccessibilityDialog) {
             EnableAccessibilityDialog(
                 onConfirm = {
-                    viewModel.onToggleDoubleTapToLock()
+                    // Persist the user's intent before leaving the app. The switch only appears
+                    // enabled after the lifecycle permission check observes the granted service.
+                    viewModel.onDoubleTapToLockChanged(true)
                     context.requestLockScreenPermission()
                     showEnableAccessibilityDialog = false
                 },

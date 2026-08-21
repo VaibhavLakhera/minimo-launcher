@@ -206,15 +206,9 @@ fun Context.sendFeedback() {
 
 fun Context.lockScreen() {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-        lockScreenWithAccessibility()
+        MinimoAccessibilityService.lockScreen()
     } else {
         lockScreenWithReceiver()
-    }
-}
-
-private fun Context.lockScreenWithAccessibility() {
-    if (isAccessibilityEnabled()) {
-        MinimoAccessibilityService.lockScreen()
     }
 }
 
@@ -236,21 +230,24 @@ fun Context.hasLockScreenPermission(): Boolean {
 }
 
 private fun Context.isAccessibilityEnabled(): Boolean {
-    var enabled = 0
-    try {
-        enabled = Settings.Secure.getInt(contentResolver, Settings.Secure.ACCESSIBILITY_ENABLED)
-    } catch (e: Settings.SettingNotFoundException) {
-        Timber.e(e)
-    }
-    if (enabled == 1) {
-        val name = ComponentName(applicationContext, MinimoAccessibilityService::class.java)
-        val services = Settings.Secure.getString(
+    val service = ComponentName(applicationContext, MinimoAccessibilityService::class.java)
+    // ACCESSIBILITY_ENABLED reflects the system's active/bound state and may briefly become 0
+    // while a service is being rebound. The enabled-services list preserves the user's grant.
+    val enabledServices = try {
+        Settings.Secure.getString(
             contentResolver,
             Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
         )
-        return services?.contains(name.flattenToString()) ?: false
+    } catch (exception: Exception) {
+        Timber.e(exception)
+        null
     }
-    return false
+
+    return enabledServices
+        ?.split(':')
+        ?.mapNotNull(ComponentName::unflattenFromString)
+        ?.any { it == service }
+        ?: false
 }
 
 private fun Context.isAdminActive(): Boolean {

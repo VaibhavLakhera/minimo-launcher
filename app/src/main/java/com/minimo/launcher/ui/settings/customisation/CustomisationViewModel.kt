@@ -16,7 +16,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -293,9 +292,9 @@ class CustomisationViewModel @Inject constructor(
         }
     }
 
-    fun onToggleDoubleTapToLock() {
+    fun onDoubleTapToLockChanged(enabled: Boolean) {
         viewModelScope.launch {
-            preferenceHelper.setDoubleTapToLock(_state.value.doubleTapToLock.not())
+            preferenceHelper.setDoubleTapToLock(enabled)
         }
     }
 
@@ -344,19 +343,6 @@ class CustomisationViewModel @Inject constructor(
     fun onToggleApplyHomeAppSizeToAllApps() {
         viewModelScope.launch {
             preferenceHelper.setHomeAppSizeToAllApps(_state.value.applyHomeAppSizeToAllApps.not())
-        }
-    }
-
-    /*
-    * On start of the screen, if the preference flag is enabled and
-    * lock screen permission is not active, then set the preference flag to false
-    * */
-    fun onLockScreenPermissionNotEnableOnStarted() {
-        viewModelScope.launch {
-            val doubleTapToLock = preferenceHelper.getDoubleTapToLock().firstOrNull() ?: false
-            if (doubleTapToLock) {
-                preferenceHelper.setDoubleTapToLock(false)
-            }
         }
     }
 
