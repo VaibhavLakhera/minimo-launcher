@@ -44,6 +44,7 @@ fun MinimoSettingsItem(
     horizontalArrangement: Arrangement.Horizontal,
     textSize: TextUnit,
     onClick: () -> Unit,
+    compactTouchArea: Boolean = false,
     verticalPadding: Dp = 16.dp,
     showAppIcon: Boolean = false,
     appIconSizeScale: Float = Constants.DEFAULT_APP_ICON_SIZE_PERCENT / 100f,
@@ -52,43 +53,56 @@ fun MinimoSettingsItem(
     textShadow: Shadow? = null
 ) {
     val lineHeight by remember { derivedStateOf { textSize * 1.2 } }
+    val contentAlignment = when (horizontalArrangement) {
+        Arrangement.Center -> Alignment.Center
+        Arrangement.End -> Alignment.CenterEnd
+        else -> Alignment.CenterStart
+    }
 
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .clickable { onClick() }
-            .padding(
-                PaddingValues(
-                    horizontal = Dimens.APP_HORIZONTAL_SPACING,
-                    vertical = verticalPadding
-                )
-            ),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = horizontalArrangement
+    Box(
+        modifier = modifier.fillMaxWidth(),
+        contentAlignment = contentAlignment
     ) {
-        if (showAppIcon && appIconAlignment == AppIconAlignment.Left) {
-            MinimoAppIcon(size = appIconSizeFor(textSize, appIconSizeScale))
-            Spacer(modifier = Modifier.width(Dimens.APP_ICON_LABEL_SPACING))
-        }
-
-        Text(
-            text = stringResource(R.string.minimo_settings),
-            modifier = if (showAppIcon && appIconAlignment == AppIconAlignment.Right) {
-                Modifier.weight(1f, fill = false)
+        Row(
+            modifier = (if (compactTouchArea) Modifier else Modifier.fillMaxWidth())
+                .clickable { onClick() }
+                .padding(
+                    PaddingValues(
+                        horizontal = Dimens.APP_HORIZONTAL_SPACING,
+                        vertical = verticalPadding
+                    )
+                ),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = if (compactTouchArea) {
+                Arrangement.Start
             } else {
-                Modifier
-            },
-            color = textColor,
-            fontSize = textSize,
-            lineHeight = lineHeight,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            style = LocalTextStyle.current.copy(shadow = textShadow)
-        )
+                horizontalArrangement
+            }
+        ) {
+            if (showAppIcon && appIconAlignment == AppIconAlignment.Left) {
+                MinimoAppIcon(size = appIconSizeFor(textSize, appIconSizeScale))
+                Spacer(modifier = Modifier.width(Dimens.APP_ICON_LABEL_SPACING))
+            }
 
-        if (showAppIcon && appIconAlignment == AppIconAlignment.Right) {
-            Spacer(modifier = Modifier.width(Dimens.APP_ICON_LABEL_SPACING))
-            MinimoAppIcon(size = appIconSizeFor(textSize, appIconSizeScale))
+            Text(
+                text = stringResource(R.string.minimo_settings),
+                modifier = if (showAppIcon && appIconAlignment == AppIconAlignment.Right) {
+                    Modifier.weight(1f, fill = false)
+                } else {
+                    Modifier
+                },
+                color = textColor,
+                fontSize = textSize,
+                lineHeight = lineHeight,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                style = LocalTextStyle.current.copy(shadow = textShadow)
+            )
+
+            if (showAppIcon && appIconAlignment == AppIconAlignment.Right) {
+                Spacer(modifier = Modifier.width(Dimens.APP_ICON_LABEL_SPACING))
+                MinimoAppIcon(size = appIconSizeFor(textSize, appIconSizeScale))
+            }
         }
     }
 }

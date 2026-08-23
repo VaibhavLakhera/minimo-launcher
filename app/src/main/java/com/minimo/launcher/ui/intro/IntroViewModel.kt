@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.minimo.launcher.data.AppInfoDao
 import com.minimo.launcher.data.PreferenceHelper
 import com.minimo.launcher.data.usecase.UpdateAllAppsUseCase
+import com.minimo.launcher.data.usecase.UpdateAllShortcutsUseCase
 import com.minimo.launcher.ui.entities.AppInfo
 import com.minimo.launcher.utils.AppUtils
 import com.minimo.launcher.utils.Constants.INTRO_MINIMUM_FAVOURITE_COUNT
@@ -18,6 +19,7 @@ import javax.inject.Inject
 @HiltViewModel
 class IntroViewModel @Inject constructor(
     private val updateAllAppsUseCase: UpdateAllAppsUseCase,
+    private val updateAllShortcutsUseCase: UpdateAllShortcutsUseCase,
     private val appInfoDao: AppInfoDao,
     private val appUtils: AppUtils,
     private val preferenceHelper: PreferenceHelper
@@ -28,6 +30,10 @@ class IntroViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             updateAllAppsUseCase.invoke()
+        }
+
+        viewModelScope.launch {
+            updateAllShortcutsUseCase.invoke()
         }
 
         viewModelScope.launch {
@@ -55,7 +61,8 @@ class IntroViewModel @Inject constructor(
         viewModelScope.launch {
             if (appInfo.isFavourite) {
                 appInfoDao.removeAppFromFavouriteTransaction(
-                    appInfo.className,
+                    appInfo.itemType,
+                    appInfo.targetId,
                     appInfo.packageName,
                     appInfo.userHandle,
                     appInfo.orderIndex
@@ -64,7 +71,8 @@ class IntroViewModel @Inject constructor(
                 val favouriteApps = _state.value.allApps.filter { it.isFavourite }
                 val newOrderIndex = (favouriteApps.maxOfOrNull { it.orderIndex } ?: 0) + 1
                 appInfoDao.addAppToFavourite(
-                    appInfo.className,
+                    appInfo.itemType,
+                    appInfo.targetId,
                     appInfo.packageName,
                     appInfo.userHandle,
                     newOrderIndex

@@ -50,13 +50,15 @@ class HiddenAppsViewModel @Inject constructor(
         viewModelScope.launch {
             if (appInfo.isHidden) {
                 appInfoDao.removeAppFromHidden(
-                    appInfo.className,
+                    appInfo.itemType,
+                    appInfo.targetId,
                     appInfo.packageName,
                     appInfo.userHandle
                 )
             } else {
                 appInfoDao.addAppToHiddenTransaction(
-                    appInfo.className,
+                    appInfo.itemType,
+                    appInfo.targetId,
                     appInfo.packageName,
                     appInfo.userHandle,
                     appInfo.orderIndex

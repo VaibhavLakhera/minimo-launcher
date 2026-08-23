@@ -60,7 +60,8 @@ class ReorderAppsViewModel @Inject constructor(
             updates.add(
                 AppOrderUpdate(
                     packageName = apps[index].packageName,
-                    className = apps[index].className,
+                    itemType = apps[index].itemType,
+                    targetId = apps[index].targetId,
                     userHandle = apps[index].userHandle,
                     orderIndex = index + 1
                 )
@@ -97,10 +98,12 @@ class ReorderAppsViewModel @Inject constructor(
     private fun swapAppOrderIndex(app1: AppInfo, app2: AppInfo) {
         viewModelScope.launch {
             appInfoDao.swapOrderIndex(
-                app1.className,
+                app1.itemType,
+                app1.targetId,
                 app1.packageName,
                 app1.userHandle,
-                app2.className,
+                app2.itemType,
+                app2.targetId,
                 app2.packageName,
                 app2.userHandle,
                 app1.orderIndex,

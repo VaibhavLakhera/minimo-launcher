@@ -2,6 +2,7 @@ package com.minimo.launcher.data.usecase
 
 import com.minimo.launcher.data.AppInfoDao
 import com.minimo.launcher.data.entities.AppInfoEntity
+import com.minimo.launcher.data.entities.AppItemType
 import com.minimo.launcher.utils.AppUtils
 import com.minimo.launcher.utils.InstalledApp
 import javax.inject.Inject
@@ -47,7 +48,8 @@ class AddUpdateAppsUseCase @Inject constructor(
                 addApps.add(
                     AppInfoEntity(
                         packageName = installedApp.packageName,
-                        className = installedApp.className,
+                        itemType = AppItemType.APP,
+                        targetId = installedApp.className,
                         userHandle = installedApp.userHandle,
                         appName = installedApp.appName,
                         alternateAppName = "",

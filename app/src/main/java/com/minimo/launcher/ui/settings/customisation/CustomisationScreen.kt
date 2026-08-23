@@ -922,7 +922,7 @@ fun CustomisationScreen(
             AppPickerDialog(
                 onDismissRequest = { showClockAppPicker = false },
                 onAppSelected = { appInfo ->
-                    viewModel.onClockAppChanged("${appInfo.packageName}|${appInfo.className}|${appInfo.userHandle}")
+                    viewModel.onClockAppChanged(appInfo.preferenceValue)
                     showClockAppPicker = false
                 }
             )
@@ -932,7 +932,7 @@ fun CustomisationScreen(
             AppPickerDialog(
                 onDismissRequest = { showBatteryAppPicker = false },
                 onAppSelected = { appInfo ->
-                    viewModel.onBatteryAppChanged("${appInfo.packageName}|${appInfo.className}|${appInfo.userHandle}")
+                    viewModel.onBatteryAppChanged(appInfo.preferenceValue)
                     showBatteryAppPicker = false
                 }
             )
@@ -942,7 +942,7 @@ fun CustomisationScreen(
             AppPickerDialog(
                 onDismissRequest = { showCalendarAppPicker = false },
                 onAppSelected = { appInfo ->
-                    viewModel.onCalendarAppChanged("${appInfo.packageName}|${appInfo.className}|${appInfo.userHandle}")
+                    viewModel.onCalendarAppChanged(appInfo.preferenceValue)
                     showCalendarAppPicker = false
                 }
             )
@@ -952,7 +952,7 @@ fun CustomisationScreen(
             AppPickerDialog(
                 onDismissRequest = { showScreenTimeAppPicker = false },
                 onAppSelected = { appInfo ->
-                    viewModel.onScreenTimeAppChanged("${appInfo.packageName}|${appInfo.className}|${appInfo.userHandle}")
+                    viewModel.onScreenTimeAppChanged(appInfo.preferenceValue)
                     showScreenTimeAppPicker = false
                 }
             )
@@ -962,7 +962,7 @@ fun CustomisationScreen(
             AppPickerDialog(
                 onDismissRequest = { showSwipeLeftAppPicker = false },
                 onAppSelected = { appInfo ->
-                    viewModel.onSwipeLeftAppChanged("${appInfo.packageName}|${appInfo.className}|${appInfo.userHandle}")
+                    viewModel.onSwipeLeftAppChanged(appInfo.preferenceValue)
                     showSwipeLeftAppPicker = false
                 }
             )
@@ -972,7 +972,7 @@ fun CustomisationScreen(
             AppPickerDialog(
                 onDismissRequest = { showSwipeRightAppPicker = false },
                 onAppSelected = { appInfo ->
-                    viewModel.onSwipeRightAppChanged("${appInfo.packageName}|${appInfo.className}|${appInfo.userHandle}")
+                    viewModel.onSwipeRightAppChanged(appInfo.preferenceValue)
                     showSwipeRightAppPicker = false
                 }
             )

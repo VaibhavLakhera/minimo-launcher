@@ -45,6 +45,7 @@ class AppsManager @Inject constructor(
                     coroutineScope.launch {
                         mutex.withLock {
                             updateAllAppsUseCase.invoke()
+                            updateAllShortcutsUseCase.invoke()
                         }
                     }
                 }
@@ -160,6 +161,7 @@ class AppsManager @Inject constructor(
         shortcuts: MutableList<ShortcutInfo>,
         user: UserHandle
     ) {
+        appIconRepository.removeIcon(packageName, user.hashCode())
         coroutineScope.launch {
             mutex.withLock {
                 updateAllShortcutsUseCase.invoke()

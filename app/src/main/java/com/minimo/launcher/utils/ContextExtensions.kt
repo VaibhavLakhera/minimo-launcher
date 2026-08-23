@@ -54,18 +54,11 @@ fun Context.startShortcut(
 
     val userManager = getSystemService(Context.USER_SERVICE) as UserManager
     val userHandle = userManager.userProfiles.find { it.hashCode() == userHandleHashCode }
+        ?: return false
 
     try {
         val launcher = getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
-        if (userHandle != null) {
-            try {
-                launcher.startShortcut(packageName, shortcutId, null, null, userHandle)
-                return true
-            } catch (_: Exception) {
-                Timber.w("Exception for userHandle, falling back to myUserHandle")
-            }
-        }
-        launcher.startShortcut(packageName, shortcutId, null, null, Process.myUserHandle())
+        launcher.startShortcut(packageName, shortcutId, null, null, userHandle)
         return true
     } catch (exception: Exception) {
         Timber.e(exception)
@@ -74,13 +67,14 @@ fun Context.startShortcut(
 }
 
 fun Context.uninstallApp(appInfo: AppInfo) {
+    if (appInfo.isShortcut) return
     try {
         val userManager = getSystemService(Context.USER_SERVICE) as UserManager
         val targetUserHandle =
             userManager.userProfiles.find { it.hashCode() == appInfo.userHandle } ?: return
 
         val intent = Intent(Intent.ACTION_DELETE)
-        intent.data = Uri.fromParts("package", appInfo.packageName, appInfo.className)
+        intent.data = Uri.fromParts("package", appInfo.packageName, appInfo.targetId)
         intent.putExtra(Intent.EXTRA_USER, targetUserHandle)
         startActivity(intent)
     } catch (exception: Exception) {
@@ -89,6 +83,7 @@ fun Context.uninstallApp(appInfo: AppInfo) {
 }
 
 fun Context.launchAppInfo(appInfo: AppInfo) {
+    if (appInfo.isShortcut) return
     try {
         val launcherApps = getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
         val userManager = getSystemService(Context.USER_SERVICE) as UserManager

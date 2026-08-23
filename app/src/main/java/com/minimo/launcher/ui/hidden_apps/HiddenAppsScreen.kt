@@ -40,6 +40,7 @@ import com.minimo.launcher.R
 import com.minimo.launcher.ui.components.ToggleAppItem
 import com.minimo.launcher.ui.home.components.SearchItem
 import com.minimo.launcher.utils.launchApp
+import com.minimo.launcher.utils.startShortcut
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -136,11 +137,19 @@ fun HiddenAppsScreen(
                         isWorkProfile = appInfo.isWorkProfile,
                         onToggleClick = { viewModel.onToggleHiddenAppClick(appInfo) },
                         onLongClick = {
-                            context.launchApp(
-                                appInfo.packageName,
-                                appInfo.className,
-                                appInfo.userHandle
-                            )
+                            if (appInfo.isShortcut) {
+                                context.startShortcut(
+                                    appInfo.packageName,
+                                    appInfo.targetId,
+                                    appInfo.userHandle
+                                )
+                            } else {
+                                context.launchApp(
+                                    appInfo.packageName,
+                                    appInfo.targetId,
+                                    appInfo.userHandle
+                                )
+                            }
                         }
                     )
                 }

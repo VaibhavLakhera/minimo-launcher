@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.minimo.launcher.data.AppInfoDao
 import com.minimo.launcher.data.PreferenceHelper
+import com.minimo.launcher.ui.entities.toAppPreferenceTarget
 import com.minimo.launcher.ui.theme.ThemeMode
 import com.minimo.launcher.utils.AppIconAlignment
 import com.minimo.launcher.utils.FastScrollerAlignment
@@ -139,15 +140,15 @@ class CustomisationViewModel @Inject constructor(
 
     private suspend fun getAppNameFromPref(pref: String): String {
         if (pref.isBlank()) return ""
-        val parts = pref.split("|")
-        if (parts.size == 3) {
-            val packageName = parts[0]
-            val className = parts[1]
-            val userHandle = parts[2].toIntOrNull() ?: return ""
-            val entity = appInfoDao.getApp(className, packageName, userHandle)
-            if (entity != null) {
-                return entity.alternateAppName.ifEmpty { entity.appName }
-            }
+        val target = pref.toAppPreferenceTarget() ?: return ""
+        val entity = appInfoDao.getApp(
+            target.itemType,
+            target.targetId,
+            target.packageName,
+            target.userHandle
+        )
+        if (entity != null) {
+            return entity.alternateAppName.ifEmpty { entity.appName }
         }
         return ""
     }

@@ -2,6 +2,7 @@ package com.minimo.launcher.data.usecase
 
 import com.minimo.launcher.data.AppInfoDao
 import com.minimo.launcher.data.entities.AppInfoEntity
+import com.minimo.launcher.data.entities.AppItemType
 import com.minimo.launcher.utils.AppUtils
 import com.minimo.launcher.utils.InstalledApp
 import kotlinx.coroutines.Dispatchers
@@ -18,7 +19,7 @@ class UpdateAllAppsUseCase @Inject constructor(
         val installedApps = withContext(Dispatchers.IO) {
             appUtils.getInstalledApps()
         }
-        val dbApps = appInfoDao.getAllApps()
+        val dbApps = appInfoDao.getItemsByType(AppItemType.APP)
 
         updateExistingAppsInDb(installedApps, dbApps)
         addNewAppsToDb(installedApps, dbApps)
@@ -71,7 +72,8 @@ class UpdateAllAppsUseCase @Inject constructor(
                 newApps.add(
                     AppInfoEntity(
                         packageName = installedApp.packageName,
-                        className = installedApp.className,
+                        itemType = AppItemType.APP,
+                        targetId = installedApp.className,
                         userHandle = installedApp.userHandle,
                         appName = installedApp.appName,
                         alternateAppName = "",

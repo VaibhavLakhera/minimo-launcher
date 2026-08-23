@@ -46,6 +46,7 @@ fun AppNameItem(
     appName: String,
     isFavourite: Boolean,
     isHidden: Boolean,
+    isShortcut: Boolean,
     isWorkProfile: Boolean,
     appsArrangement: Arrangement.Horizontal,
     textSize: TextUnit,
@@ -63,6 +64,7 @@ fun AppNameItem(
     onLaunchDelayClick: () -> Unit,
     onLongClick: () -> Unit = { },
     onUninstallClick: () -> Unit,
+    onDeleteShortcutClick: () -> Unit,
     verticalPadding: Dp = 16.dp,
     clickEnabled: Boolean = true,
     bottomSheetStatusBarVisible: Boolean = true,
@@ -210,6 +212,7 @@ fun AppNameItem(
             appName = appName,
             isFavourite = isFavourite,
             isHidden = isHidden,
+            isShortcut = isShortcut,
             statusBarVisible = bottomSheetStatusBarVisible,
             navigationBarVisible = bottomSheetNavigationBarVisible,
             useDarkStatusBarIcons = useDarkBottomSheetStatusBarIcons,
@@ -234,6 +237,10 @@ fun AppNameItem(
             onUninstallClick = {
                 appBottomSheetVisible = false
                 onUninstallClick()
+            },
+            onDeleteShortcutClick = {
+                appBottomSheetVisible = false
+                onDeleteShortcutClick()
             },
             onLaunchDelayClick = {
                 appBottomSheetVisible = false

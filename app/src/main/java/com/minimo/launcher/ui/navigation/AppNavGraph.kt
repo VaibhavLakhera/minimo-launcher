@@ -26,7 +26,6 @@ import com.minimo.launcher.ui.settings.SettingsScreen
 import com.minimo.launcher.ui.settings.SupporterScreen
 import com.minimo.launcher.ui.settings.about.AboutAppScreen
 import com.minimo.launcher.ui.settings.customisation.CustomisationScreen
-import com.minimo.launcher.ui.settings.web_shortcuts.WebShortcutsScreen
 
 private const val DRAWER_TRANSITION_DURATION_MILLIS = 300
 private const val OUTGOING_SCREEN_FADE_DURATION_MILLIS = 50
@@ -42,7 +41,6 @@ object Routes {
     const val HIDDEN_APPS = "HIDDEN_APPS"
     const val FAVOURITE_APPS = "FAVOURITE_APPS"
     const val SETTINGS_REORDER_APPS = "SETTINGS_REORDER_APPS"
-    const val WEB_SHORTCUTS = "WEB_SHORTCUTS"
     const val SUPPORTER = "SUPPORTER"
     const val ABOUT_APP = "ABOUT_APP"
 }
@@ -208,9 +206,6 @@ fun AppNavGraph(
                 },
                 onAboutAppClick = {
                     navController.navigate(Routes.ABOUT_APP)
-                },
-                onWebShortcutsClick = {
-                    navController.navigate(Routes.WEB_SHORTCUTS)
                 }
             )
         }
@@ -250,11 +245,6 @@ fun AppNavGraph(
             ReorderAppsScreen(
                 viewModel = hiltViewModel(it),
                 onBackClick = onBackPressed,
-            )
-        }
-        composable(route = Routes.WEB_SHORTCUTS) {
-            WebShortcutsScreen(
-                onBackClick = onBackPressed
             )
         }
     }
