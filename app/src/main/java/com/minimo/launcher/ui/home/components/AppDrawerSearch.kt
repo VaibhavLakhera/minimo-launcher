@@ -20,6 +20,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.minimo.launcher.R
+import com.minimo.launcher.ui.theme.Dimens
 
 @Composable
 fun AppDrawerSearch(
@@ -27,7 +28,9 @@ fun AppDrawerSearch(
     focusRequester: FocusRequester,
     searchText: String,
     onSearchTextChange: (String) -> Unit,
+    onKeyboardDone: (() -> Unit)? = null,
     onSettingsClick: () -> Unit,
+    showSettingsIcon: Boolean = true,
     wallpaperContentColor: Color? = null,
     wallpaperTextShadow: Shadow? = null
 ) {
@@ -44,38 +47,41 @@ fun AppDrawerSearch(
                 .focusRequester(focusRequester),
             searchText = searchText,
             onSearchTextChange = onSearchTextChange,
-            endPadding = 0.dp,
+            onKeyboardDone = onKeyboardDone,
+            endPadding = if (showSettingsIcon) 0.dp else Dimens.APP_HORIZONTAL_SPACING,
             wallpaperContentColor = wallpaperContentColor,
             wallpaperTextShadow = wallpaperTextShadow
         )
-        IconButton(
-            onClick = onSettingsClick
-        ) {
-            Box(contentAlignment = Alignment.Center) {
-                if (wallpaperTextShadow != null) {
+        if (showSettingsIcon) {
+            IconButton(
+                onClick = onSettingsClick
+            ) {
+                Box(contentAlignment = Alignment.Center) {
+                    if (wallpaperTextShadow != null) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_settings),
+                            tint = wallpaperTextShadow.color,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .offset {
+                                    IntOffset(
+                                        x = wallpaperTextShadow.offset.x.toInt(),
+                                        y = wallpaperTextShadow.offset.y.toInt()
+                                    )
+                                }
+                                .blur(
+                                    with(density) {
+                                        wallpaperTextShadow.blurRadius.toDp()
+                                    }
+                                )
+                        )
+                    }
                     Icon(
                         painter = painterResource(R.drawable.ic_settings),
-                        tint = wallpaperTextShadow.color,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .offset {
-                                IntOffset(
-                                    x = wallpaperTextShadow.offset.x.toInt(),
-                                    y = wallpaperTextShadow.offset.y.toInt()
-                                )
-                            }
-                            .blur(
-                                with(density) {
-                                    wallpaperTextShadow.blurRadius.toDp()
-                                }
-                            )
+                        tint = settingsIconColor,
+                        contentDescription = stringResource(R.string.settings)
                     )
                 }
-                Icon(
-                    painter = painterResource(R.drawable.ic_settings),
-                    tint = settingsIconColor,
-                    contentDescription = stringResource(R.string.settings)
-                )
             }
         }
     }

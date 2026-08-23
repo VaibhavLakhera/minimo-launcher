@@ -36,17 +36,14 @@ class DataModule {
                 DatabaseMigrations.MIGRATION_1_2(application),
                 DatabaseMigrations.MIGRATION_2_3,
                 DatabaseMigrations.MIGRATION_3_4,
-                DatabaseMigrations.MIGRATION_4_5
+                DatabaseMigrations.MIGRATION_4_5,
+                DatabaseMigrations.MIGRATION_6_7
             )
             .build()
 
     @Singleton
     @Provides
     fun providesAppInfoDao(db: AppDatabase) = db.appInfoDao()
-
-    @Singleton
-    @Provides
-    fun providesShortcutInfoDao(db: AppDatabase) = db.shortcutInfoDao()
 
     @Singleton
     @Provides

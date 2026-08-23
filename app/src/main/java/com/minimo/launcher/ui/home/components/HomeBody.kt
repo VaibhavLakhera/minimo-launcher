@@ -28,8 +28,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.minimo.launcher.ui.components.ScreenTimeView
 import com.minimo.launcher.ui.components.TimeAndDateView
+import com.minimo.launcher.ui.entities.AppInfo
 import com.minimo.launcher.ui.home.HomeScreenState
 import com.minimo.launcher.ui.home.HomeViewModel
 import com.minimo.launcher.ui.theme.Dimens
@@ -38,7 +40,6 @@ import com.minimo.launcher.utils.openDefaultCalendarApp
 import com.minimo.launcher.utils.openDefaultClockApp
 import com.minimo.launcher.utils.openDigitalWellbeing
 import com.minimo.launcher.utils.openPowerUsageSummary
-import com.minimo.launcher.utils.startShortcut
 import com.minimo.launcher.utils.uninstallApp
 
 @Composable
@@ -52,9 +53,11 @@ fun HomeBody(
     statusBarVisible: Boolean,
     navigationBarVisible: Boolean,
     useDarkBottomSheetStatusBarIcons: Boolean,
-    useDarkBottomSheetNavigationBarIcons: Boolean
+    useDarkBottomSheetNavigationBarIcons: Boolean,
+    onDeleteShortcutClick: (AppInfo) -> Unit
 ) {
     val context = LocalContext.current
+    val iconCacheRevision by viewModel.iconCacheRevision.collectAsStateWithLifecycle()
 
     fun launchPreferredApp(preference: String, fallback: () -> Unit) {
         if (!viewModel.onPreferenceAppLaunchRequest(preference)) {
@@ -168,7 +171,7 @@ fun HomeBody(
                     initialValue = null,
                     key1 = state.showAppIconInHome,
                     key2 = appInfo.id,
-                    key3 = iconSizePx
+                    key3 = iconSizePx to iconCacheRevision
                 ) {
                     if (state.showAppIconInHome) {
                         value = viewModel.loadAppIcon(appInfo, iconSizePx)
@@ -180,6 +183,7 @@ fun HomeBody(
                     appName = appInfo.name,
                     isFavourite = appInfo.isFavourite,
                     isHidden = appInfo.isHidden,
+                    isShortcut = appInfo.isShortcut,
                     isWorkProfile = appInfo.isWorkProfile,
                     onClick = { viewModel.onAppLaunchRequest(appInfo) },
                     onToggleFavouriteClick = {
@@ -194,7 +198,9 @@ fun HomeBody(
                     appsArrangement = state.appsArrangementHorizontal,
                     textSize = textSize,
                     onUninstallClick = { context.uninstallApp(appInfo) },
+                    onDeleteShortcutClick = { onDeleteShortcutClick(appInfo) },
                     showNotificationDot = appInfo.showNotificationDot,
+                    compactTouchArea = state.compactAppTouchArea,
                     showAppIcon = state.showAppIconInHome,
                     appIcon = appIcon,
                     appIconSizeScale = appIconSizeScale,
@@ -209,25 +215,6 @@ fun HomeBody(
                 )
             }
 
-            items(items = state.favouriteShortcuts, key = { it.id }) { shortcutInfo ->
-                HomeShortcutItem(
-                    modifier = Modifier.animateItem(),
-                    shortcutName = shortcutInfo.displayName,
-                    isWorkProfile = shortcutInfo.isWorkProfile,
-                    onClick = {
-                        context.startShortcut(
-                            shortcutInfo.packageName,
-                            shortcutInfo.shortcutId,
-                            shortcutInfo.userHandle
-                        )
-                    },
-                    appsArrangement = state.appsArrangementHorizontal,
-                    textSize = state.homeTextSize.sp,
-                    verticalPadding = state.homeAppVerticalPadding.dp,
-                    textColor = textColor,
-                    shadow = textShadow
-                )
-            }
         }
     }
 }

@@ -35,6 +35,7 @@ fun ReorderAppItem(
             appName = appInfo.name,
             isFavourite = appInfo.isFavourite,
             isHidden = appInfo.isHidden,
+            isShortcut = appInfo.isShortcut,
             isWorkProfile = appInfo.isWorkProfile,
             onClick = { },
             onToggleFavouriteClick = { },
@@ -45,6 +46,7 @@ fun ReorderAppItem(
             appsArrangement = Arrangement.Start,
             textSize = Constants.DEFAULT_HOME_TEXT_SIZE.sp,
             onUninstallClick = { },
+            onDeleteShortcutClick = { },
             showNotificationDot = false,
             clickEnabled = false
         )

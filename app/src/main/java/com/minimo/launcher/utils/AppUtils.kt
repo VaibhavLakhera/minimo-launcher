@@ -5,6 +5,7 @@ import android.content.pm.LauncherApps
 import android.os.Process
 import android.os.UserManager
 import com.minimo.launcher.data.entities.AppInfoEntity
+import com.minimo.launcher.data.entities.AppItemType
 import com.minimo.launcher.ui.entities.AppInfo
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -91,9 +92,11 @@ class AppUtils @Inject constructor(
         return entities.map {
             it.toAppInfo(
                 myUserHandle = myUserHandle,
-                showNotificationDot = notificationDots.any { notificationDot ->
-                    notificationDot.packageName == it.packageName && notificationDot.userHandle == it.userHandle
-                }
+                showNotificationDot = it.itemType == AppItemType.APP &&
+                        notificationDots.any { notificationDot ->
+                            notificationDot.packageName == it.packageName &&
+                                    notificationDot.userHandle == it.userHandle
+                        }
             )
         }
     }
@@ -109,7 +112,8 @@ class AppUtils @Inject constructor(
     private fun AppInfoEntity.toAppInfo(myUserHandle: Int, showNotificationDot: Boolean): AppInfo {
         return AppInfo(
             packageName = packageName,
-            className = className,
+            itemType = itemType,
+            targetId = targetId,
             userHandle = userHandle,
             appName = appName,
             alternateAppName = alternateAppName,
@@ -128,9 +132,11 @@ class AppUtils @Inject constructor(
 fun List<AppInfo>.updateNotificationDots(notificationDots: List<NotificationDot>): List<AppInfo> {
     return map { appInfo ->
         appInfo.copy(
-            showNotificationDot = notificationDots.any { notificationDot ->
-                notificationDot.packageName == appInfo.packageName && notificationDot.userHandle == appInfo.userHandle
-            }
+            showNotificationDot = appInfo.itemType == AppItemType.APP &&
+                    notificationDots.any { notificationDot ->
+                        notificationDot.packageName == appInfo.packageName &&
+                                notificationDot.userHandle == appInfo.userHandle
+                    }
         )
     }
 }
@@ -142,5 +148,5 @@ data class InstalledApp(
     val userHandle: Int
 ) {
     val id: String
-        get() = packageName + className + userHandle
+        get() = "${AppItemType.APP.persistedValue}|$packageName|$className|$userHandle"
 }

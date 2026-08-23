@@ -3,7 +3,6 @@ package com.minimo.launcher.ui.home
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.ui.Alignment
 import com.minimo.launcher.ui.entities.AppInfo
-import com.minimo.launcher.ui.entities.ShortcutInfo
 import com.minimo.launcher.utils.AppIconAlignment
 import com.minimo.launcher.utils.Constants
 import com.minimo.launcher.utils.FastScrollerAlignment
@@ -18,7 +17,6 @@ data class PendingAppLaunch(
 data class HomeScreenState(
     val initialLoaded: Boolean = false,
     val favouriteApps: List<AppInfo> = emptyList(),
-    val favouriteShortcuts: List<ShortcutInfo> = emptyList(),
     val allApps: List<AppInfo> = emptyList(),
     val filteredAllApps: List<AppInfo> = emptyList(),
     val renameAppDialog: AppInfo? = null,
@@ -48,6 +46,7 @@ data class HomeScreenState(
     val homeAppVerticalPadding: Int = Constants.DEFAULT_HOME_VERTICAL_PADDING,
     val ignoreSpecialCharacters: String = "",
     val hideAppDrawerSearch: Boolean = false,
+    val hideSettingsIcon: Boolean = false,
     val showScreenTimeWidget: Boolean = false,
     val screenTime: String = "",
     val enableWallpaper: Boolean = false,
@@ -63,5 +62,7 @@ data class HomeScreenState(
     val keyboardOpenDelay: Long = Constants.DEFAULT_KEYBOARD_OPEN_DELAY,
     val enableFastScroller: Boolean = false,
     val fastScrollerAlignment: FastScrollerAlignment = FastScrollerAlignment.Right,
-    val backOpensAppDrawer: Boolean = true
+    val backOpensAppDrawer: Boolean = true,
+    val compactAppTouchArea: Boolean = false,
+    val keyboardDoneOpensFirstApp: Boolean = false
 )

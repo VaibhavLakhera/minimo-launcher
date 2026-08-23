@@ -201,4 +201,121 @@ object DatabaseMigrations {
             }
         }
     }
+
+    val MIGRATION_6_7 = object : Migration(6, 7) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            // Version 7 replaces the separate app and shortcut tables with one launcher-item
+            // table. Item type is part of the primary key so an activity and shortcut can safely
+            // share the same package, target text, and profile.
+            db.execSQL(
+                """
+                CREATE TABLE IF NOT EXISTS `appInfoEntity_new` (
+                    `package_name` TEXT NOT NULL,
+                    `item_type` TEXT NOT NULL,
+                    `target_id` TEXT NOT NULL,
+                    `user_handle` INTEGER NOT NULL,
+                    `app_name` TEXT NOT NULL,
+                    `alternate_app_name` TEXT NOT NULL DEFAULT '',
+                    `is_favourite` INTEGER NOT NULL DEFAULT 0,
+                    `is_hidden` INTEGER NOT NULL DEFAULT 0,
+                    `order_index` INTEGER NOT NULL DEFAULT 0,
+                    `launch_delay_seconds` INTEGER NOT NULL DEFAULT 0,
+                    PRIMARY KEY(`package_name`, `item_type`, `target_id`, `user_handle`)
+                )
+                """.trimIndent()
+            )
+
+            // Existing app rows map directly to APP items. The former activity class_name is now
+            // stored as target_id, while every user-controlled field is copied unchanged.
+            db.execSQL(
+                """
+                INSERT INTO `appInfoEntity_new` (
+                    `package_name`, `item_type`, `target_id`, `user_handle`, `app_name`,
+                    `alternate_app_name`, `is_favourite`, `is_hidden`, `order_index`,
+                    `launch_delay_seconds`
+                )
+                SELECT
+                    `package_name`, 'APP', `class_name`, `user_handle`, `app_name`,
+                    `alternate_app_name`, `is_favourite`, `is_hidden`, `order_index`,
+                    `launch_delay_seconds`
+                FROM `appInfoEntity`
+                """.trimIndent()
+            )
+
+            // Preserve all existing app favourite positions. Favourite shortcuts are appended
+            // after them in their previous case-insensitive display-name order, matching the old
+            // Home layout where shortcuts were rendered below favourite apps.
+            var nextFavouriteOrder = queryLong(
+                db,
+                "SELECT COALESCE(MAX(order_index), 0) FROM appInfoEntity WHERE is_favourite = 1"
+            ).toInt()
+            val shortcutCursor = db.query(
+                """
+                SELECT * FROM shortcutInfoEntity
+                ORDER BY is_favourite DESC,
+                    COALESCE(NULLIF(alternate_shortcut_name, ''), shortcut_name) COLLATE NOCASE,
+                    package_name, shortcut_id, user_handle
+                """.trimIndent()
+            )
+            while (shortcutCursor.moveToNext()) {
+                val isFavourite = shortcutCursor.getInt(
+                    shortcutCursor.getColumnIndexOrThrow("is_favourite")
+                )
+                val orderIndex = if (isFavourite == 1) ++nextFavouriteOrder else 0
+
+                // Shortcut IDs become target_id values. Version 6 had no hidden or launch-delay
+                // shortcut fields, so migrated shortcuts start visible with zero launch delay.
+                db.execSQL(
+                    """
+                    INSERT INTO `appInfoEntity_new` (
+                        `package_name`, `item_type`, `target_id`, `user_handle`, `app_name`,
+                        `alternate_app_name`, `is_favourite`, `is_hidden`, `order_index`,
+                        `launch_delay_seconds`
+                    ) VALUES (?, 'SHORTCUT', ?, ?, ?, ?, ?, 0, ?, 0)
+                    """.trimIndent(),
+                    arrayOf(
+                        shortcutCursor.getString(
+                            shortcutCursor.getColumnIndexOrThrow("package_name")
+                        ),
+                        shortcutCursor.getString(
+                            shortcutCursor.getColumnIndexOrThrow("shortcut_id")
+                        ),
+                        shortcutCursor.getInt(
+                            shortcutCursor.getColumnIndexOrThrow("user_handle")
+                        ),
+                        shortcutCursor.getString(
+                            shortcutCursor.getColumnIndexOrThrow("shortcut_name")
+                        ),
+                        shortcutCursor.getString(
+                            shortcutCursor.getColumnIndexOrThrow("alternate_shortcut_name")
+                        ),
+                        isFavourite,
+                        orderIndex
+                    )
+                )
+            }
+            shortcutCursor.close()
+
+            // Verify that the unified table contains every source row before removing either old
+            // table. A failed check aborts the Room migration transaction without losing data.
+            val sourceCount = queryLong(db, "SELECT COUNT(*) FROM appInfoEntity") +
+                    queryLong(db, "SELECT COUNT(*) FROM shortcutInfoEntity")
+            val migratedCount = queryLong(db, "SELECT COUNT(*) FROM appInfoEntity_new")
+            check(sourceCount == migratedCount) {
+                "Launcher item migration lost data: expected $sourceCount rows, found $migratedCount"
+            }
+
+            // Source tables are only replaced after copying and validation have succeeded.
+            db.execSQL("DROP TABLE `appInfoEntity`")
+            db.execSQL("DROP TABLE `shortcutInfoEntity`")
+            db.execSQL("ALTER TABLE `appInfoEntity_new` RENAME TO `appInfoEntity`")
+        }
+    }
+
+    private fun queryLong(db: SupportSQLiteDatabase, query: String): Long {
+        val cursor = db.query(query)
+        val value = if (cursor.moveToFirst()) cursor.getLong(0) else 0L
+        cursor.close()
+        return value
+    }
 }

@@ -3,6 +3,7 @@ package com.minimo.launcher.ui.home
 import android.content.Context
 import android.os.Build
 import android.os.SystemClock
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.ui.Alignment
 import androidx.lifecycle.ViewModel
@@ -10,10 +11,11 @@ import androidx.lifecycle.viewModelScope
 import com.minimo.launcher.R
 import com.minimo.launcher.data.AppInfoDao
 import com.minimo.launcher.data.PreferenceHelper
-import com.minimo.launcher.data.ShortcutInfoDao
+import com.minimo.launcher.data.entities.AppItemType
 import com.minimo.launcher.data.usecase.UpdateAllAppsUseCase
 import com.minimo.launcher.data.usecase.UpdateAllShortcutsUseCase
 import com.minimo.launcher.ui.entities.AppInfo
+import com.minimo.launcher.ui.entities.toAppPreferenceTarget
 import com.minimo.launcher.utils.AppIconRepository
 import com.minimo.launcher.utils.AppUtils
 import com.minimo.launcher.utils.Constants
@@ -26,6 +28,7 @@ import com.minimo.launcher.utils.ScreenTimeHelper
 import com.minimo.launcher.utils.ShortcutsUtils
 import com.minimo.launcher.utils.isAppUsagePermissionGranted
 import com.minimo.launcher.utils.launchApp
+import com.minimo.launcher.utils.startShortcut
 import com.minimo.launcher.utils.updateNotificationDots
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -35,6 +38,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -48,13 +52,13 @@ class HomeViewModel @Inject constructor(
     @ApplicationContext
     private val applicationContext: Context,
     private val screenTimeHelper: ScreenTimeHelper,
-    private val shortcutInfoDao: ShortcutInfoDao,
     private val updateAllShortcutsUseCase: UpdateAllShortcutsUseCase,
     private val shortcutsUtils: ShortcutsUtils,
     private val appIconRepository: AppIconRepository
 ) : ViewModel() {
     private val _state = MutableStateFlow(HomeScreenState())
     val state: StateFlow<HomeScreenState> = _state
+    val iconCacheRevision = appIconRepository.cacheRevision
 
     private var lastScreenTimeUpdateTime = 0L
 
@@ -64,9 +68,7 @@ class HomeViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
-            if (shortcutInfoDao.hasShortcuts()) {
-                updateAllShortcutsUseCase.invoke()
-            }
+            updateAllShortcutsUseCase.invoke()
         }
 
         viewModelScope.launch {
@@ -107,17 +109,6 @@ class HomeViewModel @Inject constructor(
                                 entities = appInfoList,
                                 notificationDots = notificationDotsNotifier.getNotificationDots()
                             )
-                        )
-                    }
-                }
-        }
-
-        viewModelScope.launch {
-            shortcutInfoDao.getFavouriteShortcutsFlow()
-                .collect { shortcutEntities ->
-                    _state.update {
-                        it.copy(
-                            favouriteShortcuts = shortcutsUtils.mapToShortcutInfo(shortcutEntities)
                         )
                     }
                 }
@@ -240,6 +231,7 @@ class HomeViewModel @Inject constructor(
                             homeAppVerticalPadding = prefs.homeAppVerticalPadding,
                             ignoreSpecialCharacters = prefs.ignoreSpecialCharacters,
                             hideAppDrawerSearch = prefs.hideAppDrawerSearch,
+                            hideSettingsIcon = prefs.hideSettingsIcon,
                             minimoSettingsPosition = prefs.minimoSettingsPosition,
                             enableWallpaper = prefs.enableWallpaper,
                             enableWallpaperOnDrawer = prefs.enableWallpaperOnDrawer,
@@ -255,6 +247,8 @@ class HomeViewModel @Inject constructor(
                             enableFastScroller = prefs.enableFastScroller,
                             fastScrollerAlignment = prefs.fastScrollerAlignment,
                             backOpensAppDrawer = prefs.backOpensAppDrawer,
+                            compactAppTouchArea = prefs.compactAppTouchArea,
+                            keyboardDoneOpensFirstApp = prefs.keyboardDoneOpensFirstApp,
                             allApps = newAllApps,
                             filteredAllApps = newFilteredApps,
                             searchText = clearSearchText
@@ -266,7 +260,8 @@ class HomeViewModel @Inject constructor(
 
     suspend fun loadAppIcon(app: AppInfo, sizePx: Int) = appIconRepository.loadIcon(
         packageName = app.packageName,
-        className = app.className,
+        itemType = app.itemType,
+        targetId = app.targetId,
         userHandle = app.userHandle,
         sizePx = sizePx
     )
@@ -279,7 +274,8 @@ class HomeViewModel @Inject constructor(
         return if (hideAppDrawerSearch) {
             val settingsAppInfo = AppInfo(
                 packageName = Constants.MINIMO_SETTINGS_PACKAGE,
-                className = "",
+                itemType = AppItemType.APP,
+                targetId = "",
                 userHandle = 0,
                 appName = applicationContext.getString(R.string.minimo_settings),
                 alternateAppName = "",
@@ -310,7 +306,8 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             if (app.isFavourite) {
                 appInfoDao.removeAppFromFavouriteTransaction(
-                    app.className,
+                    app.itemType,
+                    app.targetId,
                     app.packageName,
                     app.userHandle,
                     app.orderIndex
@@ -319,7 +316,8 @@ class HomeViewModel @Inject constructor(
                 val newOrderIndex =
                     (_state.value.favouriteApps.maxOfOrNull { it.orderIndex } ?: 0) + 1
                 appInfoDao.addAppToFavourite(
-                    app.className,
+                    app.itemType,
+                    app.targetId,
                     app.packageName,
                     app.userHandle,
                     newOrderIndex
@@ -331,10 +329,16 @@ class HomeViewModel @Inject constructor(
     fun onToggleHideClick(app: AppInfo) {
         viewModelScope.launch {
             if (app.isHidden) {
-                appInfoDao.removeAppFromHidden(app.className, app.packageName, app.userHandle)
+                appInfoDao.removeAppFromHidden(
+                    app.itemType,
+                    app.targetId,
+                    app.packageName,
+                    app.userHandle
+                )
             } else {
                 appInfoDao.addAppToHiddenTransaction(
-                    app.className,
+                    app.itemType,
+                    app.targetId,
                     app.packageName,
                     app.userHandle,
                     app.orderIndex
@@ -355,10 +359,14 @@ class HomeViewModel @Inject constructor(
         val app = _state.value.renameAppDialog ?: return
         onDismissRenameAppDialog()
         viewModelScope.launch {
-            val name = newName.ifBlank {
-                app.appName
-            }
-            appInfoDao.renameApp(app.className, app.packageName, name)
+            val name = newName.trim().takeUnless { it.isBlank() || it == app.appName }.orEmpty()
+            appInfoDao.renameApp(
+                app.itemType,
+                app.targetId,
+                app.packageName,
+                app.userHandle,
+                name
+            )
         }
     }
 
@@ -381,7 +389,8 @@ class HomeViewModel @Inject constructor(
         onDismissLaunchDelayDialog()
         viewModelScope.launch {
             appInfoDao.updateLaunchDelay(
-                className = app.className,
+                itemType = app.itemType,
+                targetId = app.targetId,
                 packageName = app.packageName,
                 userHandle = app.userHandle,
                 delaySeconds = delaySeconds
@@ -412,15 +421,8 @@ class HomeViewModel @Inject constructor(
     }
 
     fun onPreferenceAppLaunchRequest(preference: String): Boolean {
-        val parts = preference.split("|")
-        if (parts.size != 3) return false
-
-        val userHandle = parts[2].toIntOrNull() ?: return false
-        val app = _state.value.allApps.find {
-            it.packageName == parts[0] &&
-                    it.className == parts[1] &&
-                    it.userHandle == userHandle
-        } ?: return false
+        val target = preference.toAppPreferenceTarget() ?: return false
+        val app = _state.value.allApps.find(target::matches) ?: return false
 
         onAppLaunchRequest(app)
         return true
@@ -439,7 +441,47 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun launchApp(app: AppInfo) {
-        applicationContext.launchApp(app.packageName, app.className, app.userHandle)
+        when (app.itemType) {
+            AppItemType.APP -> applicationContext.launchApp(
+                app.packageName,
+                app.targetId,
+                app.userHandle
+            )
+
+            AppItemType.SHORTCUT -> applicationContext.startShortcut(
+                app.packageName,
+                app.targetId,
+                app.userHandle
+            )
+        }
+    }
+
+    fun onConfirmDeleteShortcut(shortcut: AppInfo) {
+        if (!shortcut.isShortcut) return
+        viewModelScope.launch {
+            val removed = withContext(Dispatchers.IO) {
+                shortcutsUtils.deleteShortcut(
+                    shortcut.packageName,
+                    shortcut.targetId,
+                    shortcut.userHandle
+                )
+            }
+            if (removed) {
+                appInfoDao.deleteAppTransaction(
+                    shortcut.itemType,
+                    shortcut.targetId,
+                    shortcut.packageName,
+                    shortcut.userHandle
+                )
+                appIconRepository.removeIcon(shortcut.packageName, shortcut.userHandle)
+            } else {
+                Toast.makeText(
+                    applicationContext,
+                    applicationContext.getString(R.string.failed_to_delete_shortcut),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
     }
 
     fun onSearchTextChange(searchText: String) {
@@ -458,6 +500,13 @@ class HomeViewModel @Inject constructor(
         if (searchText.isNotBlank() && _state.value.autoOpenApp && filteredAllApps.size == 1) {
             onAppLaunchRequest(filteredAllApps[0])
         }
+    }
+
+    fun onKeyboardDone() {
+        val state = _state.value
+        if (state.searchText.isBlank()) return
+
+        state.filteredAllApps.firstOrNull()?.let(::onAppLaunchRequest)
     }
 
     /**

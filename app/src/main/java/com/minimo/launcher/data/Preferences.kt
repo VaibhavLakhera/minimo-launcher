@@ -51,6 +51,7 @@ data class HomePreferences(
     val homeAppVerticalPadding: Int = Constants.DEFAULT_HOME_VERTICAL_PADDING,
     val ignoreSpecialCharacters: String = "",
     val hideAppDrawerSearch: Boolean = false,
+    val hideSettingsIcon: Boolean = false,
     val minimoSettingsPosition: MinimoSettingsPosition = MinimoSettingsPosition.Auto,
     val enableWallpaper: Boolean = false,
     val enableWallpaperOnDrawer: Boolean = false,
@@ -65,7 +66,9 @@ data class HomePreferences(
     val keyboardOpenDelay: Long = Constants.DEFAULT_KEYBOARD_OPEN_DELAY,
     val enableFastScroller: Boolean = false,
     val fastScrollerAlignment: FastScrollerAlignment = FastScrollerAlignment.Right,
-    val backOpensAppDrawer: Boolean = true
+    val backOpensAppDrawer: Boolean = true,
+    val compactAppTouchArea: Boolean = false,
+    val keyboardDoneOpensFirstApp: Boolean = false
 )
 
 data class CustomisationPreferences(
@@ -106,6 +109,7 @@ data class CustomisationPreferences(
     val homeAppVerticalPadding: Int = Constants.DEFAULT_HOME_VERTICAL_PADDING,
     val ignoreSpecialCharacters: String = "",
     val hideAppDrawerSearch: Boolean = false,
+    val hideSettingsIcon: Boolean = false,
     val minimoSettingsPosition: MinimoSettingsPosition = MinimoSettingsPosition.Auto,
     val showScreenTimeWidget: Boolean = false,
     val clockAppPreference: String = "",
@@ -117,5 +121,7 @@ data class CustomisationPreferences(
     val keyboardOpenDelay: Long = Constants.DEFAULT_KEYBOARD_OPEN_DELAY,
     val enableFastScroller: Boolean = false,
     val fastScrollerAlignment: FastScrollerAlignment = FastScrollerAlignment.Right,
-    val backOpensAppDrawer: Boolean = true
+    val backOpensAppDrawer: Boolean = true,
+    val compactAppTouchArea: Boolean = false,
+    val keyboardDoneOpensFirstApp: Boolean = false
 )

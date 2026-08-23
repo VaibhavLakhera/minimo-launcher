@@ -2,6 +2,7 @@ package com.minimo.launcher.ui.home
 
 import android.app.Activity
 import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -63,6 +64,7 @@ import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.minimo.launcher.R
 import com.minimo.launcher.ui.components.RenameDialog
+import com.minimo.launcher.ui.entities.AppInfo
 import com.minimo.launcher.ui.home.components.AppDrawerFastScroller
 import com.minimo.launcher.ui.home.components.AppDrawerSearch
 import com.minimo.launcher.ui.home.components.AppLaunchConfirmationDialog
@@ -94,12 +96,14 @@ fun AppDrawerScreen(
     val keyboardController = LocalSoftwareKeyboardController.current
 
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val iconCacheRevision by viewModel.iconCacheRevision.collectAsStateWithLifecycle()
     val focusRequester = remember { FocusRequester() }
     val allAppsLazyListState = rememberLazyListState()
     val windowInfo = LocalWindowInfo.current
     val dragDownCloseThresholdPx = windowInfo.containerSize.height * 0.15f
     var pointerDragCloseEnabled by remember { mutableStateOf(false) }
     var autoOpenKeyboardHandled by rememberSaveable { mutableStateOf(false) }
+    var shortcutToDelete by remember { mutableStateOf<AppInfo?>(null) }
     val searchVisible = state.initialLoaded && !state.hideAppDrawerSearch
     val bottomSearchVisible = searchVisible && state.drawerSearchBarAtBottom
 
@@ -191,6 +195,10 @@ fun AppDrawerScreen(
     var swipeYAccumulator by remember { mutableFloatStateOf(0f) }
     val closeGestureEnabledState = rememberUpdatedState(pointerDragCloseEnabled)
     val onCloseAppDrawerState = rememberUpdatedState(::closeAppDrawer)
+    val onSettingsClickState = rememberUpdatedState {
+        hideKeyboardWithClearFocus()
+        onSettingsClick()
+    }
     val nestedScrollConnection = remember(allAppsLazyListState, dragDownCloseThresholdPx) {
         object : NestedScrollConnection {
             override fun onPostScroll(
@@ -247,13 +255,41 @@ fun AppDrawerScreen(
     } else {
         fastScrollerContentPadding
     }
+    val textSize = if (state.applyHomeAppSizeToAllApps) {
+        state.homeTextSize.sp
+    } else {
+        20.sp
+    }
+    val appIconSizeScale = state.appIconSizePercent / 100f
+    val iconSizePx = with(LocalDensity.current) {
+        appIconSizeFor(textSize, appIconSizeScale).roundToPx()
+    }
+    val verticalPadding = state.homeAppVerticalPadding.dp
+    val showAppIcon = state.showAppIconInDrawer
+    val appIconAlignment = state.drawerAppIconAlignment
+    val appsArrangement = state.drawerAppsArrangementHorizontal
+    val showSettingsIcon = !state.hideSettingsIcon
+    val onKeyboardDone: (() -> Unit)? = if (state.keyboardDoneOpensFirstApp) {
+        {
+            hideKeyboardWithClearFocus()
+            viewModel.onKeyboardDone()
+        }
+    } else {
+        null
+    }
+    val onDrawerSettingsClick = onSettingsClickState.value
 
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
             .markPointerDragForDrawerClose(
                 onPointerDragCloseEnabledChange = { pointerDragCloseEnabled = it }
-            ),
+            )
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onLongPress = { onSettingsClickState.value() }
+                )
+            },
         containerColor = Color.Transparent,
         contentWindowInsets = if (bottomSearchVisible) {
             ScaffoldDefaults
@@ -279,10 +315,9 @@ fun AppDrawerScreen(
                         focusRequester = focusRequester,
                         searchText = state.searchText,
                         onSearchTextChange = viewModel::onSearchTextChange,
-                        onSettingsClick = {
-                            hideKeyboardWithClearFocus()
-                            onSettingsClick()
-                        },
+                        onKeyboardDone = onKeyboardDone,
+                        showSettingsIcon = showSettingsIcon,
+                        onSettingsClick = onDrawerSettingsClick,
                         wallpaperContentColor = wallpaperContentColor,
                         wallpaperTextShadow = textShadow
                     )
@@ -300,7 +335,7 @@ fun AppDrawerScreen(
                             .nestedScroll(nestedScrollConnection),
                         contentPadding = PaddingValues(
                             top = 16.dp,
-                            bottom = 0.dp,
+                            bottom = 16.dp,
                             start = startContentPadding,
                             end = endContentPadding
                         )
@@ -309,40 +344,25 @@ fun AppDrawerScreen(
                             if (appInfo.packageName == Constants.MINIMO_SETTINGS_PACKAGE) {
                                 MinimoSettingsItem(
                                     modifier = Modifier.animateItem(),
-                                    horizontalArrangement = state.drawerAppsArrangementHorizontal,
-                                    textSize = if (state.applyHomeAppSizeToAllApps) {
-                                        state.homeTextSize.sp
-                                    } else {
-                                        20.sp
-                                    },
-                                    onClick = {
-                                        hideKeyboardWithClearFocus()
-                                        onSettingsClick()
-                                    },
-                                    verticalPadding = state.homeAppVerticalPadding.dp,
-                                    showAppIcon = state.showAppIconInDrawer,
-                                    appIconSizeScale = state.appIconSizePercent / 100f,
-                                    appIconAlignment = state.drawerAppIconAlignment,
+                                    horizontalArrangement = appsArrangement,
+                                    textSize = textSize,
+                                    onClick = onDrawerSettingsClick,
+                                    compactTouchArea = state.compactAppTouchArea,
+                                    verticalPadding = verticalPadding,
+                                    showAppIcon = showAppIcon,
+                                    appIconSizeScale = appIconSizeScale,
+                                    appIconAlignment = appIconAlignment,
                                     textColor = textColor,
                                     textShadow = textShadow
                                 )
                             } else {
-                                val textSize = if (state.applyHomeAppSizeToAllApps) {
-                                    state.homeTextSize.sp
-                                } else {
-                                    20.sp
-                                }
-                                val appIconSizeScale = state.appIconSizePercent / 100f
-                                val iconSizePx = with(LocalDensity.current) {
-                                    appIconSizeFor(textSize, appIconSizeScale).roundToPx()
-                                }
                                 val appIcon by produceState<ImageBitmap?>(
                                     initialValue = null,
-                                    key1 = state.showAppIconInDrawer,
+                                    key1 = showAppIcon,
                                     key2 = appInfo.id,
-                                    key3 = iconSizePx
+                                    key3 = iconSizePx to iconCacheRevision
                                 ) {
-                                    if (state.showAppIconInDrawer) {
+                                    if (showAppIcon) {
                                         value = viewModel.loadAppIcon(appInfo, iconSizePx)
                                     }
                                 }
@@ -352,6 +372,7 @@ fun AppDrawerScreen(
                                     appName = appInfo.name,
                                     isFavourite = appInfo.isFavourite,
                                     isHidden = appInfo.isHidden,
+                                    isShortcut = appInfo.isShortcut,
                                     isWorkProfile = appInfo.isWorkProfile,
                                     onClick = {
                                         hideKeyboardWithClearFocus()
@@ -366,20 +387,22 @@ fun AppDrawerScreen(
                                     onLaunchDelayClick = {
                                         viewModel.onLaunchDelayClick(appInfo)
                                     },
-                                    appsArrangement = state.drawerAppsArrangementHorizontal,
+                                    appsArrangement = appsArrangement,
                                     onLongClick = ::hideKeyboardWithClearFocus,
                                     onUninstallClick = { context.uninstallApp(appInfo) },
+                                    onDeleteShortcutClick = { shortcutToDelete = appInfo },
                                     textSize = textSize,
                                     showNotificationDot = appInfo.showNotificationDot,
-                                    showAppIcon = state.showAppIconInDrawer,
+                                    compactTouchArea = state.compactAppTouchArea,
+                                    showAppIcon = showAppIcon,
                                     appIcon = appIcon,
                                     appIconSizeScale = appIconSizeScale,
-                                    appIconAlignment = state.drawerAppIconAlignment,
+                                    appIconAlignment = appIconAlignment,
                                     bottomSheetStatusBarVisible = statusBarVisible,
                                     bottomSheetNavigationBarVisible = navigationBarVisible,
                                     useDarkBottomSheetStatusBarIcons = useDarkIconsOnSurface,
                                     useDarkBottomSheetNavigationBarIcons = useDarkIconsOnSurface,
-                                    verticalPadding = state.homeAppVerticalPadding.dp,
+                                    verticalPadding = verticalPadding,
                                     textColor = textColor,
                                     shadow = textShadow
                                 )
@@ -424,10 +447,9 @@ fun AppDrawerScreen(
                         focusRequester = focusRequester,
                         searchText = state.searchText,
                         onSearchTextChange = viewModel::onSearchTextChange,
-                        onSettingsClick = {
-                            hideKeyboardWithClearFocus()
-                            onSettingsClick()
-                        },
+                        onKeyboardDone = onKeyboardDone,
+                        showSettingsIcon = showSettingsIcon,
+                        onSettingsClick = onDrawerSettingsClick,
                         wallpaperContentColor = wallpaperContentColor,
                         wallpaperTextShadow = textShadow
                     )
@@ -439,8 +461,12 @@ fun AppDrawerScreen(
     if (state.renameAppDialog != null) {
         val app = state.renameAppDialog!!
         RenameDialog(
-            title = stringResource(R.string.rename_app),
-            label = stringResource(R.string.app_name_label),
+            title = stringResource(
+                if (app.isShortcut) R.string.rename_shortcut else R.string.rename_app
+            ),
+            label = stringResource(
+                if (app.isShortcut) R.string.shortcut_name else R.string.app_name_label
+            ),
             originalName = app.appName,
             currentName = app.name,
             onRenameClick = viewModel::onRenameApp,
@@ -462,6 +488,16 @@ fun AppDrawerScreen(
             deadlineElapsedRealtimeMillis = pendingLaunch.deadlineElapsedRealtimeMillis,
             onLaunch = viewModel::onConfirmAppLaunch,
             onDismiss = viewModel::onDismissAppLaunch
+        )
+    }
+
+    shortcutToDelete?.let { shortcut ->
+        DeleteShortcutConfirmationDialog(
+            onConfirm = {
+                shortcutToDelete = null
+                viewModel.onConfirmDeleteShortcut(shortcut)
+            },
+            onDismiss = { shortcutToDelete = null }
         )
     }
 }

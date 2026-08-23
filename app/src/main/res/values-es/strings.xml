@@ -151,6 +151,12 @@
     <string name="fast_scroller_description">Mostrar una barra de desplazamiento rápido A-Z en el cajón de apps</string>
     <string name="back_opens_drawer">Atrás abre el cajón de apps</string>
     <string name="back_opens_drawer_description">Pulsa Atrás en la pantalla de inicio para abrir el cajón de apps</string>
+    <string name="hide_settings_icon">Ocultar icono de Ajustes</string>
+    <string name="hide_settings_icon_description">Oculta el icono de Ajustes del cajón de apps. Mantén pulsado un espacio vacío en Inicio o en el cajón para abrir Ajustes.</string>
+    <string name="compact_app_touch_area">Área táctil compacta</string>
+    <string name="compact_app_touch_area_description">Limita el área táctil de cada app a su contenido visible.</string>
+    <string name="done_opens_first_app">Listo abre la primera app</string>
+    <string name="done_opens_first_app_description">Pulsa Listo en el teclado para abrir el primer resultado de búsqueda.</string>
     <string name="become_a_supporter">Hazte colaborador</string>
     <string name="supporter_title">Colaborador</string>
     <string name="supporter_description">Esta app es completamente gratuita y de código abierto, y seguirá siéndolo. Si te gusta la app y quieres apoyar el desarrollo, puedes elegir una de las opciones a continuación.</string>
@@ -169,10 +175,9 @@
     <string name="github">GitHub</string>
     <string name="links">Enlaces</string>
 
-    <string name="web_shortcuts">Accesos directos web</string>
-    <string name="default_launcher_required_shortcuts">Debes establecer este launcher como predeterminado para acceder a los accesos directos.</string>
     <string name="delete_shortcut_confirmation">Esto eliminará el acceso directo. ¿Seguro que quieres eliminarlo?</string>
-    <string name="how_to_add_shortcut">Para añadir un acceso directo web:\n\n1. Abre tu navegador y ve a un sitio web.\n2. Selecciona \"Añadir a pantalla de inicio\" en el menú.\n3. Selecciona \"Instalar\" o \"Crear acceso directo\".\n\nLa app instalada se mostrará en el cajón de apps y el acceso directo se mostrará aquí.</string>
+    <string name="delete_shortcut">Eliminar acceso directo</string>
+    <string name="failed_to_delete_shortcut">No se pudo eliminar el acceso directo</string>
     <string name="search">Buscar</string>
     <string name="back_icon">Atrás</string>
     <string name="delete">Eliminar</string>

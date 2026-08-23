@@ -54,18 +54,11 @@ fun Context.startShortcut(
 
     val userManager = getSystemService(Context.USER_SERVICE) as UserManager
     val userHandle = userManager.userProfiles.find { it.hashCode() == userHandleHashCode }
+        ?: return false
 
     try {
         val launcher = getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
-        if (userHandle != null) {
-            try {
-                launcher.startShortcut(packageName, shortcutId, null, null, userHandle)
-                return true
-            } catch (_: Exception) {
-                Timber.w("Exception for userHandle, falling back to myUserHandle")
-            }
-        }
-        launcher.startShortcut(packageName, shortcutId, null, null, Process.myUserHandle())
+        launcher.startShortcut(packageName, shortcutId, null, null, userHandle)
         return true
     } catch (exception: Exception) {
         Timber.e(exception)
@@ -74,13 +67,14 @@ fun Context.startShortcut(
 }
 
 fun Context.uninstallApp(appInfo: AppInfo) {
+    if (appInfo.isShortcut) return
     try {
         val userManager = getSystemService(Context.USER_SERVICE) as UserManager
         val targetUserHandle =
             userManager.userProfiles.find { it.hashCode() == appInfo.userHandle } ?: return
 
         val intent = Intent(Intent.ACTION_DELETE)
-        intent.data = Uri.fromParts("package", appInfo.packageName, appInfo.className)
+        intent.data = Uri.fromParts("package", appInfo.packageName, appInfo.targetId)
         intent.putExtra(Intent.EXTRA_USER, targetUserHandle)
         startActivity(intent)
     } catch (exception: Exception) {
@@ -89,6 +83,7 @@ fun Context.uninstallApp(appInfo: AppInfo) {
 }
 
 fun Context.launchAppInfo(appInfo: AppInfo) {
+    if (appInfo.isShortcut) return
     try {
         val launcherApps = getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
         val userManager = getSystemService(Context.USER_SERVICE) as UserManager
@@ -206,15 +201,9 @@ fun Context.sendFeedback() {
 
 fun Context.lockScreen() {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-        lockScreenWithAccessibility()
+        MinimoAccessibilityService.lockScreen()
     } else {
         lockScreenWithReceiver()
-    }
-}
-
-private fun Context.lockScreenWithAccessibility() {
-    if (isAccessibilityEnabled()) {
-        MinimoAccessibilityService.lockScreen()
     }
 }
 
@@ -236,21 +225,24 @@ fun Context.hasLockScreenPermission(): Boolean {
 }
 
 private fun Context.isAccessibilityEnabled(): Boolean {
-    var enabled = 0
-    try {
-        enabled = Settings.Secure.getInt(contentResolver, Settings.Secure.ACCESSIBILITY_ENABLED)
-    } catch (e: Settings.SettingNotFoundException) {
-        Timber.e(e)
-    }
-    if (enabled == 1) {
-        val name = ComponentName(applicationContext, MinimoAccessibilityService::class.java)
-        val services = Settings.Secure.getString(
+    val service = ComponentName(applicationContext, MinimoAccessibilityService::class.java)
+    // ACCESSIBILITY_ENABLED reflects the system's active/bound state and may briefly become 0
+    // while a service is being rebound. The enabled-services list preserves the user's grant.
+    val enabledServices = try {
+        Settings.Secure.getString(
             contentResolver,
             Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
         )
-        return services?.contains(name.flattenToString()) ?: false
+    } catch (exception: Exception) {
+        Timber.e(exception)
+        null
     }
-    return false
+
+    return enabledServices
+        ?.split(':')
+        ?.mapNotNull(ComponentName::unflattenFromString)
+        ?.any { it == service }
+        ?: false
 }
 
 private fun Context.isAdminActive(): Boolean {

@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.minimo.launcher.data.AppInfoDao
 import com.minimo.launcher.data.PreferenceHelper
+import com.minimo.launcher.ui.entities.toAppPreferenceTarget
 import com.minimo.launcher.ui.theme.ThemeMode
 import com.minimo.launcher.utils.AppIconAlignment
 import com.minimo.launcher.utils.FastScrollerAlignment
@@ -16,7 +17,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -73,6 +73,7 @@ class CustomisationViewModel @Inject constructor(
                             homeAppVerticalPadding = prefs.homeAppVerticalPadding.toFloat(),
                             ignoreSpecialCharacters = prefs.ignoreSpecialCharacters,
                             hideAppDrawerSearch = prefs.hideAppDrawerSearch,
+                            hideSettingsIcon = prefs.hideSettingsIcon,
                             minimoSettingsPosition = prefs.minimoSettingsPosition,
                             showScreenTimeWidget = prefs.showScreenTimeWidget,
                             clockAppPreference = prefs.clockAppPreference,
@@ -84,7 +85,9 @@ class CustomisationViewModel @Inject constructor(
                             keyboardOpenDelay = prefs.keyboardOpenDelay,
                             enableFastScroller = prefs.enableFastScroller,
                             fastScrollerAlignment = prefs.fastScrollerAlignment,
-                            backOpensAppDrawer = prefs.backOpensAppDrawer
+                            backOpensAppDrawer = prefs.backOpensAppDrawer,
+                            compactAppTouchArea = prefs.compactAppTouchArea,
+                            keyboardDoneOpensFirstApp = prefs.keyboardDoneOpensFirstApp
                         )
                     }
 
@@ -137,15 +140,15 @@ class CustomisationViewModel @Inject constructor(
 
     private suspend fun getAppNameFromPref(pref: String): String {
         if (pref.isBlank()) return ""
-        val parts = pref.split("|")
-        if (parts.size == 3) {
-            val packageName = parts[0]
-            val className = parts[1]
-            val userHandle = parts[2].toIntOrNull() ?: return ""
-            val entity = appInfoDao.getApp(className, packageName, userHandle)
-            if (entity != null) {
-                return entity.alternateAppName.ifEmpty { entity.appName }
-            }
+        val target = pref.toAppPreferenceTarget() ?: return ""
+        val entity = appInfoDao.getApp(
+            target.itemType,
+            target.targetId,
+            target.packageName,
+            target.userHandle
+        )
+        if (entity != null) {
+            return entity.alternateAppName.ifEmpty { entity.appName }
         }
         return ""
     }
@@ -290,9 +293,9 @@ class CustomisationViewModel @Inject constructor(
         }
     }
 
-    fun onToggleDoubleTapToLock() {
+    fun onDoubleTapToLockChanged(enabled: Boolean) {
         viewModelScope.launch {
-            preferenceHelper.setDoubleTapToLock(_state.value.doubleTapToLock.not())
+            preferenceHelper.setDoubleTapToLock(enabled)
         }
     }
 
@@ -344,19 +347,6 @@ class CustomisationViewModel @Inject constructor(
         }
     }
 
-    /*
-    * On start of the screen, if the preference flag is enabled and
-    * lock screen permission is not active, then set the preference flag to false
-    * */
-    fun onLockScreenPermissionNotEnableOnStarted() {
-        viewModelScope.launch {
-            val doubleTapToLock = preferenceHelper.getDoubleTapToLock().firstOrNull() ?: false
-            if (doubleTapToLock) {
-                preferenceHelper.setDoubleTapToLock(false)
-            }
-        }
-    }
-
     fun onToggleAutoOpenApp() {
         viewModelScope.launch {
             preferenceHelper.setAutoOpenApp(_state.value.autoOpenApp.not())
@@ -390,6 +380,12 @@ class CustomisationViewModel @Inject constructor(
     fun onToggleHideAppDrawerSearch() {
         viewModelScope.launch {
             preferenceHelper.hideAppDrawerSearch(_state.value.hideAppDrawerSearch.not())
+        }
+    }
+
+    fun onToggleHideSettingsIcon() {
+        viewModelScope.launch {
+            preferenceHelper.setHideSettingsIcon(_state.value.hideSettingsIcon.not())
         }
     }
 
@@ -468,6 +464,20 @@ class CustomisationViewModel @Inject constructor(
     fun onToggleBackOpensAppDrawer() {
         viewModelScope.launch {
             preferenceHelper.setBackOpensAppDrawer(_state.value.backOpensAppDrawer.not())
+        }
+    }
+
+    fun onToggleCompactAppTouchArea() {
+        viewModelScope.launch {
+            preferenceHelper.setCompactAppTouchArea(_state.value.compactAppTouchArea.not())
+        }
+    }
+
+    fun onToggleKeyboardDoneOpensFirstApp() {
+        viewModelScope.launch {
+            preferenceHelper.setKeyboardDoneOpensFirstApp(
+                _state.value.keyboardDoneOpensFirstApp.not()
+            )
         }
     }
 }

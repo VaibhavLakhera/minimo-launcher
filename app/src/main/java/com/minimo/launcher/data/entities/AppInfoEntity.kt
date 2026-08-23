@@ -4,13 +4,26 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Ignore
 
-@Entity(tableName = "appInfoEntity", primaryKeys = ["package_name", "class_name", "user_handle"])
+/**
+ * A launcher item backed by either an installed launcher activity or a pinned shortcut.
+ *
+ * [targetId] contains the launcher activity class name for [AppItemType.APP] rows and the
+ * Android shortcut ID for [AppItemType.SHORTCUT] rows. Together with [packageName], [itemType],
+ * and [userHandle], it forms the stable identity of a launcher item.
+ */
+@Entity(
+    tableName = "appInfoEntity",
+    primaryKeys = ["package_name", "item_type", "target_id", "user_handle"]
+)
 data class AppInfoEntity(
     @ColumnInfo(name = "package_name")
     val packageName: String,
 
-    @ColumnInfo(name = "class_name")
-    val className: String,
+    @ColumnInfo(name = "item_type")
+    val itemType: AppItemType,
+
+    @ColumnInfo(name = "target_id")
+    val targetId: String,
 
     @ColumnInfo(name = "user_handle")
     val userHandle: Int,
@@ -35,5 +48,5 @@ data class AppInfoEntity(
 ) {
     @get:Ignore
     val id: String
-        get() = packageName + className + userHandle
+        get() = "${itemType.persistedValue}|$packageName|$targetId|$userHandle"
 }

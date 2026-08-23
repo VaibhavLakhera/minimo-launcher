@@ -52,7 +52,8 @@ class FavouriteAppsViewModel @Inject constructor(
         viewModelScope.launch {
             if (appInfo.isFavourite) {
                 appInfoDao.removeAppFromFavouriteTransaction(
-                    appInfo.className,
+                    appInfo.itemType,
+                    appInfo.targetId,
                     appInfo.packageName,
                     appInfo.userHandle,
                     appInfo.orderIndex
@@ -61,7 +62,8 @@ class FavouriteAppsViewModel @Inject constructor(
                 val newOrderIndex =
                     (_state.value.favouriteApps.maxOfOrNull { it.orderIndex } ?: 0) + 1
                 appInfoDao.addAppToFavourite(
-                    appInfo.className,
+                    appInfo.itemType,
+                    appInfo.targetId,
                     appInfo.packageName,
                     appInfo.userHandle,
                     newOrderIndex

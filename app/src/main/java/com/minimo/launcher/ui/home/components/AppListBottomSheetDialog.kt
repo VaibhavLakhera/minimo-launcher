@@ -11,6 +11,7 @@ fun AppListBottomSheetDialog(
     appName: String,
     isFavourite: Boolean,
     isHidden: Boolean,
+    isShortcut: Boolean,
     onDismiss: () -> Unit,
     statusBarVisible: Boolean = true,
     navigationBarVisible: Boolean = true,
@@ -21,6 +22,7 @@ fun AppListBottomSheetDialog(
     onToggleHideClick: () -> Unit,
     onAppInfoClick: () -> Unit,
     onUninstallClick: () -> Unit,
+    onDeleteShortcutClick: () -> Unit,
     onLaunchDelayClick: () -> Unit,
 ) {
     AppBottomSheetDialog(
@@ -48,16 +50,23 @@ fun AppListBottomSheetDialog(
             onClick = onToggleHideClick
         )
         AppBottomSheetText(
-            text = stringResource(R.string.app_info),
-            onClick = onAppInfoClick
-        )
-        AppBottomSheetText(
             text = stringResource(R.string.launch_delay),
             onClick = onLaunchDelayClick
         )
-        AppBottomSheetText(
-            text = stringResource(R.string.uninstall),
-            onClick = onUninstallClick
-        )
+        if (isShortcut) {
+            AppBottomSheetText(
+                text = stringResource(R.string.delete_shortcut),
+                onClick = onDeleteShortcutClick
+            )
+        } else {
+            AppBottomSheetText(
+                text = stringResource(R.string.app_info),
+                onClick = onAppInfoClick
+            )
+            AppBottomSheetText(
+                text = stringResource(R.string.uninstall),
+                onClick = onUninstallClick
+            )
+        }
     }
 }
