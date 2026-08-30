@@ -7,66 +7,73 @@ import com.minimo.launcher.data.entities.AppItemType
 import com.minimo.launcher.utils.InstalledShortcut
 import com.minimo.launcher.utils.ShortcutInventory
 import com.minimo.launcher.utils.ShortcutsUtils
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class UpdateAllShortcutsUseCase @Inject constructor(
     private val shortcutsUtils: ShortcutsUtils,
-    private val appInfoDao: AppInfoDao
+    private val appInfoDao: AppInfoDao,
+    private val appSyncMutex: AppSyncMutex
 ) {
-    suspend operator fun invoke() {
-        val dbShortcuts = appInfoDao.getItemsByType(AppItemType.SHORTCUT)
-        val reconciliation = reconcilePinnedShortcuts(
-            shortcutsUtils.getInstalledShortcuts(),
-            dbShortcuts
-        ) ?: return
+    suspend operator fun invoke() = withContext(Dispatchers.IO) {
+        appSyncMutex.withLock {
+            val dbShortcuts = appInfoDao.getItemsByType(AppItemType.SHORTCUT)
+            val syncResult = syncPinnedShortcuts(
+                shortcutsUtils.getInstalledShortcuts(),
+                dbShortcuts
+            ) ?: return@withLock
 
-        if (reconciliation.updates.isNotEmpty()) appInfoDao.addApps(reconciliation.updates)
-        if (reconciliation.deletions.isNotEmpty()) {
-            appInfoDao.deleteAppsTransaction(reconciliation.deletions)
+            if (syncResult.updates.isNotEmpty()) appInfoDao.addApps(syncResult.updates)
+            if (syncResult.deletions.isNotEmpty()) {
+                appInfoDao.deleteAppsTransaction(syncResult.deletions)
+            }
+            if (syncResult.additions.isNotEmpty()) appInfoDao.addApps(syncResult.additions)
         }
-        if (reconciliation.additions.isNotEmpty()) appInfoDao.addApps(reconciliation.additions)
     }
 
-    suspend fun addAcceptedShortcut(shortcut: ShortcutInfo) {
-        val installedShortcut = shortcutsUtils.mapInstalledShortcut(shortcut)
-        val existing = appInfoDao.getApp(
-            itemType = AppItemType.SHORTCUT,
-            targetId = installedShortcut.shortcutId,
-            packageName = installedShortcut.packageName,
-            userHandle = installedShortcut.userHandle
-        )
-        if (existing == null) {
-            appInfoDao.addAppIfMissing(createShortcutEntity(installedShortcut))
-        } else {
-            appInfoDao.addApps(
-                listOf(
-                    existing.copy(
-                        appName = installedShortcut.appName,
-                        alternateAppName = if (existing.alternateAppName == existing.appName) {
-                            ""
-                        } else {
-                            existing.alternateAppName
-                        }
+    suspend fun addAcceptedShortcut(shortcut: ShortcutInfo): Unit = withContext(Dispatchers.IO) {
+        appSyncMutex.withLock {
+            val installedShortcut = shortcutsUtils.mapInstalledShortcut(shortcut)
+            val existing = appInfoDao.getApp(
+                itemType = AppItemType.SHORTCUT,
+                targetId = installedShortcut.shortcutId,
+                packageName = installedShortcut.packageName,
+                userHandle = installedShortcut.userHandle
+            )
+            if (existing == null) {
+                appInfoDao.addAppIfMissing(createShortcutEntity(installedShortcut))
+            } else {
+                appInfoDao.addApps(
+                    listOf(
+                        existing.copy(
+                            appName = installedShortcut.appName,
+                            alternateAppName = if (existing.alternateAppName == existing.appName) {
+                                ""
+                            } else {
+                                existing.alternateAppName
+                            }
+                        )
                     )
                 )
-            )
+            }
         }
     }
 
 }
 
-internal data class ShortcutReconciliation(
+internal data class ShortcutSyncResult(
     val additions: List<AppInfoEntity>,
     val updates: List<AppInfoEntity>,
     val deletions: List<AppInfoEntity>
 )
 
-internal fun reconcilePinnedShortcuts(
+internal fun syncPinnedShortcuts(
     inventory: ShortcutInventory?,
     dbShortcuts: List<AppInfoEntity>
-): ShortcutReconciliation? {
+): ShortcutSyncResult? {
     if (inventory == null) return null
 
     val installedMap = inventory.shortcuts.associateBy { it.id }
@@ -100,7 +107,7 @@ internal fun reconcilePinnedShortcuts(
         .filterNot { it.id in dbIds }
         .map(::createShortcutEntity)
 
-    return ShortcutReconciliation(additions, updates, deletions)
+    return ShortcutSyncResult(additions, updates, deletions)
 }
 
 private fun createShortcutEntity(shortcut: InstalledShortcut): AppInfoEntity {

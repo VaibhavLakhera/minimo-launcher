@@ -33,14 +33,14 @@ class PinShortcutActivity : ComponentActivity() {
                     lifecycleScope.launch {
                         try {
                             // Insert the accepted shortcut immediately so it can appear in the app
-                            // drawer, then reconcile against Android's authoritative pinned list.
+                            // drawer, then sync against Android's authoritative pinned list.
                             if (shortcut != null) {
                                 updateAllShortcutsUseCase.addAcceptedShortcut(shortcut)
                             }
                             updateAllShortcutsUseCase.invoke()
                         } catch (exception: Exception) {
                             // Acceptance already succeeded at the system level. A later launcher
-                            // startup reconciliation will recover from a local persistence failure.
+                            // startup sync will recover from a local persistence failure.
                             Timber.e(exception, "Unable to save accepted shortcut")
                         } finally {
                             Toast.makeText(

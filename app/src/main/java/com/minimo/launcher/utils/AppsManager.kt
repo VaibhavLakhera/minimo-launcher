@@ -15,13 +15,15 @@ import com.minimo.launcher.data.usecase.UpdateAllAppsUseCase
 import com.minimo.launcher.data.usecase.UpdateAllShortcutsUseCase
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
 
 class AppsManager @Inject constructor(
     @ApplicationContext
@@ -34,7 +36,11 @@ class AppsManager @Inject constructor(
 ) : LauncherApps.Callback() {
     private val launcherApps = context.getSystemService(LauncherApps::class.java)
     private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
-    private val mutex = Mutex()
+
+    // Component changes are debounced independently for each profile so unrelated packages do not
+    // cancel one another. The lock only protects the job map from callback/coroutine races.
+    private val packageChangeJobs = mutableMapOf<PackageProfile, Job>()
+    private val packageChangeJobsLock = Any()
 
     private val managedProfileReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -43,10 +49,8 @@ class AppsManager @Inject constructor(
                 Intent.ACTION_MANAGED_PROFILE_REMOVED -> {
                     appIconRepository.clear()
                     coroutineScope.launch {
-                        mutex.withLock {
-                            updateAllAppsUseCase.invoke()
-                            updateAllShortcutsUseCase.invoke()
-                        }
+                        updateAllAppsUseCase.invoke()
+                        updateAllShortcutsUseCase.invoke()
                     }
                 }
             }
@@ -65,40 +69,34 @@ class AppsManager @Inject constructor(
 
     override fun onPackageRemoved(packageName: String?, user: UserHandle?) {
         if (packageName == null || user == null) return
-        appIconRepository.removeIcon(packageName, user.hashCode())
+        val userHandle = user.hashCode()
+        // A true removal must win over any delayed component sync for this package/profile.
+        cancelPendingPackageChange(packageName, userHandle)
+        appIconRepository.removeIcon(packageName, userHandle)
         coroutineScope.launch {
-            mutex.withLock {
-                removeAppsUseCase.invoke(packageName, user.hashCode())
-            }
+            removeAppsUseCase.invoke(packageName, userHandle)
         }
     }
 
     override fun onPackageAdded(packageName: String?, user: UserHandle?) {
         if (packageName == null || user == null) return
-        appIconRepository.removeIcon(packageName, user.hashCode())
+        val userHandle = user.hashCode()
+        cancelPendingPackageChange(packageName, userHandle)
         coroutineScope.launch {
-            mutex.withLock {
-                addUpdateAppsUseCase.invoke(
-                    packageName = packageName,
-                    userHandle = user.hashCode(),
-                    checkAppRemoval = false
-                )
-            }
+            addUpdateAppsUseCase.invoke(
+                packageName = packageName,
+                userHandle = userHandle,
+                removeMissing = false
+            )
         }
     }
 
     override fun onPackageChanged(packageName: String?, user: UserHandle?) {
         if (packageName == null || user == null) return
-        appIconRepository.removeIcon(packageName, user.hashCode())
-        coroutineScope.launch {
-            mutex.withLock {
-                addUpdateAppsUseCase.invoke(
-                    packageName = packageName,
-                    userHandle = user.hashCode(),
-                    checkAppRemoval = true
-                )
-            }
-        }
+        val userHandle = user.hashCode()
+        // Icon switching can enable and disable launcher aliases in consecutive callbacks. Waiting
+        // briefly lets one authoritative sync observe the final component set.
+        schedulePackageChange(packageName, userHandle)
     }
 
     override fun onPackagesAvailable(
@@ -107,16 +105,17 @@ class AppsManager @Inject constructor(
         replacing: Boolean
     ) {
         if (packageNames == null || user == null) return
-        packageNames.forEach { appIconRepository.removeIcon(it, user.hashCode()) }
+        val userHandle = user.hashCode()
+        packageNames.forEach { packageName ->
+            cancelPendingPackageChange(packageName, userHandle)
+        }
         coroutineScope.launch {
-            mutex.withLock {
-                packageNames.forEach { packageName ->
-                    addUpdateAppsUseCase.invoke(
-                        packageName = packageName,
-                        userHandle = user.hashCode(),
-                        checkAppRemoval = false
-                    )
-                }
+            packageNames.forEach { packageName ->
+                addUpdateAppsUseCase.invoke(
+                    packageName = packageName,
+                    userHandle = userHandle,
+                    removeMissing = replacing
+                )
             }
         }
     }
@@ -127,31 +126,34 @@ class AppsManager @Inject constructor(
         replacing: Boolean
     ) {
         if (packageNames == null || user == null) return
-        packageNames.forEach { appIconRepository.removeIcon(it, user.hashCode()) }
+        val userHandle = user.hashCode()
+        packageNames.forEach { packageName ->
+            cancelPendingPackageChange(packageName, userHandle)
+            appIconRepository.removeIcon(packageName, userHandle)
+        }
+        // Package replacement is temporary; keep saved state until the available callback can sync
+        // against the new version. Non-replacement unavailability keeps the existing behavior.
+        if (replacing) return
+
         coroutineScope.launch {
-            mutex.withLock {
-                packageNames.forEach { packageName ->
-                    removeAppsUseCase.invoke(
-                        packageName = packageName,
-                        userHandle = user.hashCode()
-                    )
-                }
+            packageNames.forEach { packageName ->
+                removeAppsUseCase.invoke(
+                    packageName = packageName,
+                    userHandle = userHandle
+                )
             }
         }
     }
 
     override fun onPackagesUnsuspended(packageNames: Array<out String>?, user: UserHandle?) {
         if (packageNames == null || user == null) return
-        packageNames.forEach { appIconRepository.removeIcon(it, user.hashCode()) }
         coroutineScope.launch {
-            mutex.withLock {
-                packageNames.forEach { packageName ->
-                    addUpdateAppsUseCase.invoke(
-                        packageName = packageName,
-                        userHandle = user.hashCode(),
-                        checkAppRemoval = false
-                    )
-                }
+            packageNames.forEach { packageName ->
+                addUpdateAppsUseCase.invoke(
+                    packageName = packageName,
+                    userHandle = user.hashCode(),
+                    removeMissing = false
+                )
             }
         }
     }
@@ -163,9 +165,7 @@ class AppsManager @Inject constructor(
     ) {
         appIconRepository.removeIcon(packageName, user.hashCode())
         coroutineScope.launch {
-            mutex.withLock {
-                updateAllShortcutsUseCase.invoke()
-            }
+            updateAllShortcutsUseCase.invoke()
         }
     }
 
@@ -173,5 +173,49 @@ class AppsManager @Inject constructor(
         launcherApps.unregisterCallback(this)
         context.unregisterReceiver(managedProfileReceiver)
         coroutineScope.cancel()
+    }
+
+    private fun schedulePackageChange(packageName: String, userHandle: Int) {
+        val key = PackageProfile(packageName, userHandle)
+        val job = coroutineScope.launch(start = CoroutineStart.LAZY) {
+            try {
+                delay(PACKAGE_CHANGE_DEBOUNCE_MILLIS.milliseconds)
+                // The use case invalidates icons once after saving the final identity, even if
+                // only the icon changed. A newer callback cannot cancel that commit halfway.
+                addUpdateAppsUseCase.invoke(
+                    packageName = packageName,
+                    userHandle = userHandle,
+                    removeMissing = true
+                )
+            } finally {
+                val currentJob = coroutineContext[Job]
+                synchronized(packageChangeJobsLock) {
+                    if (packageChangeJobs[key] === currentJob) {
+                        packageChangeJobs.remove(key)
+                    }
+                }
+            }
+        }
+
+        synchronized(packageChangeJobsLock) {
+            packageChangeJobs.put(key, job)?.cancel()
+        }
+        job.start()
+    }
+
+    private fun cancelPendingPackageChange(packageName: String, userHandle: Int) {
+        val job = synchronized(packageChangeJobsLock) {
+            packageChangeJobs.remove(PackageProfile(packageName, userHandle))
+        }
+        job?.cancel()
+    }
+
+    private data class PackageProfile(
+        val packageName: String,
+        val userHandle: Int
+    )
+
+    companion object {
+        private const val PACKAGE_CHANGE_DEBOUNCE_MILLIS = 500L
     }
 }

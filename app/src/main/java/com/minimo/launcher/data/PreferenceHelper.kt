@@ -7,6 +7,8 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.minimo.launcher.ui.entities.AppPreferenceTarget
+import com.minimo.launcher.ui.entities.toAppPreferenceTarget
 import com.minimo.launcher.ui.theme.ThemeMode
 import com.minimo.launcher.utils.AppIconAlignment
 import com.minimo.launcher.utils.Constants
@@ -95,6 +97,14 @@ class PreferenceHelper @Inject constructor(
             stringPreferencesKey("KEY_SWIPE_LEFT_APP_PREFERENCE")
         private val KEY_SWIPE_RIGHT_APP_PREFERENCE =
             stringPreferencesKey("KEY_SWIPE_RIGHT_APP_PREFERENCE")
+        private val APP_TARGET_PREFERENCE_KEYS = listOf(
+            KEY_CLOCK_APP_PREFERENCE,
+            KEY_BATTERY_APP_PREFERENCE,
+            KEY_CALENDAR_APP_PREFERENCE,
+            KEY_SCREEN_TIME_APP_PREFERENCE,
+            KEY_SWIPE_LEFT_APP_PREFERENCE,
+            KEY_SWIPE_RIGHT_APP_PREFERENCE
+        )
         private val KEY_FONT_PREFERENCE = stringPreferencesKey("KEY_FONT_PREFERENCE")
         private val KEY_MINIMO_SETTINGS_POSITION =
             stringPreferencesKey("KEY_MINIMO_SETTINGS_POSITION")
@@ -196,10 +206,6 @@ class PreferenceHelper @Inject constructor(
         preferences.edit {
             it[KEY_DOUBLE_TAP_TO_LOCK] = enable
         }
-    }
-
-    fun getDoubleTapToLock(): Flow<Boolean> {
-        return preferences.data.map { it[KEY_DOUBLE_TAP_TO_LOCK] ?: false }
     }
 
     suspend fun setTwentyFourHourFormat(enable: Boolean) {
@@ -383,6 +389,21 @@ class PreferenceHelper @Inject constructor(
     suspend fun setSwipeRightAppPreference(appData: String) {
         preferences.edit {
             it[KEY_SWIPE_RIGHT_APP_PREFERENCE] = appData
+        }
+    }
+
+    suspend fun remapAppPreferences(
+        replacements: Map<AppPreferenceTarget, AppPreferenceTarget>
+    ) {
+        if (replacements.isEmpty()) return
+
+        preferences.edit { prefs ->
+            APP_TARGET_PREFERENCE_KEYS.forEach { key ->
+                val currentValue = prefs[key] ?: return@forEach
+                val currentTarget = currentValue.toAppPreferenceTarget() ?: return@forEach
+                val replacement = replacements[currentTarget] ?: return@forEach
+                prefs[key] = replacement.preferenceValue
+            }
         }
     }
 
