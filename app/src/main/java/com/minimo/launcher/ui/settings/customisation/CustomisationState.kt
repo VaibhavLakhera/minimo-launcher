@@ -12,6 +12,7 @@ import com.minimo.launcher.utils.MinimoSettingsPosition
 import com.minimo.launcher.utils.ScreenOrientation
 
 data class CustomisationState(
+    val initialLoaded: Boolean = false,
     val themeMode: ThemeMode? = null,
     val fontPreference: String = "",
     val screenOrientation: ScreenOrientation = ScreenOrientation.Portrait,

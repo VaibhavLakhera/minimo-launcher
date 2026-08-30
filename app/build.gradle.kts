@@ -13,8 +13,8 @@ android {
     defaultConfig {
         applicationId = "com.minimo.launcher"
         minSdk = 26
-        targetSdk = 36
-        versionCode = 139
+        targetSdk = 37
+        versionCode = 140
         versionName = "1.35.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -65,12 +65,6 @@ android {
     }
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-    compilerOptions {
-        freeCompilerArgs.addAll("-Xannotation-default-target=param-property")
-    }
-}
-
 room {
     schemaDirectory("$projectDir/schemas")
 }
@@ -78,15 +72,15 @@ room {
 val playStoreImplementation by configurations
 
 dependencies {
-    implementation(platform("androidx.compose:compose-bom:2026.06.01"))
+    implementation(platform("androidx.compose:compose-bom:2026.08.00"))
 
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.ui:ui-graphics")
 
-    implementation("androidx.appcompat:appcompat:1.7.1")
+    implementation("androidx.appcompat:appcompat:1.8.0")
     debugImplementation("androidx.compose.ui:ui-tooling")
 
-    implementation("androidx.navigation:navigation-compose:2.9.8")
+    implementation("androidx.navigation:navigation-compose:2.10.0")
 
     implementation("androidx.activity:activity-compose:1.13.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.11.0")
@@ -106,6 +100,6 @@ dependencies {
 
     implementation("com.jakewharton.timber:timber:5.0.1")
 
-    playStoreImplementation("com.android.billingclient:billing-ktx:8.3.0")
+    playStoreImplementation("com.android.billingclient:billing-ktx:9.1.0")
     playStoreImplementation("com.google.android.play:review-ktx:2.0.2")
 }

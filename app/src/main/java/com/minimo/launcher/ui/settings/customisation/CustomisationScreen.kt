@@ -179,6 +179,8 @@ fun CustomisationScreen(
         },
         containerColor = MaterialTheme.colorScheme.surface
     ) { paddingValues ->
+        if (!state.initialLoaded) return@Scaffold
+
         Column(
             modifier = Modifier
                 .verticalScroll(rememberScrollState())

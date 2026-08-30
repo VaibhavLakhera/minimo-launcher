@@ -26,6 +26,7 @@
 
     <string name="theme">Theme</string>
     <string name="orientation">Orientation</string>
+    <string name="orientation_large_screen_note">Android controls orientation on large screens and may ignore this preference.</string>
     <string name="home_apps_alignment_horizontal">Home Apps Alignment Horizontal</string>
     <string name="clock_alignment">Clock Alignment</string>
     <string name="clock_mode">Clock Mode</string>
