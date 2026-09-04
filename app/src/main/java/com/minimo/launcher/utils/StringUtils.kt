@@ -5,6 +5,20 @@ import com.minimo.launcher.R
 import com.minimo.launcher.ui.theme.ThemeMode
 
 object StringUtils {
+    fun matchesAppSearch(appName: String, searchText: String, mode: SearchMode): Boolean {
+        return when (mode) {
+            SearchMode.Contains -> appName.contains(searchText, ignoreCase = true)
+            SearchMode.StartsWith -> appName.startsWith(searchText, ignoreCase = true)
+        }
+    }
+
+    fun searchModeText(context: Context, mode: SearchMode): String {
+        return when (mode) {
+            SearchMode.Contains -> context.getString(R.string.search_contains)
+            SearchMode.StartsWith -> context.getString(R.string.search_starts_with)
+        }
+    }
+
     fun themeModeText(context: Context, mode: ThemeMode?): String {
         return when (mode) {
             ThemeMode.System -> context.getString(R.string.system)

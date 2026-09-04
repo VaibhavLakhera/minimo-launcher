@@ -111,11 +111,15 @@ fun FavouriteAppsScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            SearchItem(
-                modifier = Modifier.fillMaxWidth(),
-                searchText = state.searchText,
-                onSearchTextChange = viewModel::onSearchTextChange
-            )
+            if (state.searchPreferencesLoaded) {
+                SearchItem(
+                    modifier = Modifier.fillMaxWidth(),
+                    searchText = state.searchText,
+                    onSearchTextChange = viewModel::onSearchTextChange,
+                    searchBarBorderPercent = state.searchBarBorderPercent,
+                    searchBarBackground = state.searchBarBackground
+                )
+            }
             LazyColumn(
                 modifier = Modifier.weight(1f),
                 contentPadding = PaddingValues(vertical = 20.dp)

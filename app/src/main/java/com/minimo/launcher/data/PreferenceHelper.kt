@@ -19,7 +19,9 @@ import com.minimo.launcher.utils.HomeClockAlignment
 import com.minimo.launcher.utils.HomeClockMode
 import com.minimo.launcher.utils.MinimoSettingsPosition
 import com.minimo.launcher.utils.ScreenOrientation
+import com.minimo.launcher.utils.SearchMode
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -83,6 +85,10 @@ class PreferenceHelper @Inject constructor(
         private val KEY_IGNORE_SPECIAL_CHARACTERS_IN_SEARCH =
             stringPreferencesKey("KEY_IGNORE_SPECIAL_CHARACTERS_IN_SEARCH")
         private val KEY_HIDE_APP_DRAWER_SEARCH = booleanPreferencesKey("KEY_HIDE_APP_DRAWER_SEARCH")
+        private val KEY_SEARCH_MODE = stringPreferencesKey("KEY_SEARCH_MODE")
+        private val KEY_SEARCH_BAR_BACKGROUND = booleanPreferencesKey("KEY_SEARCH_BAR_BACKGROUND")
+        private val KEY_SEARCH_BAR_BORDER_PERCENT =
+            intPreferencesKey("KEY_SEARCH_BAR_BORDER_PERCENT")
         private val KEY_HIDE_SETTINGS_ICON = booleanPreferencesKey("KEY_HIDE_SETTINGS_ICON")
         private val KEY_SHOW_SCREEN_TIME_WIDGET =
             booleanPreferencesKey("KEY_SHOW_SCREEN_TIME_WIDGET")
@@ -461,6 +467,35 @@ class PreferenceHelper @Inject constructor(
         }
     }
 
+    suspend fun setSearchMode(mode: SearchMode) {
+        preferences.edit {
+            it[KEY_SEARCH_MODE] = mode.name
+        }
+    }
+
+    suspend fun setSearchBarBorderPercent(percent: Int) {
+        preferences.edit {
+            it[KEY_SEARCH_BAR_BORDER_PERCENT] = percent
+        }
+    }
+
+    suspend fun setSearchBarBackground(enable: Boolean) {
+        preferences.edit {
+            it[KEY_SEARCH_BAR_BACKGROUND] = enable
+        }
+    }
+
+    fun getSearchPreferencesFlow(): Flow<SearchPreferences> {
+        return preferences.data.map { prefs ->
+            SearchPreferences(
+                searchMode = getSearchModeFromPref(prefs[KEY_SEARCH_MODE]),
+                searchBarBackground = prefs[KEY_SEARCH_BAR_BACKGROUND] ?: false,
+                searchBarBorderPercent = prefs[KEY_SEARCH_BAR_BORDER_PERCENT]
+                    ?: Constants.DEFAULT_SEARCH_BAR_BORDER_PERCENT
+            )
+        }.distinctUntilChanged()
+    }
+
     fun getMainPreferencesFlow(): Flow<MainPreferences> {
         return preferences.data.map { prefs ->
             MainPreferences(
@@ -512,6 +547,10 @@ class PreferenceHelper @Inject constructor(
                 autoOpenApp = prefs[KEY_AUTO_OPEN_APP] ?: false,
                 homeAppVerticalPadding = prefs[KEY_HOME_APP_VERTICAL_PADDING] ?: Constants.DEFAULT_HOME_VERTICAL_PADDING,
                 ignoreSpecialCharacters = prefs[KEY_IGNORE_SPECIAL_CHARACTERS_IN_SEARCH] ?: "",
+                searchMode = getSearchModeFromPref(prefs[KEY_SEARCH_MODE]),
+                searchBarBorderPercent = prefs[KEY_SEARCH_BAR_BORDER_PERCENT]
+                    ?: Constants.DEFAULT_SEARCH_BAR_BORDER_PERCENT,
+                searchBarBackground = prefs[KEY_SEARCH_BAR_BACKGROUND] ?: false,
                 hideAppDrawerSearch = prefs[KEY_HIDE_APP_DRAWER_SEARCH] ?: false,
                 hideSettingsIcon = prefs[KEY_HIDE_SETTINGS_ICON] ?: false,
                 minimoSettingsPosition = getMinimoSettingsPositionFromPref(prefs[KEY_MINIMO_SETTINGS_POSITION]),
@@ -584,6 +623,10 @@ class PreferenceHelper @Inject constructor(
                 notificationDot = prefs[KEY_NOTIFICATION_DOT] ?: false,
                 homeAppVerticalPadding = prefs[KEY_HOME_APP_VERTICAL_PADDING] ?: Constants.DEFAULT_HOME_VERTICAL_PADDING,
                 ignoreSpecialCharacters = prefs[KEY_IGNORE_SPECIAL_CHARACTERS_IN_SEARCH] ?: "",
+                searchMode = getSearchModeFromPref(prefs[KEY_SEARCH_MODE]),
+                searchBarBorderPercent = prefs[KEY_SEARCH_BAR_BORDER_PERCENT]
+                    ?: Constants.DEFAULT_SEARCH_BAR_BORDER_PERCENT,
+                searchBarBackground = prefs[KEY_SEARCH_BAR_BACKGROUND] ?: false,
                 hideAppDrawerSearch = prefs[KEY_HIDE_APP_DRAWER_SEARCH] ?: false,
                 hideSettingsIcon = prefs[KEY_HIDE_SETTINGS_ICON] ?: false,
                 minimoSettingsPosition = getMinimoSettingsPositionFromPref(prefs[KEY_MINIMO_SETTINGS_POSITION]),
@@ -606,6 +649,10 @@ class PreferenceHelper @Inject constructor(
                     prefs[KEY_KEYBOARD_DONE_OPENS_FIRST_APP] ?: false
             )
         }
+    }
+
+    private fun getSearchModeFromPref(mode: String?): SearchMode {
+        return SearchMode.entries.find { it.name == mode } ?: SearchMode.Contains
     }
 
     private fun getThemeModeFromPref(mode: String?): ThemeMode {

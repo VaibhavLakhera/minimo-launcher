@@ -25,7 +25,9 @@ import com.minimo.launcher.utils.HomeClockAlignment
 import com.minimo.launcher.utils.MinimoSettingsPosition
 import com.minimo.launcher.utils.NotificationDotsNotifier
 import com.minimo.launcher.utils.ScreenTimeHelper
+import com.minimo.launcher.utils.SearchMode
 import com.minimo.launcher.utils.ShortcutsUtils
+import com.minimo.launcher.utils.StringUtils
 import com.minimo.launcher.utils.isAppUsagePermissionGranted
 import com.minimo.launcher.utils.launchApp
 import com.minimo.launcher.utils.startShortcut
@@ -92,7 +94,8 @@ class HomeViewModel @Inject constructor(
                                 searchText = state.searchText,
                                 apps = allApps,
                                 includeHiddenApps = state.showHiddenAppsInSearch,
-                                ignoreSpecialCharacters = state.ignoreSpecialCharacters
+                                ignoreSpecialCharacters = state.ignoreSpecialCharacters,
+                                searchMode = state.searchMode
                             )
                         )
                     }
@@ -126,7 +129,8 @@ class HomeViewModel @Inject constructor(
                             searchText = it.searchText,
                             apps = allApps,
                             includeHiddenApps = it.showHiddenAppsInSearch,
-                            ignoreSpecialCharacters = it.ignoreSpecialCharacters
+                            ignoreSpecialCharacters = it.ignoreSpecialCharacters,
+                            searchMode = it.searchMode
                         ),
                         favouriteApps = favouriteApps
                     )
@@ -191,14 +195,20 @@ class HomeViewModel @Inject constructor(
                                 searchText = clearSearchText,
                                 apps = newAllApps,
                                 includeHiddenApps = prefs.showHiddenAppsInSearch,
-                                ignoreSpecialCharacters = prefs.ignoreSpecialCharacters
+                                ignoreSpecialCharacters = prefs.ignoreSpecialCharacters,
+                                searchMode = prefs.searchMode
                             )
-                        } else if (state.showHiddenAppsInSearch != prefs.showHiddenAppsInSearch || state.ignoreSpecialCharacters != prefs.ignoreSpecialCharacters) {
+                        } else if (
+                            state.showHiddenAppsInSearch != prefs.showHiddenAppsInSearch ||
+                            state.ignoreSpecialCharacters != prefs.ignoreSpecialCharacters ||
+                            state.searchMode != prefs.searchMode
+                        ) {
                             newFilteredApps = getAppsWithSearch(
                                 searchText = clearSearchText,
                                 apps = newAllApps,
                                 includeHiddenApps = prefs.showHiddenAppsInSearch,
-                                ignoreSpecialCharacters = prefs.ignoreSpecialCharacters
+                                ignoreSpecialCharacters = prefs.ignoreSpecialCharacters,
+                                searchMode = prefs.searchMode
                             )
                         }
 
@@ -208,6 +218,7 @@ class HomeViewModel @Inject constructor(
                         }
 
                         state.copy(
+                            searchPreferencesLoaded = true,
                             appsArrangementHorizontal = homeAppsArrangementHorizontal,
                             drawerAppsArrangementHorizontal = drawerAppsArrangementHorizontal,
                             appsArrangementVertical = homeAppsArrangementVertical,
@@ -230,6 +241,9 @@ class HomeViewModel @Inject constructor(
                             autoOpenApp = prefs.autoOpenApp,
                             homeAppVerticalPadding = prefs.homeAppVerticalPadding,
                             ignoreSpecialCharacters = prefs.ignoreSpecialCharacters,
+                            searchMode = prefs.searchMode,
+                            searchBarBackground = prefs.searchBarBackground,
+                            searchBarBorderPercent = prefs.searchBarBorderPercent,
                             hideAppDrawerSearch = prefs.hideAppDrawerSearch,
                             hideSettingsIcon = prefs.hideSettingsIcon,
                             minimoSettingsPosition = prefs.minimoSettingsPosition,
@@ -489,7 +503,8 @@ class HomeViewModel @Inject constructor(
             searchText = searchText,
             apps = _state.value.allApps,
             includeHiddenApps = _state.value.showHiddenAppsInSearch,
-            ignoreSpecialCharacters = _state.value.ignoreSpecialCharacters
+            ignoreSpecialCharacters = _state.value.ignoreSpecialCharacters,
+            searchMode = _state.value.searchMode
         )
         _state.update {
             it.copy(
@@ -519,7 +534,8 @@ class HomeViewModel @Inject constructor(
         searchText: String,
         apps: List<AppInfo>,
         includeHiddenApps: Boolean,
-        ignoreSpecialCharacters: String
+        ignoreSpecialCharacters: String,
+        searchMode: SearchMode
     ): List<AppInfo> {
         if (searchText.isBlank()) {
             return apps.filterNot { appInfo ->
@@ -527,18 +543,11 @@ class HomeViewModel @Inject constructor(
             }
         }
 
-        if (includeHiddenApps) {
-            return apps.filter { appInfo ->
-                // Filter out the special characters from the app name before searching
-                val cleanedAppName = appInfo.name.filterNot { ignoreSpecialCharacters.contains(it) }
-                cleanedAppName.contains(searchText, ignoreCase = true)
-            }
-        }
-
         return apps.filter { appInfo ->
             // Filter out the special characters from the app name before searching
             val cleanedAppName = appInfo.name.filterNot { ignoreSpecialCharacters.contains(it) }
-            !appInfo.isHidden && cleanedAppName.contains(searchText, ignoreCase = true)
+            (includeHiddenApps || !appInfo.isHidden) &&
+                    StringUtils.matchesAppSearch(cleanedAppName, searchText, searchMode)
         }
     }
 

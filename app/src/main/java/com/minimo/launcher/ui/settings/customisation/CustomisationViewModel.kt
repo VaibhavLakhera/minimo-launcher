@@ -13,6 +13,7 @@ import com.minimo.launcher.utils.HomeAppsAlignmentVertical
 import com.minimo.launcher.utils.HomeClockAlignment
 import com.minimo.launcher.utils.HomeClockMode
 import com.minimo.launcher.utils.ScreenOrientation
+import com.minimo.launcher.utils.SearchMode
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -104,6 +105,9 @@ class CustomisationViewModel @Inject constructor(
                             notificationDot = prefs.notificationDot,
                             homeAppVerticalPadding = prefs.homeAppVerticalPadding.toFloat(),
                             ignoreSpecialCharacters = prefs.ignoreSpecialCharacters,
+                            searchMode = prefs.searchMode,
+                            searchBarBackground = prefs.searchBarBackground,
+                            searchBarBorderPercent = prefs.searchBarBorderPercent.toFloat(),
                             hideAppDrawerSearch = prefs.hideAppDrawerSearch,
                             hideSettingsIcon = prefs.hideSettingsIcon,
                             minimoSettingsPosition = prefs.minimoSettingsPosition,
@@ -326,6 +330,24 @@ class CustomisationViewModel @Inject constructor(
     fun onDrawerAppIconAlignmentChanged(alignment: AppIconAlignment) {
         viewModelScope.launch {
             preferenceHelper.setDrawerAppIconAlignment(alignment)
+        }
+    }
+
+    fun onSearchModeChanged(mode: SearchMode) {
+        viewModelScope.launch {
+            preferenceHelper.setSearchMode(mode)
+        }
+    }
+
+    fun onToggleSearchBarBackground() {
+        viewModelScope.launch {
+            preferenceHelper.setSearchBarBackground(_state.value.searchBarBackground.not())
+        }
+    }
+
+    fun onSearchBarBorderPercentChanged(percent: Int) {
+        viewModelScope.launch {
+            preferenceHelper.setSearchBarBorderPercent(percent)
         }
     }
 

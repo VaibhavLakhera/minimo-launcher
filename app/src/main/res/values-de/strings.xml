@@ -117,6 +117,12 @@
     <string name="enter_characters">Zeichen eingeben</string>
     <string name="these_characters_will_be_ignored_when_searching_for_apps_in_home_screen">Diese Zeichen werden bei der App-Suche auf dem Startbildschirm ignoriert</string>
     <string name="search_app">App suchen</string>
+    <string name="search_mode">Suchmodus</string>
+    <string name="search_mode_description">Wähle, wie du in der App-Übersicht nach Apps suchst.</string>
+    <string name="search_contains">Enthält</string>
+    <string name="search_starts_with">Beginnt mit</string>
+    <string name="search_bar_border">Rand der Suchleiste:</string>
+    <string name="search_bar_background">Hintergrund der Suchleiste</string>
     <string name="get_started">Loslegen</string>
     <string name="reorder_favourites">Favoriten neu anordnen</string>
     <string name="hide_app_drawer_search">App-Schubladensuche ausblenden</string>

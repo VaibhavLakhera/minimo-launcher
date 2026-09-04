@@ -117,6 +117,12 @@
     <string name="enter_characters">Enter characters</string>
     <string name="these_characters_will_be_ignored_when_searching_for_apps_in_home_screen">These characters will be ignored when searching for apps on the home screen</string>
     <string name="search_app">Search app</string>
+    <string name="search_mode">Search Mode</string>
+    <string name="search_mode_description">Choose how to search for apps in the app drawer.</string>
+    <string name="search_contains">Contains</string>
+    <string name="search_starts_with">Starts with</string>
+    <string name="search_bar_border">Search Bar Border:</string>
+    <string name="search_bar_background">Search Bar Background</string>
     <string name="get_started">Get Started</string>
     <string name="reorder_favourites">Reorder Favorites</string>
     <string name="hide_app_drawer_search">Hide App Drawer Search</string>

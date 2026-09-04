@@ -10,6 +10,13 @@ import com.minimo.launcher.utils.HomeClockAlignment
 import com.minimo.launcher.utils.HomeClockMode
 import com.minimo.launcher.utils.MinimoSettingsPosition
 import com.minimo.launcher.utils.ScreenOrientation
+import com.minimo.launcher.utils.SearchMode
+
+data class SearchPreferences(
+    val searchMode: SearchMode = SearchMode.Contains,
+    val searchBarBackground: Boolean = false,
+    val searchBarBorderPercent: Int = Constants.DEFAULT_SEARCH_BAR_BORDER_PERCENT
+)
 
 data class MainPreferences(
     val themeMode: ThemeMode = ThemeMode.System,
@@ -50,6 +57,9 @@ data class HomePreferences(
     val autoOpenApp: Boolean = false,
     val homeAppVerticalPadding: Int = Constants.DEFAULT_HOME_VERTICAL_PADDING,
     val ignoreSpecialCharacters: String = "",
+    val searchMode: SearchMode = SearchMode.Contains,
+    val searchBarBorderPercent: Int = Constants.DEFAULT_SEARCH_BAR_BORDER_PERCENT,
+    val searchBarBackground: Boolean = false,
     val hideAppDrawerSearch: Boolean = false,
     val hideSettingsIcon: Boolean = false,
     val minimoSettingsPosition: MinimoSettingsPosition = MinimoSettingsPosition.Auto,
@@ -108,6 +118,9 @@ data class CustomisationPreferences(
     val notificationDot: Boolean = false,
     val homeAppVerticalPadding: Int = Constants.DEFAULT_HOME_VERTICAL_PADDING,
     val ignoreSpecialCharacters: String = "",
+    val searchMode: SearchMode = SearchMode.Contains,
+    val searchBarBorderPercent: Int = Constants.DEFAULT_SEARCH_BAR_BORDER_PERCENT,
+    val searchBarBackground: Boolean = false,
     val hideAppDrawerSearch: Boolean = false,
     val hideSettingsIcon: Boolean = false,
     val minimoSettingsPosition: MinimoSettingsPosition = MinimoSettingsPosition.Auto,

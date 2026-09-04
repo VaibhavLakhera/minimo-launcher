@@ -29,6 +29,25 @@ class IntroViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
+            preferenceHelper.getSearchPreferencesFlow()
+                .collect { prefs ->
+                    _state.update {
+                        it.copy(
+                            searchPreferencesLoaded = true,
+                            searchMode = prefs.searchMode,
+                            searchBarBackground = prefs.searchBarBackground,
+                            searchBarBorderPercent = prefs.searchBarBorderPercent,
+                            filteredAllApps = appUtils.getAppsWithSearch(
+                                searchText = it.searchText,
+                                apps = it.allApps,
+                                searchMode = prefs.searchMode
+                            )
+                        )
+                    }
+                }
+        }
+
+        viewModelScope.launch {
             updateAllAppsUseCase.invoke()
         }
 
@@ -48,7 +67,8 @@ class IntroViewModel @Inject constructor(
                             allApps = allApps,
                             filteredAllApps = appUtils.getAppsWithSearch(
                                 searchText = it.searchText,
-                                apps = allApps
+                                apps = allApps,
+                                searchMode = it.searchMode
                             ),
                             minimumFavouriteAdded = minimumFavouriteAdded
                         )
@@ -93,7 +113,8 @@ class IntroViewModel @Inject constructor(
                 searchText = searchText,
                 filteredAllApps = appUtils.getAppsWithSearch(
                     searchText = searchText,
-                    apps = it.allApps
+                    apps = it.allApps,
+                    searchMode = it.searchMode
                 )
             )
         }

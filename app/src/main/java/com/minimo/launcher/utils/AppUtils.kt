@@ -101,11 +101,15 @@ class AppUtils @Inject constructor(
         }
     }
 
-    fun getAppsWithSearch(searchText: String, apps: List<AppInfo>): List<AppInfo> {
+    fun getAppsWithSearch(
+        searchText: String,
+        apps: List<AppInfo>,
+        searchMode: SearchMode
+    ): List<AppInfo> {
         if (searchText.isBlank()) return apps
 
         return apps.filter { appInfo ->
-            appInfo.name.contains(searchText, ignoreCase = true)
+            StringUtils.matchesAppSearch(appInfo.name, searchText, searchMode)
         }
     }
 
