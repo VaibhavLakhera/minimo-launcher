@@ -33,6 +33,7 @@ import com.minimo.launcher.utils.isInstalledFromPlayStore
 import com.minimo.launcher.utils.openDiscordLink
 import com.minimo.launcher.utils.openGithubLink
 import com.minimo.launcher.utils.openPlayStorePage
+import com.minimo.launcher.utils.openRedditLink
 import com.minimo.launcher.utils.sendFeedback
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -127,7 +128,12 @@ fun AboutAppScreen(
             }
 
             AboutItem(
-                name = stringResource(R.string.join_discord_channel),
+                name = stringResource(R.string.reddit),
+                onClick = context::openRedditLink
+            )
+
+            AboutItem(
+                name = stringResource(R.string.discord),
                 onClick = context::openDiscordLink
             )
 

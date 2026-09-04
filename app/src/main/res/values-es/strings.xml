@@ -178,8 +178,6 @@
     <string name="about_app">Acerca de la app</string>
     <string name="about_app_description">Minimo es un launcher completamente gratuito y de código abierto. Diseñado para quienes quieren despejar su pantalla de inicio, ofrece una interfaz limpia y minimalista sin distracciones.</string>
     <string name="version">Versión</string>
-    <string name="join_discord_channel">Unirse al canal de Discord</string>
-    <string name="github">GitHub</string>
     <string name="links">Enlaces</string>
 
     <string name="delete_shortcut_confirmation">Esto eliminará el acceso directo. ¿Seguro que quieres eliminarlo?</string>

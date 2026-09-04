@@ -178,8 +178,9 @@
     <string name="about_app">About App</string>
     <string name="about_app_description">Minimo is a completely free and open-source launcher. Designed for those who want to de-clutter their home screen, it offers a clean, minimalist interface without distractions.</string>
     <string name="version">Version</string>
-    <string name="join_discord_channel">Join Discord Channel</string>
-    <string name="github">GitHub</string>
+    <string name="discord" translatable="false">Discord</string>
+    <string name="reddit" translatable="false">Reddit</string>
+    <string name="github" translatable="false">GitHub</string>
     <string name="links">Links</string>
 
     <string name="delete_shortcut_confirmation">This will delete the shortcut. Are you sure you want to delete?</string>
