@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.ui.Alignment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.minimo.launcher.BuildConfig
 import com.minimo.launcher.R
 import com.minimo.launcher.data.AppInfoDao
 import com.minimo.launcher.data.PreferenceHelper
@@ -65,6 +66,13 @@ class HomeViewModel @Inject constructor(
     private var lastScreenTimeUpdateTime = 0L
 
     init {
+        viewModelScope.launch {
+            val description = applicationContext.getString(R.string.whats_new_description)
+            if (preferenceHelper.claimWhatsNew(BuildConfig.VERSION_CODE, description)) {
+                _state.update { it.copy(whatsNewDescription = description) }
+            }
+        }
+
         viewModelScope.launch {
             updateAllAppsUseCase.invoke()
         }
@@ -572,5 +580,9 @@ class HomeViewModel @Inject constructor(
                 preferenceHelper.showScreenTimeWidget(false)
             }
         }
+    }
+
+    fun onDismissWhatsNew() {
+        _state.update { it.copy(whatsNewDescription = null) }
     }
 }

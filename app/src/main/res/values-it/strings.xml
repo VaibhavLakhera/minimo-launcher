@@ -191,4 +191,9 @@
     <string name="invalid_shortcut_request">Richiesta di scorciatoia non valida</string>
     <string name="rename_shortcut">Rinomina collegamento</string>
     <string name="shortcut_name">Nome collegamento</string>
+
+    <!-- Current release notes. Update for each release, or leave blank to skip the dialog. -->
+    <string name="whats_new_title">Novità</string>
+    <string name="whats_new_description">• Personalizza lo sfondo e il bordo della barra di ricerca.\n• Scegli come cercare le app per nome.\n• Migliorate la sincronizzazione delle app e il caricamento delle impostazioni.\n• Aggiunto il supporto per Android 17.\n• Unisciti alla community di Reddit su /r/MinimoLauncher</string>
+    <string name="review_on_play_store">Recensisci sul Play Store</string>
 </resources>

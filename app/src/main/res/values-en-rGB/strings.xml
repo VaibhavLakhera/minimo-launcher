@@ -191,4 +191,9 @@
     <string name="invalid_shortcut_request">Invalid shortcut request</string>
     <string name="rename_shortcut">Rename Shortcut</string>
     <string name="shortcut_name">Shortcut Name</string>
+
+    <!-- Current release notes. Update for each release, or leave blank to skip the dialog. -->
+    <string name="whats_new_title">What\'s New</string>
+    <string name="whats_new_description">• Customise your search bar’s background and border.\n• Choose how app search matches names.\n• Improved app syncing and settings loading.\n• Added Android 17 support.\n• Join reddit community at /r/MinimoLauncher</string>
+    <string name="review_on_play_store">Review on Play Store</string>
 </resources>

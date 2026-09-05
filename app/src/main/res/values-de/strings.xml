@@ -191,4 +191,9 @@
     <string name="invalid_shortcut_request">Ungültige Verknüpfungsanfrage</string>
     <string name="rename_shortcut">Verknüpfung umbenennen</string>
     <string name="shortcut_name">Name der Verknüpfung</string>
+
+    <!-- Current release notes. Update for each release, or leave blank to skip the dialog. -->
+    <string name="whats_new_title">Was ist neu?</string>
+    <string name="whats_new_description">• Passe Hintergrund und Rahmen der Suchleiste an.\n• Wähle, wie die App-Suche Namen abgleicht.\n• Verbesserte App-Synchronisierung und schnelleres Laden der Einstellungen.\n• Unterstützung für Android 17 hinzugefügt.\n• Tritt der Reddit-Community unter /r/MinimoLauncher bei</string>
+    <string name="review_on_play_store">Im Play Store bewerten</string>
 </resources>

@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.minimo.launcher.BuildConfig
 import com.minimo.launcher.ui.entities.AppPreferenceTarget
 import com.minimo.launcher.ui.entities.toAppPreferenceTarget
 import com.minimo.launcher.ui.theme.ThemeMode
@@ -31,6 +32,7 @@ class PreferenceHelper @Inject constructor(
     private val preferences: DataStore<Preferences>
 ) {
     companion object {
+        private val KEY_WHATS_NEW_HANDLED_BUILD = intPreferencesKey("KEY_WHATS_NEW_HANDLED_BUILD")
         private val KEY_INTRO_COMPLETED = booleanPreferencesKey("KEY_INTRO_COMPLETED")
         private val KEY_THEME_MODE = stringPreferencesKey("KEY_THEME_MODE")
         private val KEY_SET_WALLPAPER_TO_THEME_COLOR =
@@ -129,7 +131,26 @@ class PreferenceHelper @Inject constructor(
     suspend fun setIsIntroCompleted(isCompleted: Boolean) {
         preferences.edit {
             it[KEY_INTRO_COMPLETED] = isCompleted
+            if (isCompleted) {
+                it[KEY_WHATS_NEW_HANDLED_BUILD] = maxOf(
+                    it[KEY_WHATS_NEW_HANDLED_BUILD] ?: 0,
+                    BuildConfig.VERSION_CODE
+                )
+            }
         }
+    }
+
+    /** Atomically claims this build before showing it, including migration for existing users. */
+    suspend fun claimWhatsNew(buildNumber: Int, description: String): Boolean {
+        var shouldShow = false
+        preferences.edit {
+            val handledBuild = it[KEY_WHATS_NEW_HANDLED_BUILD]
+            if (handledBuild == null || buildNumber > handledBuild) {
+                shouldShow = it[KEY_INTRO_COMPLETED] == true && description.isNotBlank()
+                it[KEY_WHATS_NEW_HANDLED_BUILD] = buildNumber
+            }
+        }
+        return shouldShow
     }
 
     fun getIsIntroCompletedFlow(): Flow<Boolean> {

@@ -16,6 +16,7 @@ data class PendingAppLaunch(
 )
 
 data class HomeScreenState(
+    val whatsNewDescription: String? = null,
     val initialLoaded: Boolean = false,
     val favouriteApps: List<AppInfo> = emptyList(),
     val allApps: List<AppInfo> = emptyList(),
