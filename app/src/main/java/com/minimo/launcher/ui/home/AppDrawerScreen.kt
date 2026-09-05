@@ -104,7 +104,7 @@ fun AppDrawerScreen(
     var pointerDragCloseEnabled by remember { mutableStateOf(false) }
     var autoOpenKeyboardHandled by rememberSaveable { mutableStateOf(false) }
     var shortcutToDelete by remember { mutableStateOf<AppInfo?>(null) }
-    val searchVisible = state.initialLoaded && !state.hideAppDrawerSearch
+    val searchVisible = state.searchPreferencesLoaded && !state.hideAppDrawerSearch
     val bottomSearchVisible = searchVisible && state.drawerSearchBarAtBottom
 
     fun hideKeyboardWithClearFocus() {
@@ -126,9 +126,8 @@ fun AppDrawerScreen(
     }
 
     LaunchedEffect(
-        state.initialLoaded,
-        state.autoOpenKeyboardAllApps,
-        state.hideAppDrawerSearch
+        searchVisible,
+        state.autoOpenKeyboardAllApps
     ) {
         if (!searchVisible || autoOpenKeyboardHandled) return@LaunchedEffect
 
@@ -299,161 +298,163 @@ fun AppDrawerScreen(
             ScaffoldDefaults.contentWindowInsets
         }
     ) { paddingValues ->
-        if (state.initialLoaded) {
-            Column(
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .consumeWindowInsets(paddingValues)
+                .windowInsetsPadding(WindowInsets.imeAnimationTarget)
+        ) {
+            // For blank space at the top of the drawer screen.
+            Spacer(modifier = Modifier.height(16.dp))
+
+            if (searchVisible && !state.drawerSearchBarAtBottom) {
+                AppDrawerSearch(
+                    focusRequester = focusRequester,
+                    searchText = state.searchText,
+                    onSearchTextChange = viewModel::onSearchTextChange,
+                    searchBarBorderPercent = state.searchBarBorderPercent,
+                    searchBarBackground = state.searchBarBackground,
+                    onKeyboardDone = onKeyboardDone,
+                    showSettingsIcon = showSettingsIcon,
+                    onSettingsClick = onDrawerSettingsClick,
+                    wallpaperContentColor = wallpaperContentColor,
+                    wallpaperTextShadow = textShadow
+                )
+            }
+
+            Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(paddingValues)
-                    .consumeWindowInsets(paddingValues)
-                    .windowInsetsPadding(WindowInsets.imeAnimationTarget)
+                    .weight(1f)
             ) {
-                // For blank space at the top of the drawer screen.
-                Spacer(modifier = Modifier.height(16.dp))
-
-                if (searchVisible && !state.drawerSearchBarAtBottom) {
-                    AppDrawerSearch(
-                        focusRequester = focusRequester,
-                        searchText = state.searchText,
-                        onSearchTextChange = viewModel::onSearchTextChange,
-                        onKeyboardDone = onKeyboardDone,
-                        showSettingsIcon = showSettingsIcon,
-                        onSettingsClick = onDrawerSettingsClick,
-                        wallpaperContentColor = wallpaperContentColor,
-                        wallpaperTextShadow = textShadow
-                    )
-                }
-
-                Box(
+                LazyColumn(
+                    state = allAppsLazyListState,
                     modifier = Modifier
                         .fillMaxSize()
-                        .weight(1f)
+                        .nestedScroll(nestedScrollConnection),
+                    contentPadding = PaddingValues(
+                        top = 16.dp,
+                        bottom = 16.dp,
+                        start = startContentPadding,
+                        end = endContentPadding
+                    )
                 ) {
-                    LazyColumn(
-                        state = allAppsLazyListState,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .nestedScroll(nestedScrollConnection),
-                        contentPadding = PaddingValues(
-                            top = 16.dp,
-                            bottom = 16.dp,
-                            start = startContentPadding,
-                            end = endContentPadding
-                        )
-                    ) {
-                        items(items = state.filteredAllApps, key = { it.id }) { appInfo ->
-                            if (appInfo.packageName == Constants.MINIMO_SETTINGS_PACKAGE) {
-                                MinimoSettingsItem(
-                                    modifier = Modifier.animateItem(),
-                                    horizontalArrangement = appsArrangement,
-                                    textSize = textSize,
-                                    onClick = onDrawerSettingsClick,
-                                    compactTouchArea = state.compactAppTouchArea,
-                                    verticalPadding = verticalPadding,
-                                    showAppIcon = showAppIcon,
-                                    appIconSizeScale = appIconSizeScale,
-                                    appIconAlignment = appIconAlignment,
-                                    textColor = textColor,
-                                    textShadow = textShadow
-                                )
-                            } else {
-                                val appIcon by produceState<ImageBitmap?>(
-                                    initialValue = null,
-                                    key1 = showAppIcon,
-                                    key2 = appInfo.id,
-                                    key3 = iconSizePx to iconCacheRevision
-                                ) {
-                                    if (showAppIcon) {
-                                        value = viewModel.loadAppIcon(appInfo, iconSizePx)
-                                    }
+                    items(items = state.filteredAllApps, key = { it.id }) { appInfo ->
+                        if (appInfo.packageName == Constants.MINIMO_SETTINGS_PACKAGE) {
+                            MinimoSettingsItem(
+                                modifier = Modifier.animateItem(),
+                                horizontalArrangement = appsArrangement,
+                                textSize = textSize,
+                                onClick = onDrawerSettingsClick,
+                                compactTouchArea = state.compactAppTouchArea,
+                                verticalPadding = verticalPadding,
+                                showAppIcon = showAppIcon,
+                                appIconSizeScale = appIconSizeScale,
+                                appIconAlignment = appIconAlignment,
+                                textColor = textColor,
+                                textShadow = textShadow
+                            )
+                        } else {
+                            val appIcon by produceState<ImageBitmap?>(
+                                initialValue = null,
+                                key1 = showAppIcon,
+                                key2 = appInfo.id,
+                                key3 = iconSizePx to iconCacheRevision
+                            ) {
+                                if (showAppIcon) {
+                                    value = viewModel.loadAppIcon(appInfo, iconSizePx)
                                 }
-
-                                AppNameItem(
-                                    modifier = Modifier.animateItem(),
-                                    appName = appInfo.name,
-                                    isFavourite = appInfo.isFavourite,
-                                    isHidden = appInfo.isHidden,
-                                    isShortcut = appInfo.isShortcut,
-                                    isWorkProfile = appInfo.isWorkProfile,
-                                    onClick = {
-                                        hideKeyboardWithClearFocus()
-                                        viewModel.onAppLaunchRequest(appInfo)
-                                    },
-                                    onToggleFavouriteClick = {
-                                        viewModel.onToggleFavouriteAppClick(appInfo)
-                                    },
-                                    onRenameClick = { viewModel.onRenameAppClick(appInfo) },
-                                    onToggleHideClick = { viewModel.onToggleHideClick(appInfo) },
-                                    onAppInfoClick = { context.launchAppInfo(appInfo) },
-                                    onLaunchDelayClick = {
-                                        viewModel.onLaunchDelayClick(appInfo)
-                                    },
-                                    appsArrangement = appsArrangement,
-                                    onLongClick = ::hideKeyboardWithClearFocus,
-                                    onUninstallClick = { context.uninstallApp(appInfo) },
-                                    onDeleteShortcutClick = { shortcutToDelete = appInfo },
-                                    textSize = textSize,
-                                    showNotificationDot = appInfo.showNotificationDot,
-                                    compactTouchArea = state.compactAppTouchArea,
-                                    showAppIcon = showAppIcon,
-                                    appIcon = appIcon,
-                                    appIconSizeScale = appIconSizeScale,
-                                    appIconAlignment = appIconAlignment,
-                                    bottomSheetStatusBarVisible = statusBarVisible,
-                                    bottomSheetNavigationBarVisible = navigationBarVisible,
-                                    useDarkBottomSheetStatusBarIcons = useDarkIconsOnSurface,
-                                    useDarkBottomSheetNavigationBarIcons = useDarkIconsOnSurface,
-                                    verticalPadding = verticalPadding,
-                                    textColor = textColor,
-                                    shadow = textShadow
-                                )
                             }
+
+                            AppNameItem(
+                                modifier = Modifier.animateItem(),
+                                appName = appInfo.name,
+                                isFavourite = appInfo.isFavourite,
+                                isHidden = appInfo.isHidden,
+                                isShortcut = appInfo.isShortcut,
+                                isWorkProfile = appInfo.isWorkProfile,
+                                onClick = {
+                                    hideKeyboardWithClearFocus()
+                                    viewModel.onAppLaunchRequest(appInfo)
+                                },
+                                onToggleFavouriteClick = {
+                                    viewModel.onToggleFavouriteAppClick(appInfo)
+                                },
+                                onRenameClick = { viewModel.onRenameAppClick(appInfo) },
+                                onToggleHideClick = { viewModel.onToggleHideClick(appInfo) },
+                                onAppInfoClick = { context.launchAppInfo(appInfo) },
+                                onLaunchDelayClick = {
+                                    viewModel.onLaunchDelayClick(appInfo)
+                                },
+                                appsArrangement = appsArrangement,
+                                onLongClick = ::hideKeyboardWithClearFocus,
+                                onUninstallClick = { context.uninstallApp(appInfo) },
+                                onDeleteShortcutClick = { shortcutToDelete = appInfo },
+                                textSize = textSize,
+                                showNotificationDot = appInfo.showNotificationDot,
+                                compactTouchArea = state.compactAppTouchArea,
+                                showAppIcon = showAppIcon,
+                                appIcon = appIcon,
+                                appIconSizeScale = appIconSizeScale,
+                                appIconAlignment = appIconAlignment,
+                                bottomSheetStatusBarVisible = statusBarVisible,
+                                bottomSheetNavigationBarVisible = navigationBarVisible,
+                                useDarkBottomSheetStatusBarIcons = useDarkIconsOnSurface,
+                                useDarkBottomSheetNavigationBarIcons = useDarkIconsOnSurface,
+                                verticalPadding = verticalPadding,
+                                textColor = textColor,
+                                shadow = textShadow
+                            )
                         }
                     }
-
-                    if (showFastScroller) {
-                        AppDrawerFastScroller(
-                            apps = state.filteredAllApps,
-                            listState = allAppsLazyListState,
-                            modifier = Modifier.align(
-                                if (fastScrollerAtStart) {
-                                    Alignment.CenterStart
-                                } else {
-                                    Alignment.CenterEnd
-                                }
-                            ),
-                            isAtStart = fastScrollerAtStart,
-                            onInteractionStart = ::hideKeyboardWithClearFocus,
-                            textColor = textColor,
-                            textShadow = textShadow,
-                            indicatorColor = if (enableWallpaper) {
-                                textColor
-                            } else {
-                                onSurfaceColor
-                            },
-                            indicatorTextColor = if (enableWallpaper) {
-                                if (state.lightTextOnWallpaper) Color.Black else Color.White
-                            } else {
-                                surfaceColor
-                            }
-                        )
-                    }
                 }
 
-                if (bottomSearchVisible) {
-                    AppDrawerSearch(
-                        modifier = Modifier
-                            .navigationBarsPadding()
-                            .padding(bottom = 8.dp),
-                        focusRequester = focusRequester,
-                        searchText = state.searchText,
-                        onSearchTextChange = viewModel::onSearchTextChange,
-                        onKeyboardDone = onKeyboardDone,
-                        showSettingsIcon = showSettingsIcon,
-                        onSettingsClick = onDrawerSettingsClick,
-                        wallpaperContentColor = wallpaperContentColor,
-                        wallpaperTextShadow = textShadow
+                if (showFastScroller) {
+                    AppDrawerFastScroller(
+                        apps = state.filteredAllApps,
+                        listState = allAppsLazyListState,
+                        modifier = Modifier.align(
+                            if (fastScrollerAtStart) {
+                                Alignment.CenterStart
+                            } else {
+                                Alignment.CenterEnd
+                            }
+                        ),
+                        isAtStart = fastScrollerAtStart,
+                        onInteractionStart = ::hideKeyboardWithClearFocus,
+                        textColor = textColor,
+                        textShadow = textShadow,
+                        indicatorColor = if (enableWallpaper) {
+                            textColor
+                        } else {
+                            onSurfaceColor
+                        },
+                        indicatorTextColor = if (enableWallpaper) {
+                            if (state.lightTextOnWallpaper) Color.Black else Color.White
+                        } else {
+                            surfaceColor
+                        }
                     )
                 }
+            }
+
+            if (bottomSearchVisible) {
+                AppDrawerSearch(
+                    modifier = Modifier
+                        .navigationBarsPadding()
+                        .padding(bottom = 8.dp),
+                    focusRequester = focusRequester,
+                    searchText = state.searchText,
+                    onSearchTextChange = viewModel::onSearchTextChange,
+                    searchBarBorderPercent = state.searchBarBorderPercent,
+                    searchBarBackground = state.searchBarBackground,
+                    onKeyboardDone = onKeyboardDone,
+                    showSettingsIcon = showSettingsIcon,
+                    onSettingsClick = onDrawerSettingsClick,
+                    wallpaperContentColor = wallpaperContentColor,
+                    wallpaperTextShadow = textShadow
+                )
             }
         }
     }

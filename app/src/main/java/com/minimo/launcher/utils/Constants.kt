@@ -17,6 +17,9 @@ object Constants {
     const val DEFAULT_DIM_WALLPAPER_PERCENTAGE = 20
     val DIM_WALLPAPER_PERCENTAGE_RANGE by lazy { 20f..80f }
 
+    const val DEFAULT_SEARCH_BAR_BORDER_PERCENT = 7
+    val SEARCH_BAR_BORDER_PERCENT_RANGE by lazy { 0f..50f }
+
     const val DEFAULT_KEYBOARD_OPEN_DELAY = 150L
     val KEYBOARD_OPEN_DELAY_RANGE by lazy { 0L..1500L }
 
@@ -46,6 +49,10 @@ enum class HomeClockAlignment {
 
 enum class HomeClockMode {
     Full, TimeOnly, DateOnly
+}
+
+enum class SearchMode {
+    Contains, StartsWith
 }
 
 enum class MinimoSettingsPosition {

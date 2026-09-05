@@ -47,7 +47,10 @@ import com.minimo.launcher.ui.entities.AppInfo
 import com.minimo.launcher.ui.home.components.AppLaunchConfirmationDialog
 import com.minimo.launcher.ui.home.components.HomeBody
 import com.minimo.launcher.ui.home.components.LaunchDelayDialog
+import com.minimo.launcher.ui.home.components.WhatsNewDialog
+import com.minimo.launcher.utils.isInstalledFromPlayStore
 import com.minimo.launcher.utils.lockScreen
+import com.minimo.launcher.utils.openPlayStorePage
 import com.minimo.launcher.utils.showNotificationDrawer
 
 @Composable
@@ -75,7 +78,7 @@ fun HomeScreen(
     val swipeRightThreshold = swipeHorizontalThresholdPx
 
     BackHandler {
-        if (state.backOpensAppDrawer) {
+        if (state.whatsNewDescription == null && state.backOpensAppDrawer) {
             onOpenAppDrawer()
         }
     }
@@ -247,6 +250,18 @@ fun HomeScreen(
                 viewModel.onConfirmDeleteShortcut(shortcut)
             },
             onDismiss = { shortcutToDelete = null }
+        )
+    }
+
+    state.whatsNewDescription?.let { description ->
+        WhatsNewDialog(
+            description = description,
+            showReviewButton = context.isInstalledFromPlayStore(),
+            onReview = {
+                viewModel.onDismissWhatsNew()
+                context.openPlayStorePage()
+            },
+            onDismiss = viewModel::onDismissWhatsNew
         )
     }
 }

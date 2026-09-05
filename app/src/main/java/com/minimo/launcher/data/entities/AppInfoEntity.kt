@@ -9,7 +9,8 @@ import androidx.room.Ignore
  *
  * [targetId] contains the launcher activity class name for [AppItemType.APP] rows and the
  * Android shortcut ID for [AppItemType.SHORTCUT] rows. Together with [packageName], [itemType],
- * and [userHandle], it forms the stable identity of a launcher item.
+ * and [userHandle], it forms the persisted identity of a launcher item. App sync can move saved
+ * state to a new identity when an app replaces one launcher component with another.
  */
 @Entity(
     tableName = "appInfoEntity",

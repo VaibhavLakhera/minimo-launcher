@@ -13,6 +13,7 @@ import com.minimo.launcher.utils.HomeAppsAlignmentVertical
 import com.minimo.launcher.utils.HomeClockAlignment
 import com.minimo.launcher.utils.HomeClockMode
 import com.minimo.launcher.utils.ScreenOrientation
+import com.minimo.launcher.utils.SearchMode
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -34,8 +35,40 @@ class CustomisationViewModel @Inject constructor(
             preferenceHelper.getCustomisationPreferencesFlow()
                 .distinctUntilChanged()
                 .collect { prefs ->
+                    // Resolve custom app names and clear preferences for apps no longer in the DB.
+                    val clockAppName = getAppNameFromPref(prefs.clockAppPreference)
+                    if (prefs.clockAppPreference.isNotBlank() && clockAppName.isEmpty()) {
+                        preferenceHelper.setClockAppPreference("")
+                    }
+
+                    val batteryAppName = getAppNameFromPref(prefs.batteryAppPreference)
+                    if (prefs.batteryAppPreference.isNotBlank() && batteryAppName.isEmpty()) {
+                        preferenceHelper.setBatteryAppPreference("")
+                    }
+
+                    val calendarAppName = getAppNameFromPref(prefs.calendarAppPreference)
+                    if (prefs.calendarAppPreference.isNotBlank() && calendarAppName.isEmpty()) {
+                        preferenceHelper.setCalendarAppPreference("")
+                    }
+
+                    val screenTimeAppName = getAppNameFromPref(prefs.screenTimeAppPreference)
+                    if (prefs.screenTimeAppPreference.isNotBlank() && screenTimeAppName.isEmpty()) {
+                        preferenceHelper.setScreenTimeAppPreference("")
+                    }
+
+                    val swipeLeftAppName = getAppNameFromPref(prefs.swipeLeftAppPreference)
+                    if (prefs.swipeLeftAppPreference.isNotBlank() && swipeLeftAppName.isEmpty()) {
+                        preferenceHelper.setSwipeLeftAppPreference("")
+                    }
+
+                    val swipeRightAppName = getAppNameFromPref(prefs.swipeRightAppPreference)
+                    if (prefs.swipeRightAppPreference.isNotBlank() && swipeRightAppName.isEmpty()) {
+                        preferenceHelper.setSwipeRightAppPreference("")
+                    }
+
                     _state.update { state ->
                         state.copy(
+                            initialLoaded = true,
                             themeMode = prefs.themeMode,
                             fontPreference = prefs.fontPreference,
                             screenOrientation = prefs.screenOrientation,
@@ -72,16 +105,25 @@ class CustomisationViewModel @Inject constructor(
                             notificationDot = prefs.notificationDot,
                             homeAppVerticalPadding = prefs.homeAppVerticalPadding.toFloat(),
                             ignoreSpecialCharacters = prefs.ignoreSpecialCharacters,
+                            searchMode = prefs.searchMode,
+                            searchBarBackground = prefs.searchBarBackground,
+                            searchBarBorderPercent = prefs.searchBarBorderPercent.toFloat(),
                             hideAppDrawerSearch = prefs.hideAppDrawerSearch,
                             hideSettingsIcon = prefs.hideSettingsIcon,
                             minimoSettingsPosition = prefs.minimoSettingsPosition,
                             showScreenTimeWidget = prefs.showScreenTimeWidget,
-                            clockAppPreference = prefs.clockAppPreference,
-                            batteryAppPreference = prefs.batteryAppPreference,
-                            calendarAppPreference = prefs.calendarAppPreference,
-                            screenTimeAppPreference = prefs.screenTimeAppPreference,
-                            swipeLeftAppPreference = prefs.swipeLeftAppPreference,
-                            swipeRightAppPreference = prefs.swipeRightAppPreference,
+                            clockAppPreference = if (clockAppName.isEmpty()) "" else prefs.clockAppPreference,
+                            clockAppName = clockAppName,
+                            batteryAppPreference = if (batteryAppName.isEmpty()) "" else prefs.batteryAppPreference,
+                            batteryAppName = batteryAppName,
+                            calendarAppPreference = if (calendarAppName.isEmpty()) "" else prefs.calendarAppPreference,
+                            calendarAppName = calendarAppName,
+                            screenTimeAppPreference = if (screenTimeAppName.isEmpty()) "" else prefs.screenTimeAppPreference,
+                            screenTimeAppName = screenTimeAppName,
+                            swipeLeftAppPreference = if (swipeLeftAppName.isEmpty()) "" else prefs.swipeLeftAppPreference,
+                            swipeLeftAppName = swipeLeftAppName,
+                            swipeRightAppPreference = if (swipeRightAppName.isEmpty()) "" else prefs.swipeRightAppPreference,
+                            swipeRightAppName = swipeRightAppName,
                             keyboardOpenDelay = prefs.keyboardOpenDelay,
                             enableFastScroller = prefs.enableFastScroller,
                             fastScrollerAlignment = prefs.fastScrollerAlignment,
@@ -89,50 +131,6 @@ class CustomisationViewModel @Inject constructor(
                             compactAppTouchArea = prefs.compactAppTouchArea,
                             keyboardDoneOpensFirstApp = prefs.keyboardDoneOpensFirstApp
                         )
-                    }
-
-                    // Special checks for custom apps.
-                    // If preference value exist, and app doesn't exist in DB then clear the preference value
-                    val clockAppName = getAppNameFromPref(prefs.clockAppPreference)
-                    if (prefs.clockAppPreference.isNotBlank() && clockAppName.isEmpty()) {
-                        preferenceHelper.setClockAppPreference("")
-                    } else {
-                        _state.update { it.copy(clockAppName = clockAppName) }
-                    }
-
-                    val batteryAppName = getAppNameFromPref(prefs.batteryAppPreference)
-                    if (prefs.batteryAppPreference.isNotBlank() && batteryAppName.isEmpty()) {
-                        preferenceHelper.setBatteryAppPreference("")
-                    } else {
-                        _state.update { it.copy(batteryAppName = batteryAppName) }
-                    }
-
-                    val calendarAppName = getAppNameFromPref(prefs.calendarAppPreference)
-                    if (prefs.calendarAppPreference.isNotBlank() && calendarAppName.isEmpty()) {
-                        preferenceHelper.setCalendarAppPreference("")
-                    } else {
-                        _state.update { it.copy(calendarAppName = calendarAppName) }
-                    }
-
-                    val screenTimeAppName = getAppNameFromPref(prefs.screenTimeAppPreference)
-                    if (prefs.screenTimeAppPreference.isNotBlank() && screenTimeAppName.isEmpty()) {
-                        preferenceHelper.setScreenTimeAppPreference("")
-                    } else {
-                        _state.update { it.copy(screenTimeAppName = screenTimeAppName) }
-                    }
-
-                    val swipeLeftAppName = getAppNameFromPref(prefs.swipeLeftAppPreference)
-                    if (prefs.swipeLeftAppPreference.isNotBlank() && swipeLeftAppName.isEmpty()) {
-                        preferenceHelper.setSwipeLeftAppPreference("")
-                    } else {
-                        _state.update { it.copy(swipeLeftAppName = swipeLeftAppName) }
-                    }
-
-                    val swipeRightAppName = getAppNameFromPref(prefs.swipeRightAppPreference)
-                    if (prefs.swipeRightAppPreference.isNotBlank() && swipeRightAppName.isEmpty()) {
-                        preferenceHelper.setSwipeRightAppPreference("")
-                    } else {
-                        _state.update { it.copy(swipeRightAppName = swipeRightAppName) }
                     }
                 }
         }
@@ -332,6 +330,24 @@ class CustomisationViewModel @Inject constructor(
     fun onDrawerAppIconAlignmentChanged(alignment: AppIconAlignment) {
         viewModelScope.launch {
             preferenceHelper.setDrawerAppIconAlignment(alignment)
+        }
+    }
+
+    fun onSearchModeChanged(mode: SearchMode) {
+        viewModelScope.launch {
+            preferenceHelper.setSearchMode(mode)
+        }
+    }
+
+    fun onToggleSearchBarBackground() {
+        viewModelScope.launch {
+            preferenceHelper.setSearchBarBackground(_state.value.searchBarBackground.not())
+        }
+    }
+
+    fun onSearchBarBorderPercentChanged(percent: Int) {
+        viewModelScope.launch {
+            preferenceHelper.setSearchBarBorderPercent(percent)
         }
     }
 

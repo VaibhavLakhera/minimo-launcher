@@ -8,6 +8,7 @@ import com.minimo.launcher.utils.Constants
 import com.minimo.launcher.utils.FastScrollerAlignment
 import com.minimo.launcher.utils.HomeClockMode
 import com.minimo.launcher.utils.MinimoSettingsPosition
+import com.minimo.launcher.utils.SearchMode
 
 data class PendingAppLaunch(
     val app: AppInfo,
@@ -15,6 +16,7 @@ data class PendingAppLaunch(
 )
 
 data class HomeScreenState(
+    val whatsNewDescription: String? = null,
     val initialLoaded: Boolean = false,
     val favouriteApps: List<AppInfo> = emptyList(),
     val allApps: List<AppInfo> = emptyList(),
@@ -45,6 +47,10 @@ data class HomeScreenState(
     val autoOpenApp: Boolean = false,
     val homeAppVerticalPadding: Int = Constants.DEFAULT_HOME_VERTICAL_PADDING,
     val ignoreSpecialCharacters: String = "",
+    val searchMode: SearchMode = SearchMode.Contains,
+    val searchBarBackground: Boolean = false,
+    val searchPreferencesLoaded: Boolean = false,
+    val searchBarBorderPercent: Int = Constants.DEFAULT_SEARCH_BAR_BORDER_PERCENT,
     val hideAppDrawerSearch: Boolean = false,
     val hideSettingsIcon: Boolean = false,
     val showScreenTimeWidget: Boolean = false,

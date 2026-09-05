@@ -31,6 +31,21 @@ data class AppInfo(
         get() = "${itemType.persistedValue}|$packageName|$targetId|$userHandle"
 
     val preferenceValue: String
+        get() = AppPreferenceTarget(
+            itemType = itemType,
+            packageName = packageName,
+            targetId = targetId,
+            userHandle = userHandle
+        ).preferenceValue
+}
+
+data class AppPreferenceTarget(
+    val itemType: AppItemType,
+    val packageName: String,
+    val targetId: String,
+    val userHandle: Int
+) {
+    val preferenceValue: String
         get() = listOf(
             PREFERENCE_VERSION,
             itemType.persistedValue,
@@ -40,14 +55,7 @@ data class AppInfo(
             Uri.encode(targetId),
             userHandle.toString()
         ).joinToString("|")
-}
 
-data class AppPreferenceTarget(
-    val itemType: AppItemType,
-    val packageName: String,
-    val targetId: String,
-    val userHandle: Int
-) {
     fun matches(app: AppInfo): Boolean {
         return itemType == app.itemType &&
                 packageName == app.packageName &&

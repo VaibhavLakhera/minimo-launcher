@@ -3,6 +3,7 @@ package com.minimo.launcher.ui.settings.app_picker
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.minimo.launcher.data.AppInfoDao
+import com.minimo.launcher.data.PreferenceHelper
 import com.minimo.launcher.utils.AppUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,12 +15,32 @@ import javax.inject.Inject
 @HiltViewModel
 class AppPickerViewModel @Inject constructor(
     private val appInfoDao: AppInfoDao,
-    private val appUtils: AppUtils
+    private val appUtils: AppUtils,
+    private val preferenceHelper: PreferenceHelper
 ) : ViewModel() {
     private val _state = MutableStateFlow(AppPickerState())
     val state: StateFlow<AppPickerState> = _state
 
     init {
+        viewModelScope.launch {
+            preferenceHelper.getSearchPreferencesFlow()
+                .collect { prefs ->
+                    _state.update {
+                        it.copy(
+                            searchPreferencesLoaded = true,
+                            searchMode = prefs.searchMode,
+                            searchBarBackground = prefs.searchBarBackground,
+                            searchBarBorderPercent = prefs.searchBarBorderPercent,
+                            filteredApps = appUtils.getAppsWithSearch(
+                                searchText = it.searchText,
+                                apps = it.allApps,
+                                searchMode = prefs.searchMode
+                            )
+                        )
+                    }
+                }
+        }
+
         viewModelScope.launch {
             appInfoDao.getAllAppsFlow()
                 .collect { appInfoList ->
@@ -30,7 +51,8 @@ class AppPickerViewModel @Inject constructor(
                             allApps = allApps,
                             filteredApps = appUtils.getAppsWithSearch(
                                 searchText = it.searchText,
-                                apps = allApps
+                                apps = allApps,
+                                searchMode = it.searchMode
                             )
                         )
                     }
@@ -44,7 +66,8 @@ class AppPickerViewModel @Inject constructor(
                 searchText = searchText,
                 filteredApps = appUtils.getAppsWithSearch(
                     searchText = searchText,
-                    apps = it.allApps
+                    apps = it.allApps,
+                    searchMode = it.searchMode
                 )
             )
         }

@@ -76,6 +76,8 @@ import com.minimo.launcher.ui.settings.customisation.components.FontDropdown
 import com.minimo.launcher.ui.settings.customisation.components.IgnoreSpecialCharacters
 import com.minimo.launcher.ui.settings.customisation.components.MinimoSettingsPositionDropdown
 import com.minimo.launcher.ui.settings.customisation.components.OrientationDropdown
+import com.minimo.launcher.ui.settings.customisation.components.SearchBarBorderSlider
+import com.minimo.launcher.ui.settings.customisation.components.SearchModeDropdown
 import com.minimo.launcher.ui.settings.customisation.components.ThemeDropdown
 import com.minimo.launcher.ui.settings.customisation.components.ToggleItem
 import com.minimo.launcher.ui.theme.Dimens
@@ -91,6 +93,7 @@ import com.minimo.launcher.utils.HomeClockAlignment
 import com.minimo.launcher.utils.HomeClockMode
 import com.minimo.launcher.utils.MinimoSettingsPosition
 import com.minimo.launcher.utils.ScreenOrientation
+import com.minimo.launcher.utils.SearchMode
 import com.minimo.launcher.utils.StringUtils
 import com.minimo.launcher.utils.hasLockScreenPermission
 import com.minimo.launcher.utils.isAppUsagePermissionGranted
@@ -179,6 +182,8 @@ fun CustomisationScreen(
         },
         containerColor = MaterialTheme.colorScheme.surface
     ) { paddingValues ->
+        if (!state.initialLoaded) return@Scaffold
+
         Column(
             modifier = Modifier
                 .verticalScroll(rememberScrollState())
@@ -682,6 +687,30 @@ fun CustomisationScreen(
             IgnoreSpecialCharacters(
                 currentCharacters = state.ignoreSpecialCharacters,
                 onUpdateCharacters = viewModel::onUpdateIgnoreSpecialCharacters
+            )
+
+            HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
+
+            SearchBarBorderSlider(
+                searchBarBorderPercent = state.searchBarBorderPercent,
+                searchBarBackground = state.searchBarBackground,
+                onSearchBarBorderPercentChanged = viewModel::onSearchBarBorderPercentChanged
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            ToggleItem(
+                title = stringResource(R.string.search_bar_background),
+                isChecked = state.searchBarBackground,
+                onToggleClick = viewModel::onToggleSearchBarBackground
+            )
+
+            SearchModeDropdown(
+                selectedOption = StringUtils.searchModeText(context, state.searchMode),
+                options = SearchMode.entries.map { mode ->
+                    mode to StringUtils.searchModeText(context, mode)
+                },
+                onOptionSelected = viewModel::onSearchModeChanged
             )
 
             HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))

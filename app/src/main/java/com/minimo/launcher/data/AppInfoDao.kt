@@ -136,6 +136,61 @@ interface AppInfoDao {
     )
 
     @Transaction
+    suspend fun syncAppsTransaction(
+        updates: List<AppInfoEntity>,
+        additions: List<AppInfoEntity>,
+        replacements: Map<AppInfoEntity, AppInfoEntity>,
+        deletedApps: List<AppInfoEntity>
+    ) {
+        for (app in updates) {
+            updateAppLabel(app.targetId, app.packageName, app.userHandle, app.appName)
+        }
+        for ((previous, replacement) in replacements) {
+            // User settings may have changed since the inventory was read. Copy the current row,
+            // and do not compact favourite order when replacing only its component identity.
+            val current = getApp(
+                previous.itemType, previous.targetId, previous.packageName, previous.userHandle
+            ) ?: continue
+            deleteApp(current.itemType, current.targetId, current.packageName, current.userHandle)
+            addApps(
+                listOf(
+                    current.copy(
+                        targetId = replacement.targetId,
+                        appName = replacement.appName,
+                        alternateAppName = if (current.alternateAppName == current.appName) {
+                            ""
+                        } else {
+                            current.alternateAppName
+                        }
+                    )
+                )
+            )
+        }
+        for (app in additions) {
+            addAppIfMissing(app)
+        }
+        if (deletedApps.isNotEmpty()) {
+            deleteAppsTransaction(deletedApps)
+        }
+    }
+
+    // Refresh source labels without overwriting user settings with an earlier inventory snapshot.
+    @Query(
+        """
+        UPDATE appInfoEntity
+        SET app_name = :appName,
+            alternate_app_name = CASE WHEN alternate_app_name = app_name THEN '' ELSE alternate_app_name END
+        WHERE item_type = 'APP' AND target_id = :targetId AND package_name = :packageName AND user_handle = :userHandle
+    """
+    )
+    suspend fun updateAppLabel(
+        targetId: String,
+        packageName: String,
+        userHandle: Int,
+        appName: String
+    )
+
+    @Transaction
     suspend fun deleteAppsTransaction(apps: List<AppInfoEntity>) {
         for (app in apps) {
             // From the input items, get the favourite item which needs to be deleted.

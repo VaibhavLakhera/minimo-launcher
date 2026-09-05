@@ -3,6 +3,7 @@ package com.minimo.launcher.ui.hidden_apps
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.minimo.launcher.data.AppInfoDao
+import com.minimo.launcher.data.PreferenceHelper
 import com.minimo.launcher.ui.entities.AppInfo
 import com.minimo.launcher.utils.AppUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,12 +16,32 @@ import javax.inject.Inject
 @HiltViewModel
 class HiddenAppsViewModel @Inject constructor(
     private val appInfoDao: AppInfoDao,
-    private val appUtils: AppUtils
+    private val appUtils: AppUtils,
+    private val preferenceHelper: PreferenceHelper
 ) : ViewModel() {
     private val _state = MutableStateFlow(HiddenAppsState())
     val state: StateFlow<HiddenAppsState> = _state
 
     init {
+        viewModelScope.launch {
+            preferenceHelper.getSearchPreferencesFlow()
+                .collect { prefs ->
+                    _state.update {
+                        it.copy(
+                            searchPreferencesLoaded = true,
+                            searchMode = prefs.searchMode,
+                            searchBarBackground = prefs.searchBarBackground,
+                            searchBarBorderPercent = prefs.searchBarBorderPercent,
+                            filteredAllApps = appUtils.getAppsWithSearch(
+                                searchText = it.searchText,
+                                apps = if (it.showHiddenOnly) it.hiddenApps else it.allApps,
+                                searchMode = prefs.searchMode
+                            )
+                        )
+                    }
+                }
+        }
+
         viewModelScope.launch {
             appInfoDao.getAllNonFavouriteAppsFlow()
                 .collect { appInfoList ->
@@ -38,7 +59,8 @@ class HiddenAppsViewModel @Inject constructor(
                             hiddenApps = hiddenApps,
                             filteredAllApps = appUtils.getAppsWithSearch(
                                 searchText = it.searchText,
-                                apps = currentAllApps
+                                apps = currentAllApps,
+                                searchMode = it.searchMode
                             ),
                         )
                     }
@@ -79,7 +101,8 @@ class HiddenAppsViewModel @Inject constructor(
                 searchText = searchText,
                 filteredAllApps = appUtils.getAppsWithSearch(
                     searchText = searchText,
-                    apps = currentAllApps
+                    apps = currentAllApps,
+                    searchMode = it.searchMode
                 )
             )
         }
@@ -105,7 +128,8 @@ class HiddenAppsViewModel @Inject constructor(
                         it.hiddenApps
                     } else {
                         it.allApps
-                    }
+                    },
+                    searchMode = it.searchMode
                 )
             )
         }

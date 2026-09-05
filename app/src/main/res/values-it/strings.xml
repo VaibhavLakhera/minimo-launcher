@@ -26,6 +26,7 @@
 
     <string name="theme">Tema</string>
     <string name="orientation">Orientamento</string>
+    <string name="orientation_large_screen_note">Android controlla l\'orientamento sugli schermi grandi e potrebbe ignorare questa preferenza.</string>
     <string name="home_apps_alignment_horizontal">Allineamento orizzontale app nella home</string>
     <string name="clock_alignment">Allineamento orologio</string>
     <string name="clock_mode">Modalità orologio</string>
@@ -116,6 +117,12 @@
     <string name="enter_characters">Inserisci caratteri</string>
     <string name="these_characters_will_be_ignored_when_searching_for_apps_in_home_screen">Questi caratteri verranno ignorati durante la ricerca di app nella schermata home</string>
     <string name="search_app">Cerca app</string>
+    <string name="search_mode">Modalità di ricerca</string>
+    <string name="search_mode_description">Scegli come cercare le app nell\'elenco app.</string>
+    <string name="search_contains">Contiene</string>
+    <string name="search_starts_with">Inizia con</string>
+    <string name="search_bar_border">Bordo della barra di ricerca:</string>
+    <string name="search_bar_background">Sfondo della barra di ricerca</string>
     <string name="get_started">Inizia</string>
     <string name="reorder_favourites">Riordina preferiti</string>
     <string name="hide_app_drawer_search">Nascondi ricerca nel drawer</string>
@@ -171,8 +178,6 @@
     <string name="about_app">Informazioni sull\'app</string>
     <string name="about_app_description">Minimo è un launcher completamente gratuito e open source. Progettato per coloro che desiderano riordinare la schermata iniziale, offre un\'interfaccia pulita e minimalista senza distrazioni.</string>
     <string name="version">Versione</string>
-    <string name="join_discord_channel">Unisciti al canale Discord</string>
-    <string name="github">GitHub</string>
     <string name="links">Link</string>
 
     <string name="delete_shortcut_confirmation">Questa operazione eliminerà la scorciatoia. Sei sicuro di volerla eliminare?</string>
@@ -186,4 +191,9 @@
     <string name="invalid_shortcut_request">Richiesta di scorciatoia non valida</string>
     <string name="rename_shortcut">Rinomina collegamento</string>
     <string name="shortcut_name">Nome collegamento</string>
+
+    <!-- Current release notes. Update for each release, or leave blank to skip the dialog. -->
+    <string name="whats_new_title">Novità</string>
+    <string name="whats_new_description">• Personalizza lo sfondo e il bordo della barra di ricerca.\n• Scegli come cercare le app per nome.\n• Migliorate la sincronizzazione delle app e il caricamento delle impostazioni.\n• Aggiunto il supporto per Android 17.\n• Unisciti alla community di Reddit su /r/MinimoLauncher</string>
+    <string name="review_on_play_store">Recensisci sul Play Store</string>
 </resources>

@@ -26,6 +26,7 @@
 
     <string name="theme">Theme</string>
     <string name="orientation">Orientation</string>
+    <string name="orientation_large_screen_note">Android controls orientation on large screens and may ignore this preference.</string>
     <string name="home_apps_alignment_horizontal">Home Apps Alignment Horizontal</string>
     <string name="clock_alignment">Clock Alignment</string>
     <string name="clock_mode">Clock Mode</string>
@@ -116,6 +117,12 @@
     <string name="enter_characters">Enter characters</string>
     <string name="these_characters_will_be_ignored_when_searching_for_apps_in_home_screen">These characters will be ignored when searching for apps on the home screen</string>
     <string name="search_app">Search app</string>
+    <string name="search_mode">Search Mode</string>
+    <string name="search_mode_description">Choose how to search for apps in the app drawer.</string>
+    <string name="search_contains">Contains</string>
+    <string name="search_starts_with">Starts with</string>
+    <string name="search_bar_border">Search Bar Border:</string>
+    <string name="search_bar_background">Search Bar Background</string>
     <string name="get_started">Get Started</string>
     <string name="reorder_favourites">Reorder Favorites</string>
     <string name="hide_app_drawer_search">Hide App Drawer Search</string>
@@ -171,8 +178,6 @@
     <string name="about_app">About App</string>
     <string name="about_app_description">Minimo is a completely free and open-source launcher. Designed for those who want to de-clutter their home screen, it offers a clean, minimalist interface without distractions.</string>
     <string name="version">Version</string>
-    <string name="join_discord_channel">Join Discord Channel</string>
-    <string name="github">GitHub</string>
     <string name="links">Links</string>
 
     <string name="delete_shortcut_confirmation">This will delete the shortcut. Are you sure you want to delete?</string>
@@ -186,4 +191,9 @@
     <string name="invalid_shortcut_request">Invalid shortcut request</string>
     <string name="rename_shortcut">Rename Shortcut</string>
     <string name="shortcut_name">Shortcut Name</string>
+
+    <!-- Current release notes. Update for each release, or leave blank to skip the dialog. -->
+    <string name="whats_new_title">What\'s New</string>
+    <string name="whats_new_description">• Customize your search bar’s background and border.\n• Choose how app search matches names.\n• Improved app syncing and settings loading.\n• Added Android 17 support.\n• Join reddit community at /r/MinimoLauncher</string>
+    <string name="review_on_play_store">Review on Play Store</string>
 </resources>

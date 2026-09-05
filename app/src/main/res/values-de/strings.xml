@@ -26,6 +26,7 @@
 
     <string name="theme">Design</string>
     <string name="orientation">Ausrichtung</string>
+    <string name="orientation_large_screen_note">Android steuert die Ausrichtung auf großen Bildschirmen und ignoriert möglicherweise diese Einstellung.</string>
     <string name="home_apps_alignment_horizontal">Horizontale Ausrichtung der Start-Apps</string>
     <string name="clock_alignment">Uhr-Ausrichtung</string>
     <string name="clock_mode">Uhrmodus</string>
@@ -116,6 +117,12 @@
     <string name="enter_characters">Zeichen eingeben</string>
     <string name="these_characters_will_be_ignored_when_searching_for_apps_in_home_screen">Diese Zeichen werden bei der App-Suche auf dem Startbildschirm ignoriert</string>
     <string name="search_app">App suchen</string>
+    <string name="search_mode">Suchmodus</string>
+    <string name="search_mode_description">Wähle, wie du in der App-Übersicht nach Apps suchst.</string>
+    <string name="search_contains">Enthält</string>
+    <string name="search_starts_with">Beginnt mit</string>
+    <string name="search_bar_border">Rand der Suchleiste:</string>
+    <string name="search_bar_background">Hintergrund der Suchleiste</string>
     <string name="get_started">Loslegen</string>
     <string name="reorder_favourites">Favoriten neu anordnen</string>
     <string name="hide_app_drawer_search">App-Schubladensuche ausblenden</string>
@@ -171,8 +178,6 @@
     <string name="about_app">Über die App</string>
     <string name="about_app_description">Minimo ist ein komplett kostenloser und Open-Source-Launcher. Entwickelt für diejenigen, die ihren Startbildschirm aufräumen möchten, bietet er eine saubere, minimalistische Benutzeroberfläche ohne Ablenkungen.</string>
     <string name="version">Version</string>
-    <string name="join_discord_channel">Discord-Kanal beitreten</string>
-    <string name="github">GitHub</string>
     <string name="links">Links</string>
 
     <string name="delete_shortcut_confirmation">Dadurch wird die Verknüpfung gelöscht. Bist du sicher, dass du sie löschen möchtest?</string>
@@ -186,4 +191,9 @@
     <string name="invalid_shortcut_request">Ungültige Verknüpfungsanfrage</string>
     <string name="rename_shortcut">Verknüpfung umbenennen</string>
     <string name="shortcut_name">Name der Verknüpfung</string>
+
+    <!-- Current release notes. Update for each release, or leave blank to skip the dialog. -->
+    <string name="whats_new_title">Was ist neu?</string>
+    <string name="whats_new_description">• Passe Hintergrund und Rahmen der Suchleiste an.\n• Wähle, wie die App-Suche Namen abgleicht.\n• Verbesserte App-Synchronisierung und schnelleres Laden der Einstellungen.\n• Unterstützung für Android 17 hinzugefügt.\n• Tritt der Reddit-Community unter /r/MinimoLauncher bei</string>
+    <string name="review_on_play_store">Im Play Store bewerten</string>
 </resources>

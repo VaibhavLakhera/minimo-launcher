@@ -3,6 +3,7 @@ package com.minimo.launcher.ui.favourite_apps
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.minimo.launcher.data.AppInfoDao
+import com.minimo.launcher.data.PreferenceHelper
 import com.minimo.launcher.ui.entities.AppInfo
 import com.minimo.launcher.utils.AppUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,12 +16,32 @@ import javax.inject.Inject
 @HiltViewModel
 class FavouriteAppsViewModel @Inject constructor(
     private val appInfoDao: AppInfoDao,
-    private val appUtils: AppUtils
+    private val appUtils: AppUtils,
+    private val preferenceHelper: PreferenceHelper
 ) : ViewModel() {
     private val _state = MutableStateFlow(FavouriteAppsState())
     val state: StateFlow<FavouriteAppsState> = _state
 
     init {
+        viewModelScope.launch {
+            preferenceHelper.getSearchPreferencesFlow()
+                .collect { prefs ->
+                    _state.update {
+                        it.copy(
+                            searchPreferencesLoaded = true,
+                            searchMode = prefs.searchMode,
+                            searchBarBackground = prefs.searchBarBackground,
+                            searchBarBorderPercent = prefs.searchBarBorderPercent,
+                            filteredAllApps = appUtils.getAppsWithSearch(
+                                searchText = it.searchText,
+                                apps = if (it.showFavouritesOnly) it.favouriteApps else it.allApps,
+                                searchMode = prefs.searchMode
+                            )
+                        )
+                    }
+                }
+        }
+
         viewModelScope.launch {
             appInfoDao.getAllNonHiddenAppsFlow()
                 .collect { appInfoList ->
@@ -39,7 +60,8 @@ class FavouriteAppsViewModel @Inject constructor(
                             favouriteApps = favouriteApps,
                             filteredAllApps = appUtils.getAppsWithSearch(
                                 searchText = it.searchText,
-                                apps = currentAllApps
+                                apps = currentAllApps,
+                                searchMode = it.searchMode
                             ),
                             showReorderButton = showReorderButton
                         )
@@ -84,7 +106,8 @@ class FavouriteAppsViewModel @Inject constructor(
                 searchText = searchText,
                 filteredAllApps = appUtils.getAppsWithSearch(
                     searchText = searchText,
-                    apps = currentAllApps
+                    apps = currentAllApps,
+                    searchMode = it.searchMode
                 )
             )
         }
@@ -110,7 +133,8 @@ class FavouriteAppsViewModel @Inject constructor(
                         it.favouriteApps
                     } else {
                         it.allApps
-                    }
+                    },
+                    searchMode = it.searchMode
                 )
             )
         }

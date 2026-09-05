@@ -1,5 +1,6 @@
 package com.minimo.launcher.ui.navigation
 
+import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -11,6 +12,7 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.runtime.Composable
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -59,8 +61,11 @@ fun AppNavGraph(
         startDestination = Routes.LAUNCH,
         enterTransition = { EnterTransition.None },
         exitTransition = { ExitTransition.None },
-        popEnterTransition = { EnterTransition.None },
-        popExitTransition = { ExitTransition.None }
+        popEnterTransition = { launcherPopEnterTransition() },
+        popExitTransition = { launcherPopExitTransition() },
+        // Navigation 2.10 defaults predictive Back to scaleOut; match toolbar Back instead.
+        predictivePopEnterTransition = { launcherPopEnterTransition() },
+        predictivePopExitTransition = { launcherPopExitTransition() }
     ) {
         composable(route = Routes.LAUNCH) {
             LaunchScreen(
@@ -104,25 +109,6 @@ fun AppNavGraph(
                 } else {
                     ExitTransition.None
                 }
-            },
-            popEnterTransition = {
-                if (initialState.destination.route == Routes.APP_DRAWER) {
-                    fadeIn(
-                        animationSpec = keyframes {
-                            durationMillis = DRAWER_TRANSITION_DURATION_MILLIS
-                            // Keep Home invisible until Drawer is fully faded out.
-                            0f at INCOMING_SCREEN_FADE_DELAY_MILLIS using FastOutSlowInEasing
-                        }
-                    ) +
-                            slideInVertically(
-                                animationSpec = tween(
-                                    durationMillis = DRAWER_TRANSITION_DURATION_MILLIS
-                                ),
-                                initialOffsetY = { -it / 8 }
-                            )
-                } else {
-                    EnterTransition.None
-                }
             }
         ) {
             HomeScreen(
@@ -161,19 +147,7 @@ fun AppNavGraph(
             },
             exitTransition = { ExitTransition.None },
             popEnterTransition = { EnterTransition.None },
-            popExitTransition = {
-                fadeOut(
-                    animationSpec = tween(
-                        durationMillis = OUTGOING_SCREEN_FADE_DURATION_MILLIS
-                    )
-                ) +
-                        slideOutVertically(
-                            animationSpec = tween(
-                                durationMillis = DRAWER_TRANSITION_DURATION_MILLIS
-                            ),
-                            targetOffsetY = { it / 8 }
-                        )
-            }
+            popExitTransition = { launcherPopExitTransition() }
         ) {
             AppDrawerScreen(
                 viewModel = homeViewModel,
@@ -248,4 +222,32 @@ fun AppNavGraph(
             )
         }
     }
+}
+
+private fun AnimatedContentTransitionScope<NavBackStackEntry>.launcherPopEnterTransition(): EnterTransition {
+    if (initialState.destination.route != Routes.APP_DRAWER ||
+        targetState.destination.route != Routes.HOME
+    ) return EnterTransition.None
+
+    return fadeIn(
+        animationSpec = keyframes {
+            durationMillis = DRAWER_TRANSITION_DURATION_MILLIS
+            // Keep Home invisible until Drawer is fully faded out.
+            0f at INCOMING_SCREEN_FADE_DELAY_MILLIS using FastOutSlowInEasing
+        }
+    ) + slideInVertically(
+        animationSpec = tween(durationMillis = DRAWER_TRANSITION_DURATION_MILLIS),
+        initialOffsetY = { -it / 8 }
+    )
+}
+
+private fun AnimatedContentTransitionScope<NavBackStackEntry>.launcherPopExitTransition(): ExitTransition {
+    if (initialState.destination.route != Routes.APP_DRAWER) return ExitTransition.None
+
+    return fadeOut(
+        animationSpec = tween(durationMillis = OUTGOING_SCREEN_FADE_DURATION_MILLIS)
+    ) + slideOutVertically(
+        animationSpec = tween(durationMillis = DRAWER_TRANSITION_DURATION_MILLIS),
+        targetOffsetY = { it / 8 }
+    )
 }

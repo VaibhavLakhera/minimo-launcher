@@ -10,8 +10,10 @@ import com.minimo.launcher.utils.HomeClockAlignment
 import com.minimo.launcher.utils.HomeClockMode
 import com.minimo.launcher.utils.MinimoSettingsPosition
 import com.minimo.launcher.utils.ScreenOrientation
+import com.minimo.launcher.utils.SearchMode
 
 data class CustomisationState(
+    val initialLoaded: Boolean = false,
     val themeMode: ThemeMode? = null,
     val fontPreference: String = "",
     val screenOrientation: ScreenOrientation = ScreenOrientation.Portrait,
@@ -45,6 +47,9 @@ data class CustomisationState(
     val notificationDot: Boolean = false,
     val homeAppVerticalPadding: Float = Constants.DEFAULT_HOME_VERTICAL_PADDING.toFloat(),
     val ignoreSpecialCharacters: String = "",
+    val searchMode: SearchMode = SearchMode.Contains,
+    val searchBarBackground: Boolean = false,
+    val searchBarBorderPercent: Float = Constants.DEFAULT_SEARCH_BAR_BORDER_PERCENT.toFloat(),
     val hideAppDrawerSearch: Boolean = false,
     val hideSettingsIcon: Boolean = false,
     val showScreenTimeWidget: Boolean = false,

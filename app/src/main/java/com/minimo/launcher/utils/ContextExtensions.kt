@@ -108,14 +108,7 @@ fun Context.openHomeSettings() {
 }
 
 fun Context.openPlayStorePage(id: String = packageName) {
-    try {
-        val intent = Intent(Intent.ACTION_VIEW).apply {
-            data = "https://play.google.com/store/apps/details?id=${id}".toUri()
-        }
-        startActivity(intent)
-    } catch (exception: Exception) {
-        Timber.e(exception)
-    }
+    openUrl("https://play.google.com/store/apps/details?id=${id}")
 }
 
 fun Context.isInstalledFromPlayStore(): Boolean {
@@ -136,42 +129,29 @@ fun Context.isInstalledFromPlayStore(): Boolean {
 }
 
 fun Context.openDeveloperPlayStorePage() {
-    try {
-        val intent = Intent(Intent.ACTION_VIEW).apply {
-            data = "https://play.google.com/store/apps/developer?id=Vaibhav+Lakhera".toUri()
-        }
-        startActivity(intent)
-    } catch (exception: Exception) {
-        Timber.e(exception)
-    }
+    openUrl("https://play.google.com/store/apps/developer?id=Vaibhav+Lakhera")
 }
 
 fun Context.openDiscordLink() {
-    try {
-        val intent = Intent(Intent.ACTION_VIEW).apply {
-            data = "https://discord.gg/f4wpPppCDk".toUri()
-        }
-        startActivity(intent)
-    } catch (exception: Exception) {
-        Timber.e(exception)
-    }
+    openUrl("https://discord.gg/f4wpPppCDk")
+}
+
+fun Context.openRedditLink() {
+    openUrl("https://www.reddit.com/r/MinimoLauncher")
 }
 
 fun Context.openGithubLink() {
-    try {
-        val intent = Intent(Intent.ACTION_VIEW).apply {
-            data = "https://github.com/VaibhavLakhera/minimo-launcher".toUri()
-        }
-        startActivity(intent)
-    } catch (exception: Exception) {
-        Timber.e(exception)
-    }
+    openUrl("https://github.com/VaibhavLakhera/minimo-launcher")
 }
 
 fun Context.openKoFiPage() {
+    openUrl("https://ko-fi.com/vaibhavlakhera")
+}
+
+private fun Context.openUrl(url: String) {
     try {
         val intent = Intent(Intent.ACTION_VIEW).apply {
-            data = "https://ko-fi.com/vaibhavlakhera".toUri()
+            data = url.toUri()
         }
         startActivity(intent)
     } catch (exception: Exception) {
