@@ -8,6 +8,7 @@ import com.minimo.launcher.utils.HomeAppsAlignmentHorizontal
 import com.minimo.launcher.utils.HomeAppsAlignmentVertical
 import com.minimo.launcher.utils.HomeClockAlignment
 import com.minimo.launcher.utils.HomeClockMode
+import com.minimo.launcher.utils.HomeDateFormat
 import com.minimo.launcher.utils.MinimoSettingsPosition
 import com.minimo.launcher.utils.ScreenOrientation
 import com.minimo.launcher.utils.SearchMode
@@ -40,6 +41,10 @@ data class HomePreferences(
     val homeAppsAlignmentVertical: HomeAppsAlignmentVertical = HomeAppsAlignmentVertical.Center,
     val homeClockAlignment: HomeClockAlignment = HomeClockAlignment.Start,
     val showHomeClock: Boolean = false,
+    val homeTimeTextSize: Int? = null,
+    val homeDateTextSize: Int? = null,
+    val homeTimeFont: String? = null,
+    val homeDateFormat: HomeDateFormat = HomeDateFormat.Default,
     val homeTextSize: Int = Constants.DEFAULT_HOME_TEXT_SIZE,
     val autoOpenKeyboardAllApps: Boolean = false,
     val homeClockMode: HomeClockMode = HomeClockMode.Full,
@@ -90,6 +95,10 @@ data class CustomisationPreferences(
     val homeAppsAlignmentVertical: HomeAppsAlignmentVertical = HomeAppsAlignmentVertical.Center,
     val homeClockAlignment: HomeClockAlignment = HomeClockAlignment.Start,
     val showHomeClock: Boolean = false,
+    val homeTimeTextSize: Int? = null,
+    val homeDateTextSize: Int? = null,
+    val homeTimeFont: String? = null,
+    val homeDateFormat: HomeDateFormat = HomeDateFormat.Default,
     val showStatusBar: Boolean = true,
     val showNavigationBar: Boolean = true,
     val homeTextSize: Int = Constants.DEFAULT_HOME_TEXT_SIZE,

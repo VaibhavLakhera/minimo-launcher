@@ -196,4 +196,10 @@
     <string name="whats_new_title">Was ist neu?</string>
     <string name="whats_new_description">• Passe Hintergrund und Rahmen der Suchleiste an.\n• Wähle, wie die App-Suche Namen abgleicht.\n• Verbesserte App-Synchronisierung und schnelleres Laden der Einstellungen.\n• Unterstützung für Android 17 hinzugefügt.\n• Tritt der Reddit-Community unter /r/MinimoLauncher bei</string>
     <string name="review_on_play_store">Im Play Store bewerten</string>
+    <string name="time_size">Uhrzeitgröße</string>
+    <string name="date_battery_size">Datums- / Akkugröße</string>
+    <string name="time_font">Uhrzeitschrift</string>
+    <string name="use_app_font">App-Schrift</string>
+    <string name="date_format">Datumsformat</string>
+    <string name="battery_charging">Wird geladen</string>
 </resources>

@@ -66,6 +66,7 @@ import com.minimo.launcher.ui.settings.customisation.components.AppsAlignmentHor
 import com.minimo.launcher.ui.settings.customisation.components.AppsAlignmentVerticalDropdown
 import com.minimo.launcher.ui.settings.customisation.components.ClockAlignmentDropdown
 import com.minimo.launcher.ui.settings.customisation.components.ClockModeDropdown
+import com.minimo.launcher.ui.settings.customisation.components.DateFormatDropdown
 import com.minimo.launcher.ui.settings.customisation.components.DimPercentageSlider
 import com.minimo.launcher.ui.settings.customisation.components.EnableAccessibilityDialog
 import com.minimo.launcher.ui.settings.customisation.components.EnableAppUsageDialog
@@ -73,6 +74,7 @@ import com.minimo.launcher.ui.settings.customisation.components.EnableNotificati
 import com.minimo.launcher.ui.settings.customisation.components.EnableSetWallpaperToThemeColorDialog
 import com.minimo.launcher.ui.settings.customisation.components.FastScrollerAlignmentDropdown
 import com.minimo.launcher.ui.settings.customisation.components.FontDropdown
+import com.minimo.launcher.ui.settings.customisation.components.HomeTextSizeSlider
 import com.minimo.launcher.ui.settings.customisation.components.IgnoreSpecialCharacters
 import com.minimo.launcher.ui.settings.customisation.components.MinimoSettingsPositionDropdown
 import com.minimo.launcher.ui.settings.customisation.components.OrientationDropdown
@@ -95,6 +97,7 @@ import com.minimo.launcher.utils.MinimoSettingsPosition
 import com.minimo.launcher.utils.ScreenOrientation
 import com.minimo.launcher.utils.SearchMode
 import com.minimo.launcher.utils.StringUtils
+import com.minimo.launcher.utils.defaultHomeDateTextSize
 import com.minimo.launcher.utils.hasLockScreenPermission
 import com.minimo.launcher.utils.isAppUsagePermissionGranted
 import com.minimo.launcher.utils.isNotificationPermissionGranted
@@ -470,7 +473,7 @@ fun CustomisationScreen(
                 isChecked = state.showHomeClock,
                 onToggleClick = viewModel::onToggleShowHomeClock
             )
-            if (state.showHomeClock) {
+            if (state.showHomeClock || state.showBatteryLevel) {
                 Spacer(modifier = Modifier.height(4.dp))
 
                 ClockAlignmentDropdown(
@@ -496,7 +499,9 @@ fun CustomisationScreen(
                 )
 
                 Spacer(modifier = Modifier.height(4.dp))
+            }
 
+            if (state.showHomeClock) {
                 ClockModeDropdown(
                     selectedOption = StringUtils.homeClockModeText(
                         context = context,
@@ -527,24 +532,29 @@ fun CustomisationScreen(
                     onToggleClick = viewModel::onToggleTwentyFourHourFormat
                 )
 
-                if (state.homeClockMode == HomeClockMode.DateOnly ||
-                    state.homeClockMode == HomeClockMode.Full
-                ) {
+                if (state.homeClockMode != HomeClockMode.DateOnly) {
                     Spacer(modifier = Modifier.height(4.dp))
 
-                    ToggleItem(
-                        title = stringResource(R.string.show_battery_level),
-                        isChecked = state.showBatteryLevel,
-                        onToggleClick = viewModel::onToggleShowBatteryLevel
+                    HomeTextSizeSlider(
+                        titleRes = R.string.time_size,
+                        value = state.homeTimeTextSize,
+                        defaultValue = Constants.DEFAULT_HOME_TIME_TEXT_SIZE,
+                        valueRange = Constants.HOME_TIME_TEXT_SIZE_RANGE,
+                        onValueChanged = viewModel::onHomeTimeTextSizeChanged
                     )
 
-                    Spacer(modifier = Modifier.height(4.dp))
+                    FontDropdown(
+                        titleRes = R.string.time_font,
+                        selectedFont = state.homeTimeFont,
+                        onFontSelected = viewModel::onHomeTimeFontChanged,
+                        onUseAppFont = { viewModel.onHomeTimeFontChanged(null) }
+                    )
+                }
 
-                    AppSelectionItem(
-                        title = stringResource(R.string.battery_app),
-                        selectedAppName = state.batteryAppName,
-                        onDefaultClick = { viewModel.onBatteryAppChanged("") },
-                        onChooseClick = { showBatteryAppPicker = true }
+                if (state.homeClockMode != HomeClockMode.TimeOnly) {
+                    DateFormatDropdown(
+                        selectedFormat = state.homeDateFormat,
+                        onFormatSelected = viewModel::onHomeDateFormatChanged
                     )
                 }
 
@@ -564,6 +574,42 @@ fun CustomisationScreen(
                     selectedAppName = state.calendarAppName,
                     onDefaultClick = { viewModel.onCalendarAppChanged("") },
                     onChooseClick = { showCalendarAppPicker = true }
+                )
+            }
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            ToggleItem(
+                title = stringResource(R.string.show_battery_level),
+                isChecked = state.showBatteryLevel,
+                onToggleClick = viewModel::onToggleShowBatteryLevel
+            )
+
+            if (state.showBatteryLevel) {
+                Spacer(modifier = Modifier.height(4.dp))
+
+                AppSelectionItem(
+                    title = stringResource(R.string.battery_app),
+                    selectedAppName = state.batteryAppName,
+                    onDefaultClick = { viewModel.onBatteryAppChanged("") },
+                    onChooseClick = { showBatteryAppPicker = true }
+                )
+            }
+
+            if (state.showBatteryLevel ||
+                (state.showHomeClock && state.homeClockMode != HomeClockMode.TimeOnly)
+            ) {
+                Spacer(modifier = Modifier.height(4.dp))
+
+                HomeTextSizeSlider(
+                    titleRes = R.string.date_battery_size,
+                    value = state.homeDateTextSize,
+                    defaultValue = defaultHomeDateTextSize(
+                        state.showHomeClock,
+                        state.homeClockMode
+                    ),
+                    valueRange = Constants.HOME_DATE_TEXT_SIZE_RANGE,
+                    onValueChanged = viewModel::onHomeDateTextSizeChanged
                 )
             }
 

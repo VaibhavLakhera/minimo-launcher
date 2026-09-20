@@ -5,6 +5,12 @@ import android.content.pm.ActivityInfo
 object Constants {
     const val INTRO_MINIMUM_FAVOURITE_COUNT = 1
 
+    const val DEFAULT_HOME_TIME_TEXT_SIZE = 30
+    const val DEFAULT_HOME_DATE_TEXT_SIZE = 18
+    const val DEFAULT_HOME_DATE_ONLY_TEXT_SIZE = 26
+    val HOME_TIME_TEXT_SIZE_RANGE = 16f..72f
+    val HOME_DATE_TEXT_SIZE_RANGE = 12f..36f
+
     const val DEFAULT_HOME_TEXT_SIZE = 20
     val HOME_TEXT_SIZE_RANGE by lazy { 16f..50f }
 

@@ -7,6 +7,7 @@ import com.minimo.launcher.utils.AppIconAlignment
 import com.minimo.launcher.utils.Constants
 import com.minimo.launcher.utils.FastScrollerAlignment
 import com.minimo.launcher.utils.HomeClockMode
+import com.minimo.launcher.utils.HomeDateFormat
 import com.minimo.launcher.utils.MinimoSettingsPosition
 import com.minimo.launcher.utils.SearchMode
 
@@ -29,6 +30,10 @@ data class HomeScreenState(
     val drawerAppsArrangementHorizontal: Arrangement.Horizontal = Arrangement.Start,
     val appsArrangementVertical: Arrangement.Vertical = Arrangement.Center,
     val showHomeClock: Boolean = false,
+    val homeTimeTextSize: Int? = null,
+    val homeDateTextSize: Int? = null,
+    val homeTimeFont: String? = null,
+    val homeDateFormat: HomeDateFormat = HomeDateFormat.Default,
     val homeClockAlignment: Alignment.Horizontal = Alignment.Start,
     val homeTextSize: Int = Constants.DEFAULT_HOME_TEXT_SIZE,
     val autoOpenKeyboardAllApps: Boolean = false,

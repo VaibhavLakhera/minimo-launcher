@@ -196,4 +196,10 @@
     <string name="whats_new_title">What\'s New</string>
     <string name="whats_new_description">• Customize your search bar’s background and border.\n• Choose how app search matches names.\n• Improved app syncing and settings loading.\n• Added Android 17 support.\n• Join reddit community at /r/MinimoLauncher</string>
     <string name="review_on_play_store">Review on Play Store</string>
+    <string name="time_size">Time Size</string>
+    <string name="date_battery_size">Date / Battery Size</string>
+    <string name="time_font">Time Font</string>
+    <string name="use_app_font">App Font</string>
+    <string name="date_format">Date Format</string>
+    <string name="battery_charging">Charging</string>
 </resources>

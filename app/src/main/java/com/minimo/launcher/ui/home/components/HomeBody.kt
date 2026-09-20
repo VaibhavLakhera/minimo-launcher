@@ -99,17 +99,22 @@ fun HomeBody(
             .fillMaxSize()
             .consumeWindowInsets(paddingValues)
     ) {
-        if (state.showHomeClock || state.showScreenTimeWidget) {
+        if (state.showHomeClock || state.showBatteryLevel || state.showScreenTimeWidget) {
             Column(
                 modifier = Modifier.padding(
                     horizontal = Dimens.APP_HORIZONTAL_SPACING,
                     vertical = 16.dp
                 )
             ) {
-                if (state.showHomeClock) {
+                if (state.showHomeClock || state.showBatteryLevel) {
                     TimeAndDateView(
                         horizontalAlignment = state.homeClockAlignment,
+                        showHomeClock = state.showHomeClock,
                         clockMode = state.homeClockMode,
+                        timeTextSize = state.homeTimeTextSize,
+                        dateTextSize = state.homeDateTextSize,
+                        timeFont = state.homeTimeFont,
+                        dateFormat = state.homeDateFormat,
                         twentyFourHourFormat = state.twentyFourHourFormat,
                         showBatteryLevel = state.showBatteryLevel,
                         textColor = textColor,
@@ -133,7 +138,7 @@ fun HomeBody(
                 }
 
                 if (state.showScreenTimeWidget && state.screenTime.isNotEmpty()) {
-                    if (state.showHomeClock) {
+                    if (state.showHomeClock || state.showBatteryLevel) {
                         Spacer(modifier = Modifier.height(8.dp))
                     }
 

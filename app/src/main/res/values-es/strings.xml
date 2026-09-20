@@ -196,4 +196,10 @@
     <string name="whats_new_title">Novedades</string>
     <string name="whats_new_description">• Personaliza el fondo y el borde de la barra de búsqueda.\n• Elige cómo se buscan las apps por nombre.\n• Mejoras en la sincronización de apps y la carga de ajustes.\n• Compatibilidad con Android 17.\n• Únete a la comunidad de Reddit en /r/MinimoLauncher</string>
     <string name="review_on_play_store">Valorar en Play Store</string>
+    <string name="time_size">Tamaño de hora</string>
+    <string name="date_battery_size">Tamaño de fecha / batería</string>
+    <string name="time_font">Fuente de hora</string>
+    <string name="use_app_font">Fuente de la app</string>
+    <string name="date_format">Formato de fecha</string>
+    <string name="battery_charging">Cargando</string>
 </resources>
