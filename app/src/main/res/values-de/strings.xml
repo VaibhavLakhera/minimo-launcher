@@ -28,7 +28,7 @@
     <string name="orientation">Ausrichtung</string>
     <string name="orientation_large_screen_note">Android steuert die Ausrichtung auf großen Bildschirmen und ignoriert möglicherweise diese Einstellung.</string>
     <string name="home_apps_alignment_horizontal">Horizontale Ausrichtung der Start-Apps</string>
-    <string name="clock_alignment">Uhr-Ausrichtung</string>
+    <string name="clock_alignment">Widget-Ausrichtung</string>
     <string name="clock_mode">Uhrmodus</string>
 
     <string name="system">System</string>
@@ -197,7 +197,7 @@
     <string name="whats_new_description">• Passe Hintergrund und Rahmen der Suchleiste an.\n• Wähle, wie die App-Suche Namen abgleicht.\n• Verbesserte App-Synchronisierung und schnelleres Laden der Einstellungen.\n• Unterstützung für Android 17 hinzugefügt.\n• Tritt der Reddit-Community unter /r/MinimoLauncher bei</string>
     <string name="review_on_play_store">Im Play Store bewerten</string>
     <string name="time_size">Uhrzeitgröße</string>
-    <string name="date_battery_size">Datums- / Akkugröße</string>
+    <string name="date_battery_size">Größe von Datum und Akku</string>
     <string name="time_font">Uhrzeitschrift</string>
     <string name="use_app_font">App-Schrift</string>
     <string name="date_format">Datumsformat</string>

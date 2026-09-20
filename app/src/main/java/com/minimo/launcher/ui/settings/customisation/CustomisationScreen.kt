@@ -473,7 +473,7 @@ fun CustomisationScreen(
                 isChecked = state.showHomeClock,
                 onToggleClick = viewModel::onToggleShowHomeClock
             )
-            if (state.showHomeClock || state.showBatteryLevel) {
+            if (state.showHomeClock || state.showBatteryLevel || state.showScreenTimeWidget) {
                 Spacer(modifier = Modifier.height(4.dp))
 
                 ClockAlignmentDropdown(

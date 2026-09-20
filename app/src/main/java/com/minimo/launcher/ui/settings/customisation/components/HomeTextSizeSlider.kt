@@ -34,7 +34,7 @@ fun HomeTextSizeSlider(
             value = effectiveValue,
             onValueChange = { onValueChanged(it.roundToInt()) },
             valueRange = valueRange,
-            steps = (valueRange.endInclusive - valueRange.start).toInt() - 1,
+            steps = ((valueRange.endInclusive - valueRange.start) / 2).toInt() - 1,
             modifier = Modifier.semantics { contentDescription = title }
         )
     }

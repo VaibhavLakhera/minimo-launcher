@@ -201,20 +201,14 @@ class PreferenceHelper @Inject constructor(
     suspend fun setHomeTimeTextSize(size: Int?) {
         preferences.edit {
             if (size == null) it.remove(KEY_HOME_TIME_TEXT_SIZE)
-            else it[KEY_HOME_TIME_TEXT_SIZE] = size.coerceIn(
-                Constants.HOME_TIME_TEXT_SIZE_RANGE.start.toInt(),
-                Constants.HOME_TIME_TEXT_SIZE_RANGE.endInclusive.toInt()
-            )
+            else it[KEY_HOME_TIME_TEXT_SIZE] = size
         }
     }
 
     suspend fun setHomeDateTextSize(size: Int?) {
         preferences.edit {
             if (size == null) it.remove(KEY_HOME_DATE_TEXT_SIZE)
-            else it[KEY_HOME_DATE_TEXT_SIZE] = size.coerceIn(
-                Constants.HOME_DATE_TEXT_SIZE_RANGE.start.toInt(),
-                Constants.HOME_DATE_TEXT_SIZE_RANGE.endInclusive.toInt()
-            )
+            else it[KEY_HOME_DATE_TEXT_SIZE] = size
         }
     }
 

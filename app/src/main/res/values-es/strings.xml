@@ -26,7 +26,7 @@
     <string name="orientation">Orientación</string>
     <string name="orientation_large_screen_note">Android controla la orientación en pantallas grandes y puede ignorar esta preferencia.</string>
     <string name="home_apps_alignment_horizontal">Alineación horizontal de apps en inicio</string>
-    <string name="clock_alignment">Alineación del reloj</string>
+    <string name="clock_alignment">Alineación de widgets</string>
     <string name="clock_mode">Modo de reloj</string>
 
     <string name="system">Sistema</string>
@@ -197,7 +197,7 @@
     <string name="whats_new_description">• Personaliza el fondo y el borde de la barra de búsqueda.\n• Elige cómo se buscan las apps por nombre.\n• Mejoras en la sincronización de apps y la carga de ajustes.\n• Compatibilidad con Android 17.\n• Únete a la comunidad de Reddit en /r/MinimoLauncher</string>
     <string name="review_on_play_store">Valorar en Play Store</string>
     <string name="time_size">Tamaño de hora</string>
-    <string name="date_battery_size">Tamaño de fecha / batería</string>
+    <string name="date_battery_size">Tamaño de fecha y batería</string>
     <string name="time_font">Fuente de hora</string>
     <string name="use_app_font">Fuente de la app</string>
     <string name="date_format">Formato de fecha</string>

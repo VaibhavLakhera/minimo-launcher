@@ -27,6 +27,7 @@ class MainViewModel @Inject constructor(
                 .collect { prefs ->
                     _state.update {
                         it.copy(
+                            initialLoaded = true,
                             themeMode = prefs.themeMode,
                             fontPreference = prefs.fontPreference,
                             screenOrientation = prefs.screenOrientation,

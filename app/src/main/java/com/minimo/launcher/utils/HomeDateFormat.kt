@@ -1,7 +1,7 @@
 package com.minimo.launcher.utils
 
-import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.time.format.DecimalStyle
 import java.util.Locale
 
 enum class HomeDateFormat(private val pattern: String) {
@@ -18,8 +18,8 @@ enum class HomeDateFormat(private val pattern: String) {
     NumericMonthFirst("MM/dd/yyyy"),
     Iso("yyyy-MM-dd");
 
-    fun format(date: LocalDate, locale: Locale): String =
-        date.format(DateTimeFormatter.ofPattern(pattern, locale))
+    fun createFormatter(locale: Locale): DateTimeFormatter =
+        DateTimeFormatter.ofPattern(pattern, locale).withDecimalStyle(DecimalStyle.of(locale))
 
     companion object {
         fun fromPreference(value: String?): HomeDateFormat =

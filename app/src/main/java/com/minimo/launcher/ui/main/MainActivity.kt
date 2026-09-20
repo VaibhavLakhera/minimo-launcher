@@ -28,6 +28,7 @@ import com.minimo.launcher.utils.AppsManager
 import com.minimo.launcher.utils.HomePressedNotifier
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -48,14 +49,17 @@ class MainActivity : ComponentActivity() {
         appsManager.registerCallback()
 
         setContent {
-            val navController = rememberNavController()
             val state by viewModel.state.collectAsState()
+            // Keep the transparent window background until the saved appearance is available.
+            if (!state.initialLoaded) return@setContent
+
+            val navController = rememberNavController()
 
             val navBackStackEntry by navController.currentBackStackEntryAsState()
             val currentRoute = navBackStackEntry?.destination?.route
             val isHomeScreen = currentRoute == Routes.HOME
             val enableWallpaperOnCurrentScreen = when (currentRoute) {
-                Routes.HOME -> state.enableWallpaper
+                null, Routes.LAUNCH, Routes.HOME -> state.enableWallpaper
                 Routes.APP_DRAWER -> state.enableWallpaperOnDrawer
                 else -> false
             }
@@ -109,6 +113,7 @@ class MainActivity : ComponentActivity() {
     private fun setupOrientationChangeListener() {
         lifecycleScope.launch {
             viewModel.state
+                .filter { it.initialLoaded }
                 .map { it.screenOrientation.orientation }
                 .distinctUntilChanged()
                 .collect { orientation ->

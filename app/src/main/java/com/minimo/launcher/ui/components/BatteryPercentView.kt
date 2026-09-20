@@ -25,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
@@ -36,6 +37,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.minimo.launcher.R
 import com.minimo.launcher.utils.BatteryChangeObserver
 import com.minimo.launcher.utils.currentBatteryState
+import java.text.NumberFormat
 
 @Composable
 fun BatteryPercentView(
@@ -48,6 +50,14 @@ fun BatteryPercentView(
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     var batteryState by remember(context) { mutableStateOf(context.currentBatteryState()) }
+    val locale = LocalConfiguration.current.locales[0]
+    val percentFormatter = remember(locale) {
+        NumberFormat.getPercentInstance(locale).apply { maximumFractionDigits = 0 }
+    }
+    val batteryPercent = batteryState?.percent
+    val batteryText = remember(batteryPercent, percentFormatter) {
+        batteryPercent?.let { percentFormatter.format(it / 100.0) }.orEmpty()
+    }
 
     DisposableEffect(context, lifecycleOwner) {
         val observer = BatteryChangeObserver(context) { batteryState = it }
@@ -64,7 +74,7 @@ fun BatteryPercentView(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = batteryState?.let { "${it.percent}%" } ?: "",
+            text = batteryText,
             fontSize = fontSize,
             softWrap = false,
             fontWeight = fontWeight,

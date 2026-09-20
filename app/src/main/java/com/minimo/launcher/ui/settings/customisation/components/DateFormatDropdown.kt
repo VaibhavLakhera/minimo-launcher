@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -24,8 +25,14 @@ fun DateFormatDropdown(
     selectedFormat: HomeDateFormat,
     onFormatSelected: (HomeDateFormat) -> Unit
 ) {
-    val today = rememberCurrentDateTime().toLocalDate()
+    val today = rememberCurrentDateTime(updateEveryMinute = false).toLocalDate()
     val locale = LocalConfiguration.current.locales[0]
+    val formatters = remember(locale) {
+        HomeDateFormat.entries.associateWith { it.createFormatter(locale) }
+    }
+    val labels = remember(today, formatters) {
+        formatters.mapValues { (_, formatter) -> today.format(formatter) }
+    }
 
     Row(
         modifier = Modifier
@@ -40,10 +47,10 @@ fun DateFormatDropdown(
         )
         Spacer(modifier = Modifier.width(16.dp))
         DropdownView(
-            selectedOption = selectedFormat.format(today, locale),
+            selectedOption = labels.getValue(selectedFormat),
             options = HomeDateFormat.entries,
             onOptionSelected = onFormatSelected,
-            optionLabel = { it.format(today, locale) }
+            optionLabel = labels::getValue
         )
     }
 }

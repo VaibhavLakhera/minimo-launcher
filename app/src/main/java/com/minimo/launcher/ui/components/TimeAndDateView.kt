@@ -1,5 +1,6 @@
 package com.minimo.launcher.ui.components
 
+import android.text.format.DateFormat
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -24,6 +26,7 @@ import com.minimo.launcher.utils.HomeClockMode
 import com.minimo.launcher.utils.HomeDateFormat
 import com.minimo.launcher.utils.defaultHomeDateTextSize
 import java.time.format.DateTimeFormatter
+import java.time.format.DecimalStyle
 
 @Composable
 fun TimeAndDateView(
@@ -42,14 +45,32 @@ fun TimeAndDateView(
     onDateClick: () -> Unit,
     onBatteryClick: () -> Unit
 ) {
-    val currentDateTime = rememberCurrentDateTime()
-    val locale = LocalConfiguration.current.locales[0]
-    val timeFormatter = DateTimeFormatter.ofPattern(
-        if (twentyFourHourFormat) "HH:mm" else "hh:mm a",
-        locale
-    )
     val showTime = showHomeClock && clockMode != HomeClockMode.DateOnly
     val showDate = showHomeClock && clockMode != HomeClockMode.TimeOnly
+    val currentDateTime = rememberCurrentDateTime(
+        enabled = showHomeClock,
+        updateEveryMinute = showTime
+    )
+    val locale = LocalConfiguration.current.locales[0]
+    val timeText = if (showTime) {
+        val formatter = remember(twentyFourHourFormat, locale) {
+            val pattern = DateFormat.getBestDateTimePattern(
+                locale,
+                if (twentyFourHourFormat) "HHmm" else "hhmm"
+            )
+            DateTimeFormatter.ofPattern(pattern, locale).withDecimalStyle(DecimalStyle.of(locale))
+        }
+        remember(currentDateTime, formatter) { currentDateTime.format(formatter) }
+    } else {
+        ""
+    }
+    val dateText = if (showDate) {
+        val formatter = remember(dateFormat, locale) { dateFormat.createFormatter(locale) }
+        val date = currentDateTime.toLocalDate()
+        remember(date, formatter) { date.format(formatter) }
+    } else {
+        ""
+    }
     val dateFontSize = (dateTextSize ?: defaultHomeDateTextSize(showHomeClock, clockMode)).sp
     val dateFontWeight =
         if (showDate && clockMode == HomeClockMode.DateOnly) FontWeight.Bold else null
@@ -63,7 +84,7 @@ fun TimeAndDateView(
         if (showTime) {
             Text(
                 modifier = Modifier.clickable(onClick = onClockClick),
-                text = currentDateTime.format(timeFormatter).uppercase(locale),
+                text = timeText,
                 fontSize = (timeTextSize ?: Constants.DEFAULT_HOME_TIME_TEXT_SIZE).sp,
                 lineHeight = timeTextSize?.let { (it * 1.2f).sp }
                     ?: LocalTextStyle.current.lineHeight,
@@ -82,7 +103,7 @@ fun TimeAndDateView(
                         modifier = Modifier
                             .weight(1f, fill = false)
                             .clickable(onClick = onDateClick),
-                        text = dateFormat.format(currentDateTime.toLocalDate(), locale),
+                        text = dateText,
                         fontSize = dateFontSize,
                         lineHeight = dateTextSize?.let { (it * 1.2f).sp }
                             ?: LocalTextStyle.current.lineHeight,

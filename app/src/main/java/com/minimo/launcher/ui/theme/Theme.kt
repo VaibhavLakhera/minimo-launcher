@@ -19,7 +19,6 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.graphics.createBitmap
-import androidx.core.graphics.drawable.toDrawable
 import androidx.core.graphics.set
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
@@ -140,8 +139,6 @@ fun AppTheme(
             } else {
                 insetsController.hide(WindowInsetsCompat.Type.navigationBars())
             }
-
-            window.setBackgroundDrawable(surfaceColor.toDrawable())
         }
     }
 

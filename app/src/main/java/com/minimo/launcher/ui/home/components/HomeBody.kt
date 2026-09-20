@@ -68,7 +68,7 @@ fun HomeBody(
     val onSurfaceColor = MaterialTheme.colorScheme.onSurface
 
     val textColor =
-        remember(state.enableWallpaper, state.lightTextOnWallpaper) {
+        remember(state.enableWallpaper, state.lightTextOnWallpaper, onSurfaceColor) {
             if (state.enableWallpaper) {
                 if (state.lightTextOnWallpaper) Color.White else Color.Black
             } else {

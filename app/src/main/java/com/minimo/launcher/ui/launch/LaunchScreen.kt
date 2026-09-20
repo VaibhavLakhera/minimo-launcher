@@ -1,9 +1,7 @@
 package com.minimo.launcher.ui.launch
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
@@ -24,9 +22,5 @@ fun LaunchScreen(
         }
     }
 
-    Spacer(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.surface)
-    )
+    Spacer(modifier = Modifier.fillMaxSize())
 }
