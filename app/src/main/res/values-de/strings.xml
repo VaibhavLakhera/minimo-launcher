@@ -34,6 +34,9 @@
     <string name="system">System</string>
     <string name="dark">Dunkel</string>
     <string name="light">Hell</string>
+    <string name="theme_selector_description">Design: %1$s</string>
+    <string name="theme_menu_expanded">Ausgeklappt</string>
+    <string name="theme_menu_collapsed">Eingeklappt</string>
     <string name="portrait">Hochformat</string>
     <string name="landscape">Querformat</string>
     <string name="full">Vollständig</string>

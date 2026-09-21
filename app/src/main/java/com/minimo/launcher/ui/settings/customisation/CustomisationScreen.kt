@@ -219,45 +219,32 @@ fun CustomisationScreen(
                 selectedFont = state.fontPreference,
                 onFontSelected = viewModel::onFontPreferenceChanged
             )
-            
+
             ThemeDropdown(
-                selectedOption = StringUtils.themeModeText(
-                    context = context,
-                    mode = state.themeMode
-                ),
-                options = listOf(
-                    ThemeMode.System to StringUtils.themeModeText(
-                        context,
-                        ThemeMode.System
-                    ),
-                    ThemeMode.Dark to StringUtils.themeModeText(
-                        context,
-                        ThemeMode.Dark
-                    ),
-                    ThemeMode.Light to StringUtils.themeModeText(
-                        context,
-                        ThemeMode.Light
-                    )
-                ),
+                selectedTheme = state.themeMode ?: ThemeMode.System,
+                blackTheme = state.blackTheme,
+                useDynamicTheme = state.dynamicTheme,
                 onOptionSelected = viewModel::onThemeModeChanged
             )
 
-            ToggleItem(
-                title = stringResource(R.string.black_theme),
-                subtitle = stringResource(R.string.applied_only_when_the_app_theme_is_in_dark_mode),
-                isChecked = state.blackTheme,
-                onToggleClick = viewModel::onToggleBlackTheme
-            )
-
-            if (AndroidUtils.isDynamicThemeSupported()) {
-                Spacer(modifier = Modifier.height(4.dp))
-
+            if (state.themeMode?.isCustom != true) {
                 ToggleItem(
-                    title = stringResource(R.string.dynamic_colours),
-                    subtitle = stringResource(R.string.adapt_theme_colours_based_on_system_settings),
-                    isChecked = state.dynamicTheme,
-                    onToggleClick = viewModel::onToggleDynamicTheme
+                    title = stringResource(R.string.black_theme),
+                    subtitle = stringResource(R.string.applied_only_when_the_app_theme_is_in_dark_mode),
+                    isChecked = state.blackTheme,
+                    onToggleClick = viewModel::onToggleBlackTheme
                 )
+
+                if (AndroidUtils.isDynamicThemeSupported()) {
+                    Spacer(modifier = Modifier.height(4.dp))
+
+                    ToggleItem(
+                        title = stringResource(R.string.dynamic_colours),
+                        subtitle = stringResource(R.string.adapt_theme_colours_based_on_system_settings),
+                        isChecked = state.dynamicTheme,
+                        onToggleClick = viewModel::onToggleDynamicTheme
+                    )
+                }
             }
 
             ToggleItem(

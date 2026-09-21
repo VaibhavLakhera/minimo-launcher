@@ -715,16 +715,11 @@ class PreferenceHelper @Inject constructor(
     }
 
     private fun getThemeModeFromPref(mode: String?): ThemeMode {
-        // Added mode check of "Black" for backward compatibility. Previously "Black" theme was part of ThemeMode.
-        if (mode == "Black") {
-            return ThemeMode.Dark
+        // Preserve the old Black mode, which predates the separate Black Theme toggle.
+        return when (mode) {
+            "Black" -> ThemeMode.Dark
+            else -> ThemeMode.entries.find { it.name == mode } ?: ThemeMode.System
         }
-
-        if (!mode.isNullOrBlank() && ThemeMode.entries.any { entry -> entry.name == mode }) {
-            return ThemeMode.valueOf(mode)
-        }
-
-        return ThemeMode.System
     }
 
     private fun getBlackThemeFromPref(blackTheme: Boolean?, themeMode: String?): Boolean {

@@ -34,6 +34,9 @@
     <string name="system">System</string>
     <string name="dark">Dark</string>
     <string name="light">Light</string>
+    <string name="theme_selector_description">Theme: %1$s</string>
+    <string name="theme_menu_expanded">Expanded</string>
+    <string name="theme_menu_collapsed">Collapsed</string>
     <string name="portrait">Portrait</string>
     <string name="landscape">Landscape</string>
     <string name="full">Full</string>

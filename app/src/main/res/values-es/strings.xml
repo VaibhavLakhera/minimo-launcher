@@ -32,6 +32,9 @@
     <string name="system">Sistema</string>
     <string name="dark">Oscuro</string>
     <string name="light">Claro</string>
+    <string name="theme_selector_description">Tema: %1$s</string>
+    <string name="theme_menu_expanded">Expandido</string>
+    <string name="theme_menu_collapsed">Contraído</string>
     <string name="portrait">Vertical</string>
     <string name="landscape">Horizontal</string>
     <string name="full">Completo</string>
