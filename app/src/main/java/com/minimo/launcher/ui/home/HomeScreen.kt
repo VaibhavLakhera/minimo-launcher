@@ -49,9 +49,7 @@ import com.minimo.launcher.ui.home.components.FolderDialogs
 import com.minimo.launcher.ui.home.components.HomeBody
 import com.minimo.launcher.ui.home.components.LaunchDelayDialog
 import com.minimo.launcher.ui.home.components.WhatsNewDialog
-import com.minimo.launcher.utils.isInstalledFromPlayStore
 import com.minimo.launcher.utils.lockScreen
-import com.minimo.launcher.utils.openPlayStorePage
 import com.minimo.launcher.utils.showNotificationDrawer
 
 @Composable
@@ -61,7 +59,8 @@ fun HomeScreen(
     statusBarVisible: Boolean,
     navigationBarVisible: Boolean,
     onOpenAppDrawer: () -> Unit,
-    onSettingsClick: () -> Unit
+    onSettingsClick: () -> Unit,
+    onSupporterClick: () -> Unit
 ) {
     val context = LocalContext.current
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -262,10 +261,9 @@ fun HomeScreen(
     state.whatsNewDescription?.let { description ->
         WhatsNewDialog(
             description = description,
-            showReviewButton = context.isInstalledFromPlayStore(),
-            onReview = {
+            onSupporterClick = {
                 viewModel.onDismissWhatsNew()
-                context.openPlayStorePage()
+                onSupporterClick()
             },
             onDismiss = viewModel::onDismissWhatsNew
         )

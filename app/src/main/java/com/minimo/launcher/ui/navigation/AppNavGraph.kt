@@ -125,6 +125,11 @@ fun AppNavGraph(
                     navController.navigate(Routes.SETTINGS) {
                         launchSingleTop = true
                     }
+                },
+                onSupporterClick = {
+                    navController.navigate(Routes.SUPPORTER) {
+                        launchSingleTop = true
+                    }
                 }
             )
         }

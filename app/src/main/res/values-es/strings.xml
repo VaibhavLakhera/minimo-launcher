@@ -197,8 +197,7 @@
 
     <!-- Current release notes. Update for each release, or leave blank to skip the dialog. -->
     <string name="whats_new_title">Novedades</string>
-    <string name="whats_new_description">• Personaliza el fondo y el borde de la barra de búsqueda.\n• Elige cómo se buscan las apps por nombre.\n• Mejoras en la sincronización de apps y la carga de ajustes.\n• Compatibilidad con Android 17.\n• Únete a la comunidad de Reddit en /r/MinimoLauncher</string>
-    <string name="review_on_play_store">Valorar en Play Store</string>
+    <string name="whats_new_description">• Se añadió compatibilidad con carpetas. Mantén pulsada una app para añadirla a una carpeta.\n• Se añadieron 19 temas nuevos.\n• Personaliza el tamaño del texto de la hora y la fecha, la fuente de la hora y el formato de la fecha.\n• Consulta el indicador de carga junto al porcentaje de batería.\n• La hora, la fecha y el porcentaje de batería ahora se muestran según tu configuración regional.\n• Mejoras de rendimiento.\n• Únete a la comunidad de Reddit en /r/MinimoLauncher</string>
     <string name="time_size">Tamaño de hora</string>
     <string name="date_battery_size">Tamaño de fecha y batería</string>
     <string name="time_font">Fuente de hora</string>

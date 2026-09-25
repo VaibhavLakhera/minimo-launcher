@@ -197,8 +197,7 @@
 
     <!-- Current release notes. Update for each release, or leave blank to skip the dialog. -->
     <string name="whats_new_title">What\'s New</string>
-    <string name="whats_new_description">• Customise your search bar’s background and border.\n• Choose how app search matches names.\n• Improved app syncing and settings loading.\n• Added Android 17 support.\n• Join reddit community at /r/MinimoLauncher</string>
-    <string name="review_on_play_store">Review on Play Store</string>
+    <string name="whats_new_description">• Added folder support. Long-press any app to add it to a folder.\n• Added 19 new themes.\n• Customise the time and date text size, time font, and date format.\n• See a charging indicator next to the battery percentage.\n• The time, date, and battery percentage now follow your locale.\n• Performance improvements.\n• Join reddit community at /r/MinimoLauncher</string>
     <string name="time_size">Time Size</string>
     <string name="date_battery_size">Date &amp; Battery Size</string>
     <string name="time_font">Time Font</string>

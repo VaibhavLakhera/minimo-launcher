@@ -197,8 +197,7 @@
 
     <!-- Current release notes. Update for each release, or leave blank to skip the dialog. -->
     <string name="whats_new_title">Was ist neu?</string>
-    <string name="whats_new_description">• Passe Hintergrund und Rahmen der Suchleiste an.\n• Wähle, wie die App-Suche Namen abgleicht.\n• Verbesserte App-Synchronisierung und schnelleres Laden der Einstellungen.\n• Unterstützung für Android 17 hinzugefügt.\n• Tritt der Reddit-Community unter /r/MinimoLauncher bei</string>
-    <string name="review_on_play_store">Im Play Store bewerten</string>
+    <string name="whats_new_description">• Ordner werden jetzt unterstützt. Halte eine App gedrückt, um sie einem Ordner hinzuzufügen.\n• 19 neue Designs hinzugefügt.\n• Passe die Textgröße von Uhrzeit und Datum, die Schriftart der Uhrzeit und das Datumsformat an.\n• Eine Ladeanzeige erscheint neben dem Akkustand.\n• Uhrzeit, Datum und Akkustand verwenden jetzt deine Regionseinstellungen.\n• Leistungsverbesserungen.\n• Tritt der Reddit-Community unter /r/MinimoLauncher bei</string>
     <string name="time_size">Uhrzeitgröße</string>
     <string name="date_battery_size">Größe von Datum und Akku</string>
     <string name="time_font">Uhrzeitschrift</string>
