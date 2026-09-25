@@ -205,4 +205,21 @@
     <string name="use_app_font">App-Schrift</string>
     <string name="date_format">Datumsformat</string>
     <string name="battery_charging">Wird geladen</string>
+    <string name="add_to_folder">Zum Ordner hinzufügen</string>
+    <string name="remove_from_folder">Aus Ordner entfernen</string>
+    <string name="folders">Ordner</string>
+    <string name="new_folder_plus">+ Neu</string>
+    <string name="new_folder">Neuer Ordner</string>
+    <string name="create_folder">Ordner erstellen</string>
+    <string name="rename_folder">Ordner umbenennen</string>
+    <string name="delete_folder">Ordner löschen</string>
+    <string name="folder_name">Ordnername</string>
+    <string name="folder_no_apps">Keine Apps</string>
+    <string name="folder_expanded">Ausgeklappt</string>
+    <string name="folder_collapsed">Eingeklappt</string>
+    <string name="folder_invalid_name">Gib einen Namen mit 1 bis 150 Zeichen ein.</string>
+    <string name="folder_duplicate_name">Ein Ordner mit diesem Namen existiert bereits.</string>
+    <string name="folder_unavailable">Dieses Element oder dieser Ordner ist nicht mehr verfügbar. Schließe diesen Dialog und versuche es erneut.</string>
+    <string name="folder_save_failed">Die Änderung konnte nicht gespeichert werden. Bitte versuche es erneut.</string>
+    <string name="delete_folder_confirmation">„%1$s“ löschen? Apps und ihre Favoriteneinstellungen bleiben erhalten.</string>
 </resources>

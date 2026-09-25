@@ -42,8 +42,7 @@ internal fun IntroPage2(
         if (state.searchPreferencesLoaded) {
             SearchItem(
                 modifier = Modifier.fillMaxWidth(),
-                searchText = state.searchText,
-                onSearchTextChange = viewModel::onSearchTextChange,
+                searchState = viewModel.searchState,
                 searchBarBorderPercent = state.searchBarBorderPercent,
                 searchBarBackground = state.searchBarBackground
             )

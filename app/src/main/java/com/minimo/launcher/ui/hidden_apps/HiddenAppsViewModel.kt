@@ -1,5 +1,7 @@
 package com.minimo.launcher.ui.hidden_apps
 
+import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.minimo.launcher.data.AppInfoDao
@@ -21,8 +23,13 @@ class HiddenAppsViewModel @Inject constructor(
 ) : ViewModel() {
     private val _state = MutableStateFlow(HiddenAppsState())
     val state: StateFlow<HiddenAppsState> = _state
+    val searchState = TextFieldState()
 
     init {
+        viewModelScope.launch {
+            snapshotFlow { searchState.text.toString() }.collect(::onSearchTextChange)
+        }
+
         viewModelScope.launch {
             preferenceHelper.getSearchPreferencesFlow()
                 .collect { prefs ->
@@ -82,14 +89,13 @@ class HiddenAppsViewModel @Inject constructor(
                     appInfo.itemType,
                     appInfo.targetId,
                     appInfo.packageName,
-                    appInfo.userHandle,
-                    appInfo.orderIndex
+                    appInfo.userHandle
                 )
             }
         }
     }
 
-    fun onSearchTextChange(searchText: String) {
+    private fun onSearchTextChange(searchText: String) {
         val currentAllApps = if (_state.value.showHiddenOnly) {
             _state.value.hiddenApps
         } else {

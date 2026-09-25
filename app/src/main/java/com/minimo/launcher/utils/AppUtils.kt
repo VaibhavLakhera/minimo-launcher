@@ -126,23 +126,12 @@ class AppUtils @Inject constructor(
             isWorkProfile = userHandle != myUserHandle,
             showNotificationDot = showNotificationDot,
             orderIndex = orderIndex,
-            launchDelaySeconds = launchDelaySeconds
+            launchDelaySeconds = launchDelaySeconds,
+            folderId = folderId
         )
     }
 
     private fun getMyUserHandle() = Process.myUserHandle().hashCode()
-}
-
-fun List<AppInfo>.updateNotificationDots(notificationDots: List<NotificationDot>): List<AppInfo> {
-    return map { appInfo ->
-        appInfo.copy(
-            showNotificationDot = appInfo.itemType == AppItemType.APP &&
-                    notificationDots.any { notificationDot ->
-                        notificationDot.packageName == appInfo.packageName &&
-                                notificationDot.userHandle == appInfo.userHandle
-                    }
-        )
-    }
 }
 
 data class InstalledApp(

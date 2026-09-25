@@ -45,6 +45,7 @@ import com.minimo.launcher.R
 import com.minimo.launcher.ui.components.RenameDialog
 import com.minimo.launcher.ui.entities.AppInfo
 import com.minimo.launcher.ui.home.components.AppLaunchConfirmationDialog
+import com.minimo.launcher.ui.home.components.FolderDialogs
 import com.minimo.launcher.ui.home.components.HomeBody
 import com.minimo.launcher.ui.home.components.LaunchDelayDialog
 import com.minimo.launcher.ui.home.components.WhatsNewDialog
@@ -209,6 +210,11 @@ fun HomeScreen(
             }
         }
     }
+
+    FolderDialogs(
+        state, viewModel, statusBarVisible, navigationBarVisible,
+        useDarkBottomSheetStatusBarIcons, useDarkIconsOnSurface
+    )
 
     if (state.renameAppDialog != null) {
         val app = state.renameAppDialog!!

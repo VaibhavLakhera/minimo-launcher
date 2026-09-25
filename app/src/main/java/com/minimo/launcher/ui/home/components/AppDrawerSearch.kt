@@ -3,6 +3,7 @@ package com.minimo.launcher.ui.home.components
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -26,8 +27,7 @@ import com.minimo.launcher.ui.theme.Dimens
 fun AppDrawerSearch(
     modifier: Modifier = Modifier,
     focusRequester: FocusRequester,
-    searchText: String,
-    onSearchTextChange: (String) -> Unit,
+    searchState: TextFieldState,
     searchBarBorderPercent: Int,
     searchBarBackground: Boolean,
     onKeyboardDone: (() -> Unit)? = null,
@@ -47,8 +47,7 @@ fun AppDrawerSearch(
             modifier = Modifier
                 .weight(1f)
                 .focusRequester(focusRequester),
-            searchText = searchText,
-            onSearchTextChange = onSearchTextChange,
+            searchState = searchState,
             searchBarBorderPercent = searchBarBorderPercent,
             searchBarBackground = searchBarBackground,
             onKeyboardDone = onKeyboardDone,

@@ -2,10 +2,13 @@ package com.minimo.launcher.ui.components
 
 import android.os.Build
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -16,6 +19,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.font.FontWeight
@@ -36,6 +40,7 @@ fun AppBottomSheetDialog(
     navigationBarVisible: Boolean = true,
     useDarkStatusBarIcons: Boolean? = null,
     useDarkNavigationBarIcons: Boolean? = null,
+    titleAction: (@Composable () -> Unit)? = null,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     val sheetState = rememberModalBottomSheetState(
@@ -62,16 +67,27 @@ fun AppBottomSheetDialog(
             navigationBarVisible = navigationBarVisible
         )
 
-        Text(
-            text = appName,
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onSurface,
-            modifier = Modifier.padding(
-                vertical = 24.dp,
-                horizontal = Dimens.APP_HORIZONTAL_SPACING
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    vertical = 24.dp,
+                    horizontal = Dimens.APP_HORIZONTAL_SPACING
+                ),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = appName,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.weight(1f)
             )
-        )
+            if (titleAction != null) {
+                Spacer(Modifier.width(16.dp))
+                titleAction()
+            }
+        }
         HorizontalDivider()
         Spacer(modifier = Modifier.height(16.dp))
         content()

@@ -3,8 +3,9 @@ package com.minimo.launcher.ui.home.components
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -26,8 +27,7 @@ import com.minimo.launcher.utils.Constants
 @Composable
 fun SearchItem(
     modifier: Modifier,
-    searchText: String,
-    onSearchTextChange: (String) -> Unit,
+    searchState: TextFieldState,
     searchBarBorderPercent: Int,
     searchBarBackground: Boolean,
     onKeyboardDone: (() -> Unit)? = null,
@@ -76,8 +76,7 @@ fun SearchItem(
     }
 
     OutlinedTextField(
-        value = searchText,
-        onValueChange = onSearchTextChange,
+        state = searchState,
         enabled = enabled,
         placeholder = {
             Text(
@@ -93,7 +92,7 @@ fun SearchItem(
             .fillMaxWidth()
             .padding(start = startPadding, end = endPadding)
             .then(if (enabled) Modifier else Modifier.clearAndSetSemantics {}),
-        singleLine = true,
+        lineLimits = TextFieldLineLimits.SingleLine,
         shape = searchBarShape(searchBarBorderPercent),
         textStyle = textStyle,
         // Keep the display-only preview identical to an unfocused, enabled search bar.
@@ -108,11 +107,9 @@ fun SearchItem(
         } else {
             KeyboardOptions.Default
         },
-        keyboardActions = if (onKeyboardDone != null) {
-            KeyboardActions(onDone = { onKeyboardDone() })
-        } else {
-            KeyboardActions.Default
-        }
+        onKeyboardAction = if (onKeyboardDone != null) {
+            { _ -> onKeyboardDone() }
+        } else null
     )
 }
 

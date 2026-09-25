@@ -1,5 +1,7 @@
 package com.minimo.launcher.ui.favourite_apps
 
+import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.minimo.launcher.data.AppInfoDao
@@ -21,8 +23,13 @@ class FavouriteAppsViewModel @Inject constructor(
 ) : ViewModel() {
     private val _state = MutableStateFlow(FavouriteAppsState())
     val state: StateFlow<FavouriteAppsState> = _state
+    val searchState = TextFieldState()
 
     init {
+        viewModelScope.launch {
+            snapshotFlow { searchState.text.toString() }.collect(::onSearchTextChange)
+        }
+
         viewModelScope.launch {
             preferenceHelper.getSearchPreferencesFlow()
                 .collect { prefs ->
@@ -72,29 +79,17 @@ class FavouriteAppsViewModel @Inject constructor(
 
     fun onToggleFavouriteAppClick(appInfo: AppInfo) {
         viewModelScope.launch {
-            if (appInfo.isFavourite) {
-                appInfoDao.removeAppFromFavouriteTransaction(
-                    appInfo.itemType,
-                    appInfo.targetId,
-                    appInfo.packageName,
-                    appInfo.userHandle,
-                    appInfo.orderIndex
-                )
-            } else {
-                val newOrderIndex =
-                    (_state.value.favouriteApps.maxOfOrNull { it.orderIndex } ?: 0) + 1
-                appInfoDao.addAppToFavourite(
-                    appInfo.itemType,
-                    appInfo.targetId,
-                    appInfo.packageName,
-                    appInfo.userHandle,
-                    newOrderIndex
-                )
-            }
+            appInfoDao.setIndividualFavourite(
+                appInfo.itemType,
+                appInfo.targetId,
+                appInfo.packageName,
+                appInfo.userHandle,
+                isFavourite = !appInfo.isFavourite
+            )
         }
     }
 
-    fun onSearchTextChange(searchText: String) {
+    private fun onSearchTextChange(searchText: String) {
         val currentAllApps = if (_state.value.showFavouritesOnly) {
             _state.value.favouriteApps
         } else {

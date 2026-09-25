@@ -18,6 +18,9 @@ interface AppInfoDao {
     @Query("SELECT * FROM appInfoEntity ORDER BY COALESCE(NULLIF(alternate_app_name, ''), app_name) COLLATE NOCASE")
     suspend fun getAllApps(): List<AppInfoEntity>
 
+    @Query("SELECT * FROM appInfoEntity WHERE folder_id = :folderId ORDER BY COALESCE(NULLIF(alternate_app_name, ''), app_name) COLLATE NOCASE")
+    suspend fun getFolderMembers(folderId: String): List<AppInfoEntity>
+
     @Query("SELECT * FROM appInfoEntity WHERE item_type = :itemType ORDER BY COALESCE(NULLIF(alternate_app_name, ''), app_name) COLLATE NOCASE")
     suspend fun getItemsByType(itemType: AppItemType): List<AppInfoEntity>
 
@@ -50,6 +53,53 @@ interface AppInfoDao {
     @Query("SELECT * FROM appInfoEntity WHERE is_favourite = 1 ORDER BY order_index")
     fun getFavouriteAppsFlow(): Flow<List<AppInfoEntity>>
 
+    @Query("SELECT COALESCE(MAX(order_index), 0) FROM appInfoEntity WHERE is_favourite = 1")
+    suspend fun getMaxFavouriteOrder(): Int
+
+    // Individual changes detach only this item when its destination conflicts with its folder.
+    // Read the current row/order inside the transaction; UI snapshots may predate a folder update.
+    @Transaction
+    suspend fun setIndividualFavourite(
+        itemType: AppItemType,
+        targetId: String,
+        packageName: String,
+        userHandle: Int,
+        isFavourite: Boolean
+    ) {
+        val current = getApp(itemType, targetId, packageName, userHandle) ?: return
+
+        if (current.isHidden) return
+
+        detachFromConflictingFolder(itemType, targetId, packageName, userHandle, isFavourite)
+
+        if (current.isFavourite == isFavourite) return
+
+        if (isFavourite) {
+            addAppToFavourite(
+                itemType,
+                targetId,
+                packageName,
+                userHandle,
+                getMaxFavouriteOrder() + 1
+            )
+        } else {
+            removeAppFromFavouriteTransaction(itemType, targetId, packageName, userHandle)
+        }
+    }
+
+    @Query(
+        """
+        UPDATE appInfoEntity SET folder_id = NULL
+        WHERE item_type = :itemType AND target_id = :targetId
+            AND package_name = :packageName AND user_handle = :userHandle
+            AND folder_id IN (SELECT id FROM folderEntity WHERE is_favourite != :isFavourite)
+    """
+    )
+    suspend fun detachFromConflictingFolder(
+        itemType: AppItemType, targetId: String, packageName: String, userHandle: Int,
+        isFavourite: Boolean
+    )
+
     @Query("UPDATE appInfoEntity SET is_favourite = 1, order_index = :orderIndex WHERE item_type = :itemType AND target_id = :targetId AND package_name = :packageName AND user_handle = :userHandle")
     suspend fun addAppToFavourite(
         itemType: AppItemType,
@@ -64,12 +114,12 @@ interface AppInfoDao {
         itemType: AppItemType,
         targetId: String,
         packageName: String,
-        userHandle: Int,
-        orderIndex: Int
+        userHandle: Int
     ) {
+        val current = getFavouriteApp(itemType, targetId, packageName, userHandle) ?: return
         removeAppFromFavourite(itemType, targetId, packageName, userHandle)
-        if (orderIndex > 0) {
-            decreaseAllOrderIndex(orderIndex)
+        if (current.orderIndex > 0) {
+            decreaseAllOrderIndex(current.orderIndex)
         }
     }
 
@@ -91,17 +141,17 @@ interface AppInfoDao {
         itemType: AppItemType,
         targetId: String,
         packageName: String,
-        userHandle: Int,
-        orderIndex: Int
+        userHandle: Int
     ) {
+        val current = getApp(itemType, targetId, packageName, userHandle) ?: return
         addAppToHidden(itemType, targetId, packageName, userHandle)
-        if (orderIndex > 0) {
-            decreaseAllOrderIndex(orderIndex)
+        if (current.isFavourite && current.orderIndex > 0) {
+            decreaseAllOrderIndex(current.orderIndex)
         }
     }
 
     // Not called from outside this file
-    @Query("UPDATE appInfoEntity SET is_hidden = 1, is_favourite = 0, order_index = 0 WHERE item_type = :itemType AND target_id = :targetId AND package_name = :packageName AND user_handle = :userHandle")
+    @Query("UPDATE appInfoEntity SET is_hidden = 1, is_favourite = 0, order_index = 0, folder_id = NULL WHERE item_type = :itemType AND target_id = :targetId AND package_name = :packageName AND user_handle = :userHandle")
     suspend fun addAppToHidden(
         itemType: AppItemType,
         targetId: String,
@@ -143,7 +193,13 @@ interface AppInfoDao {
         deletedApps: List<AppInfoEntity>
     ) {
         for (app in updates) {
-            updateAppLabel(app.targetId, app.packageName, app.userHandle, app.appName)
+            updateItemLabel(
+                AppItemType.APP,
+                app.targetId,
+                app.packageName,
+                app.userHandle,
+                app.appName
+            )
         }
         for ((previous, replacement) in replacements) {
             // User settings may have changed since the inventory was read. Copy the current row,
@@ -180,15 +236,47 @@ interface AppInfoDao {
         UPDATE appInfoEntity
         SET app_name = :appName,
             alternate_app_name = CASE WHEN alternate_app_name = app_name THEN '' ELSE alternate_app_name END
-        WHERE item_type = 'APP' AND target_id = :targetId AND package_name = :packageName AND user_handle = :userHandle
+        WHERE item_type = :itemType AND target_id = :targetId AND package_name = :packageName AND user_handle = :userHandle
     """
     )
-    suspend fun updateAppLabel(
+    suspend fun updateItemLabel(
+        itemType: AppItemType,
         targetId: String,
         packageName: String,
         userHandle: Int,
         appName: String
     )
+
+    @Transaction
+    suspend fun syncShortcutsTransaction(
+        updates: List<AppInfoEntity>,
+        additions: List<AppInfoEntity>,
+        deletions: List<AppInfoEntity>
+    ) {
+        updates.forEach {
+            updateItemLabel(
+                AppItemType.SHORTCUT,
+                it.targetId,
+                it.packageName,
+                it.userHandle,
+                it.appName
+            )
+        }
+        additions.forEach { addAppIfMissing(it) }
+        deleteAppsTransaction(deletions)
+    }
+
+    @Transaction
+    suspend fun acceptShortcut(shortcut: AppInfoEntity) {
+        addAppIfMissing(shortcut)
+        updateItemLabel(
+            AppItemType.SHORTCUT,
+            shortcut.targetId,
+            shortcut.packageName,
+            shortcut.userHandle,
+            shortcut.appName
+        )
+    }
 
     @Transaction
     suspend fun deleteAppsTransaction(apps: List<AppInfoEntity>) {

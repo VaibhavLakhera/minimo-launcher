@@ -56,6 +56,7 @@ fun AppDrawerFastScroller(
     apps: List<AppInfo>,
     listState: LazyListState,
     modifier: Modifier = Modifier,
+    itemIndexOffset: Int = 0,
     isAtStart: Boolean = false,
     onInteractionStart: () -> Unit = {},
     textColor: Color = MaterialTheme.colorScheme.onSurface,
@@ -67,40 +68,11 @@ fun AppDrawerFastScroller(
     val density = LocalDensity.current
     val hapticFeedback = LocalHapticFeedback.current
 
-    val letters = remember(apps) {
-        val seen = linkedSetOf<String>()
-        var hasNonLetters = false
-
-        apps.forEach { appInfo ->
-            val firstChar = appInfo.name.firstOrNull()?.uppercaseChar()
-            when {
-                firstChar?.isLetter() == true -> seen.add(firstChar.toString())
-                else -> hasNonLetters = true
-            }
-        }
-
-        buildList {
-            if (hasNonLetters) {
-                add("#")
-            }
-            addAll(seen.sorted())
-        }
+    val letterToIndexMap = remember(apps, itemIndexOffset) {
+        drawerLetterIndices(apps, itemIndexOffset)
     }
-
-    val letterToIndexMap = remember(apps) {
-        val mapping = mutableMapOf<String, Int>()
-        apps.forEachIndexed { index, appInfo ->
-            val firstChar = appInfo.name.firstOrNull()?.uppercaseChar()
-            val letter = if (firstChar?.isLetter() == true) {
-                firstChar.toString()
-            } else {
-                "#"
-            }
-            if (!mapping.containsKey(letter)) {
-                mapping[letter] = index
-            }
-        }
-        mapping
+    val letters = remember(letterToIndexMap) {
+        letterToIndexMap.keys.sorted()
     }
 
     if (letters.isEmpty()) return
@@ -112,7 +84,7 @@ fun AppDrawerFastScroller(
     var currentSelectedLetter by remember { mutableStateOf("") }
     var previousSelectedLetter by remember { mutableStateOf("") }
 
-    LaunchedEffect(apps) {
+    LaunchedEffect(apps, itemIndexOffset) {
         isInteracting = false
         currentDragPosition = 0f
     }
@@ -152,7 +124,7 @@ fun AppDrawerFastScroller(
             .height(scrollerHeight)
             .width(width)
             .background(color = Color.Transparent)
-            .pointerInput(apps) {
+            .pointerInput(apps, itemIndexOffset) {
                 awaitPointerEventScope {
                     while (true) {
                         val down = awaitFirstDown()
@@ -268,6 +240,16 @@ fun AppDrawerFastScroller(
             )
         }
     }
+}
+
+private fun drawerLetterIndices(apps: List<AppInfo>, itemIndexOffset: Int): Map<String, Int> {
+    val mapping = linkedMapOf<String, Int>()
+    apps.forEachIndexed { index, app ->
+        val initial = app.name.firstOrNull()?.uppercaseChar()
+        val letter = if (initial?.isLetter() == true) initial.toString() else "#"
+        if (letter !in mapping) mapping[letter] = index + itemIndexOffset
+    }
+    return mapping
 }
 
 @Composable

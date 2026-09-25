@@ -205,4 +205,21 @@
     <string name="use_app_font">Fuente de la app</string>
     <string name="date_format">Formato de fecha</string>
     <string name="battery_charging">Cargando</string>
+    <string name="add_to_folder">Añadir a carpeta</string>
+    <string name="remove_from_folder">Quitar de la carpeta</string>
+    <string name="folders">Carpetas</string>
+    <string name="new_folder_plus">+ Nueva</string>
+    <string name="new_folder">Nueva carpeta</string>
+    <string name="create_folder">Crear carpeta</string>
+    <string name="rename_folder">Renombrar carpeta</string>
+    <string name="delete_folder">Eliminar carpeta</string>
+    <string name="folder_name">Nombre de la carpeta</string>
+    <string name="folder_no_apps">No hay aplicaciones</string>
+    <string name="folder_expanded">Expandida</string>
+    <string name="folder_collapsed">Contraída</string>
+    <string name="folder_invalid_name">Introduce un nombre de entre 1 y 150 caracteres.</string>
+    <string name="folder_duplicate_name">Ya existe una carpeta con este nombre.</string>
+    <string name="folder_unavailable">Este elemento o carpeta ya no está disponible. Cierra este diálogo e inténtalo de nuevo.</string>
+    <string name="folder_save_failed">No se pudo guardar el cambio. Inténtalo de nuevo.</string>
+    <string name="delete_folder_confirmation">¿Eliminar «%1$s»? Se conservarán las aplicaciones y sus ajustes de favoritos.</string>
 </resources>

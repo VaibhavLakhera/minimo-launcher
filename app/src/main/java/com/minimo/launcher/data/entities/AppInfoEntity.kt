@@ -2,7 +2,9 @@ package com.minimo.launcher.data.entities
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.ForeignKey
 import androidx.room.Ignore
+import androidx.room.Index
 
 /**
  * A launcher item backed by either an installed launcher activity or a pinned shortcut.
@@ -14,7 +16,13 @@ import androidx.room.Ignore
  */
 @Entity(
     tableName = "appInfoEntity",
-    primaryKeys = ["package_name", "item_type", "target_id", "user_handle"]
+    primaryKeys = ["package_name", "item_type", "target_id", "user_handle"],
+    foreignKeys = [ForeignKey(
+        entity = FolderEntity::class,
+        parentColumns = ["id"], childColumns = ["folder_id"],
+        onDelete = ForeignKey.SET_NULL
+    )],
+    indices = [Index("folder_id")]
 )
 data class AppInfoEntity(
     @ColumnInfo(name = "package_name")
@@ -45,7 +53,10 @@ data class AppInfoEntity(
     val orderIndex: Int,
 
     @ColumnInfo(name = "launch_delay_seconds", defaultValue = "0")
-    val launchDelaySeconds: Int = 0
+    val launchDelaySeconds: Int = 0,
+
+    @ColumnInfo(name = "folder_id", defaultValue = "NULL")
+    val folderId: String? = null
 ) {
     @get:Ignore
     val id: String

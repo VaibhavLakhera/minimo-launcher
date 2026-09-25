@@ -205,4 +205,21 @@
     <string name="use_app_font">Carattere dell’app</string>
     <string name="date_format">Formato data</string>
     <string name="battery_charging">In carica</string>
+    <string name="add_to_folder">Aggiungi a cartella</string>
+    <string name="remove_from_folder">Rimuovi dalla cartella</string>
+    <string name="folders">Cartelle</string>
+    <string name="new_folder_plus">+ Nuova</string>
+    <string name="new_folder">Nuova cartella</string>
+    <string name="create_folder">Crea cartella</string>
+    <string name="rename_folder">Rinomina cartella</string>
+    <string name="delete_folder">Elimina cartella</string>
+    <string name="folder_name">Nome della cartella</string>
+    <string name="folder_no_apps">Nessuna app</string>
+    <string name="folder_expanded">Espansa</string>
+    <string name="folder_collapsed">Compressa</string>
+    <string name="folder_invalid_name">Inserisci un nome da 1 a 150 caratteri.</string>
+    <string name="folder_duplicate_name">Esiste già una cartella con questo nome.</string>
+    <string name="folder_unavailable">Questo elemento o questa cartella non è più disponibile. Chiudi questa finestra e riprova.</string>
+    <string name="folder_save_failed">Impossibile salvare la modifica. Riprova.</string>
+    <string name="delete_folder_confirmation">Eliminare «%1$s»? Le app e le relative impostazioni dei preferiti saranno mantenute.</string>
 </resources>

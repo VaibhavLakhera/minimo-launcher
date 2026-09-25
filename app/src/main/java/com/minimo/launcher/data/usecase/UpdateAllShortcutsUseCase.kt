@@ -26,39 +26,16 @@ class UpdateAllShortcutsUseCase @Inject constructor(
                 dbShortcuts
             ) ?: return@withLock
 
-            if (syncResult.updates.isNotEmpty()) appInfoDao.addApps(syncResult.updates)
-            if (syncResult.deletions.isNotEmpty()) {
-                appInfoDao.deleteAppsTransaction(syncResult.deletions)
-            }
-            if (syncResult.additions.isNotEmpty()) appInfoDao.addApps(syncResult.additions)
+            appInfoDao.syncShortcutsTransaction(
+                syncResult.updates, syncResult.additions, syncResult.deletions
+            )
         }
     }
 
     suspend fun addAcceptedShortcut(shortcut: ShortcutInfo): Unit = withContext(Dispatchers.IO) {
         appSyncMutex.withLock {
             val installedShortcut = shortcutsUtils.mapInstalledShortcut(shortcut)
-            val existing = appInfoDao.getApp(
-                itemType = AppItemType.SHORTCUT,
-                targetId = installedShortcut.shortcutId,
-                packageName = installedShortcut.packageName,
-                userHandle = installedShortcut.userHandle
-            )
-            if (existing == null) {
-                appInfoDao.addAppIfMissing(createShortcutEntity(installedShortcut))
-            } else {
-                appInfoDao.addApps(
-                    listOf(
-                        existing.copy(
-                            appName = installedShortcut.appName,
-                            alternateAppName = if (existing.alternateAppName == existing.appName) {
-                                ""
-                            } else {
-                                existing.alternateAppName
-                            }
-                        )
-                    )
-                )
-            }
+            appInfoDao.acceptShortcut(createShortcutEntity(installedShortcut))
         }
     }
 
@@ -89,16 +66,7 @@ internal fun syncPinnedShortcuts(
         if (installedShortcut == null) {
             deletions.add(dbShortcut)
         } else {
-            updates.add(
-                dbShortcut.copy(
-                    appName = installedShortcut.appName,
-                    alternateAppName = if (dbShortcut.alternateAppName == dbShortcut.appName) {
-                        ""
-                    } else {
-                        dbShortcut.alternateAppName
-                    }
-                )
-            )
+            updates.add(dbShortcut.copy(appName = installedShortcut.appName))
         }
     }
 

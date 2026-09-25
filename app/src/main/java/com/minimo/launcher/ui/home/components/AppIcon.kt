@@ -3,6 +3,7 @@ package com.minimo.launcher.ui.home.components
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -56,19 +57,7 @@ fun AppIcon(
             }
         }
 
-        if (showNotificationDot) {
-            Box(
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .size(size * NOTIFICATION_DOT_SCALE)
-                    .shadow(
-                        elevation = NOTIFICATION_DOT_SHADOW_ELEVATION,
-                        shape = CircleShape,
-                        clip = false
-                    )
-                    .background(MaterialTheme.colorScheme.primary, CircleShape)
-            )
-        }
+        if (showNotificationDot) NotificationDot(size)
 
         if (isWorkProfile) {
             Box(
@@ -92,6 +81,21 @@ fun AppIcon(
             }
         }
     }
+}
+
+@Composable
+internal fun BoxScope.NotificationDot(size: Dp) {
+    Box(
+        modifier = Modifier
+            .align(Alignment.TopEnd)
+            .size(size * NOTIFICATION_DOT_SCALE)
+            .shadow(
+                elevation = NOTIFICATION_DOT_SHADOW_ELEVATION,
+                shape = CircleShape,
+                clip = false
+            )
+            .background(MaterialTheme.colorScheme.primary, CircleShape)
+    )
 }
 
 private const val NOTIFICATION_DOT_SCALE = 0.28f

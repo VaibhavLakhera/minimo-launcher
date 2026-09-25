@@ -13,21 +13,17 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.minimo.launcher.ui.components.ScreenTimeView
 import com.minimo.launcher.ui.components.TimeAndDateView
@@ -35,12 +31,10 @@ import com.minimo.launcher.ui.entities.AppInfo
 import com.minimo.launcher.ui.home.HomeScreenState
 import com.minimo.launcher.ui.home.HomeViewModel
 import com.minimo.launcher.ui.theme.Dimens
-import com.minimo.launcher.utils.launchAppInfo
 import com.minimo.launcher.utils.openDefaultCalendarApp
 import com.minimo.launcher.utils.openDefaultClockApp
 import com.minimo.launcher.utils.openDigitalWellbeing
 import com.minimo.launcher.utils.openPowerUsageSummary
-import com.minimo.launcher.utils.uninstallApp
 
 @Composable
 fun HomeBody(
@@ -158,6 +152,7 @@ fun HomeBody(
             }
         }
 
+        val homeRows = remember(state.folders, state.favouriteApps) { state.homeRows }
         LazyColumn(
             state = homeLazyListState,
             modifier = Modifier
@@ -166,57 +161,21 @@ fun HomeBody(
             contentPadding = lazyColumnPadding,
             verticalArrangement = state.appsArrangementVertical
         ) {
-            items(items = state.favouriteApps, key = { it.id }) { appInfo ->
-                val textSize = state.homeTextSize.sp
-                val appIconSizeScale = state.appIconSizePercent / 100f
-                val iconSizePx = with(LocalDensity.current) {
-                    appIconSizeFor(textSize, appIconSizeScale).roundToPx()
-                }
-                val appIcon by produceState<ImageBitmap?>(
-                    initialValue = null,
-                    key1 = state.showAppIconInHome,
-                    key2 = appInfo.id,
-                    key3 = iconSizePx to iconCacheRevision
-                ) {
-                    if (state.showAppIconInHome) {
-                        value = viewModel.loadAppIcon(appInfo, iconSizePx)
-                    }
-                }
-
-                AppNameItem(
+            items(items = homeRows, key = { it.key }) { row ->
+                LauncherListItem(
                     modifier = Modifier.animateItem(),
-                    appName = appInfo.name,
-                    isFavourite = appInfo.isFavourite,
-                    isHidden = appInfo.isHidden,
-                    isShortcut = appInfo.isShortcut,
-                    isWorkProfile = appInfo.isWorkProfile,
-                    onClick = { viewModel.onAppLaunchRequest(appInfo) },
-                    onToggleFavouriteClick = {
-                        viewModel.onToggleFavouriteAppClick(
-                            appInfo
-                        )
-                    },
-                    onRenameClick = { viewModel.onRenameAppClick(appInfo) },
-                    onToggleHideClick = { viewModel.onToggleHideClick(appInfo) },
-                    onAppInfoClick = { context.launchAppInfo(appInfo) },
-                    onLaunchDelayClick = { viewModel.onLaunchDelayClick(appInfo) },
-                    appsArrangement = state.appsArrangementHorizontal,
-                    textSize = textSize,
-                    onUninstallClick = { context.uninstallApp(appInfo) },
-                    onDeleteShortcutClick = { onDeleteShortcutClick(appInfo) },
-                    showNotificationDot = appInfo.showNotificationDot,
-                    compactTouchArea = state.compactAppTouchArea,
-                    showAppIcon = state.showAppIconInHome,
-                    appIcon = appIcon,
-                    appIconSizeScale = appIconSizeScale,
-                    appIconAlignment = state.homeAppIconAlignment,
-                    verticalPadding = state.homeAppVerticalPadding.dp,
-                    bottomSheetStatusBarVisible = statusBarVisible,
-                    bottomSheetNavigationBarVisible = navigationBarVisible,
-                    useDarkBottomSheetStatusBarIcons = useDarkBottomSheetStatusBarIcons,
-                    useDarkBottomSheetNavigationBarIcons = useDarkBottomSheetNavigationBarIcons,
+                    row = row,
+                    state = state,
+                    viewModel = viewModel,
+                    home = true,
+                    iconCacheRevision = iconCacheRevision,
                     textColor = textColor,
-                    shadow = textShadow
+                    textShadow = textShadow,
+                    statusBarVisible = statusBarVisible,
+                    navigationBarVisible = navigationBarVisible,
+                    useDarkStatusBarIcons = useDarkBottomSheetStatusBarIcons,
+                    useDarkNavigationBarIcons = useDarkBottomSheetNavigationBarIcons,
+                    onDeleteShortcut = onDeleteShortcutClick
                 )
             }
 

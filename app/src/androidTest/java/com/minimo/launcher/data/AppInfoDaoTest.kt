@@ -83,8 +83,7 @@ class AppInfoDaoTest {
             shortcut.itemType,
             shortcut.targetId,
             shortcut.packageName,
-            shortcut.userHandle,
-            2
+            shortcut.userHandle
         )
         val hiddenShortcut = dao.getApp(AppItemType.SHORTCUT, "same-target", PACKAGE, 10)
         assertTrue(hiddenShortcut?.isHidden == true)

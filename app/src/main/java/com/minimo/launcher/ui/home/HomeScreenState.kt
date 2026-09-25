@@ -2,6 +2,7 @@ package com.minimo.launcher.ui.home
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.ui.Alignment
+import com.minimo.launcher.data.FolderError
 import com.minimo.launcher.ui.entities.AppInfo
 import com.minimo.launcher.utils.AppIconAlignment
 import com.minimo.launcher.utils.Constants
@@ -17,6 +18,10 @@ data class PendingAppLaunch(
 )
 
 data class HomeScreenState(
+    val folders: List<FolderInfo> = emptyList(),
+    val folderDialog: FolderDialog? = null,
+    val folderError: FolderError? = null,
+    val folderSaving: Boolean = false,
     val whatsNewDescription: String? = null,
     val initialLoaded: Boolean = false,
     val favouriteApps: List<AppInfo> = emptyList(),
@@ -76,4 +81,15 @@ data class HomeScreenState(
     val backOpensAppDrawer: Boolean = true,
     val compactAppTouchArea: Boolean = false,
     val keyboardDoneOpensFirstApp: Boolean = false
-)
+) {
+    val homeRows: List<LauncherRow>
+        get() = launcherRows(
+            folders.filter { it.folder.isFavourite },
+            favouriteApps.filter { it.folderId == null }
+        )
+    val drawerRows: List<LauncherRow>
+        get() = launcherRows(
+            if (searchText.isBlank()) folders.filterNot { it.folder.isFavourite } else emptyList(),
+            filteredAllApps
+        )
+}
