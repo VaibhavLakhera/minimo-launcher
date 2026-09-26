@@ -158,6 +158,12 @@
     <string name="home_swipe_right_app">App scorrimento destra nella home</string>
     <string name="none">Nessuna</string>
     <string name="font">Carattere</string>
+    <string name="add_font">Aggiungi carattere (.ttf)</string>
+    <string name="importing_font">Importazione del carattere…</string>
+    <string name="font_import_invalid">Scegli un file di carattere TrueType (.ttf) valido.</string>
+    <string name="font_import_too_large">I file dei caratteri non devono superare i 10 MB.</string>
+    <string name="font_import_failed">Impossibile importare questo carattere. Verifica che il file sia leggibile e che ci sia spazio di archiviazione sufficiente, quindi riprova.</string>
+    <string name="font_picker_unavailable">Nessun selettore di file disponibile su questo dispositivo.</string>
     <string name="fast_scroller">Scorrimento rapido</string>
     <string name="fast_scroller_alignment">Allineamento scorrimento rapido</string>
     <string name="fast_scroller_description">Mostra uno scorrimento rapido A-Z nel drawer</string>

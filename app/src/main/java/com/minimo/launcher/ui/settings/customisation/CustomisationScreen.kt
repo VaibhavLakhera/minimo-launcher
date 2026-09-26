@@ -1,6 +1,10 @@
 package com.minimo.launcher.ui.settings.customisation
 
+import android.content.ActivityNotFoundException
 import android.os.Build
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -38,6 +42,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -114,6 +119,27 @@ fun CustomisationScreen(
 ) {
     val context = LocalContext.current
     val state by viewModel.state.collectAsStateWithLifecycle()
+
+    var importingTimeFont by rememberSaveable { mutableStateOf(false) }
+    val fontPicker =
+        rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+            if (uri != null) viewModel.importFont(uri, importingTimeFont)
+        }
+    val openFontPicker: (Boolean) -> Unit = { forTime ->
+        importingTimeFont = forTime
+        try {
+            // Providers often report TTF files as generic binary data; validate after selection.
+            fontPicker.launch(arrayOf("*/*"))
+        } catch (_: ActivityNotFoundException) {
+            Toast.makeText(context, R.string.font_picker_unavailable, Toast.LENGTH_LONG).show()
+        }
+    }
+    LaunchedEffect(state.fontImportError) {
+        state.fontImportError?.let { message ->
+            Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+            viewModel.clearFontImportError()
+        }
+    }
 
     var showEnableAccessibilityDialog by remember { mutableStateOf(false) }
     var hasLockScreenPermission by remember {
@@ -217,7 +243,10 @@ fun CustomisationScreen(
 
             FontDropdown(
                 selectedFont = state.fontPreference,
-                onFontSelected = viewModel::onFontPreferenceChanged
+                onFontSelected = viewModel::onFontPreferenceChanged,
+                customFonts = state.customFonts,
+                importingFont = state.importingFont,
+                onAddFont = { openFontPicker(false) }
             )
 
             ThemeDropdown(
@@ -534,6 +563,9 @@ fun CustomisationScreen(
                         titleRes = R.string.time_font,
                         selectedFont = state.homeTimeFont,
                         onFontSelected = viewModel::onHomeTimeFontChanged,
+                        customFonts = state.customFonts,
+                        importingFont = state.importingFont,
+                        onAddFont = { openFontPicker(true) },
                         onUseAppFont = { viewModel.onHomeTimeFontChanged(null) }
                     )
                 }

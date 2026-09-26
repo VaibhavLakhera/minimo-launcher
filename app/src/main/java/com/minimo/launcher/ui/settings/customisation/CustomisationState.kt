@@ -1,5 +1,6 @@
 package com.minimo.launcher.ui.settings.customisation
 
+import com.minimo.launcher.data.CustomFont
 import com.minimo.launcher.ui.theme.ThemeMode
 import com.minimo.launcher.utils.AppIconAlignment
 import com.minimo.launcher.utils.Constants
@@ -17,6 +18,9 @@ data class CustomisationState(
     val initialLoaded: Boolean = false,
     val themeMode: ThemeMode? = null,
     val fontPreference: String = "",
+    val customFonts: List<CustomFont> = emptyList(),
+    val importingFont: Boolean = false,
+    val fontImportError: Int? = null,
     val screenOrientation: ScreenOrientation = ScreenOrientation.Portrait,
     val homeAppsAlignmentHorizontal: HomeAppsAlignmentHorizontal? = null,
     val drawerAppsAlignmentHorizontal: HomeAppsAlignmentHorizontal? = null,

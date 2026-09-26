@@ -158,6 +158,12 @@
     <string name="home_swipe_right_app">App beim Wischen nach rechts</string>
     <string name="none">Keine</string>
     <string name="font">Schriftart</string>
+    <string name="add_font">Schriftart hinzufügen (.ttf)</string>
+    <string name="importing_font">Schriftart wird importiert…</string>
+    <string name="font_import_invalid">Wähle eine gültige TrueType-Schriftdatei (.ttf) aus.</string>
+    <string name="font_import_too_large">Schriftdateien dürfen höchstens 10 MB groß sein.</string>
+    <string name="font_import_failed">Diese Schriftart konnte nicht importiert werden. Prüfe, ob die Datei lesbar ist und genügend Speicherplatz verfügbar ist, und versuche es erneut.</string>
+    <string name="font_picker_unavailable">Auf diesem Gerät ist keine Dateiauswahl verfügbar.</string>
     <string name="fast_scroller">Schnellscroller</string>
     <string name="fast_scroller_alignment">Schnellscroller-Ausrichtung</string>
     <string name="fast_scroller_description">Zeige einen A-Z-Schnellscroller in der App-Schublade</string>

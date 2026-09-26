@@ -20,7 +20,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.minimo.launcher.ui.theme.getFontFamily
+import com.minimo.launcher.ui.theme.rememberFontFamily
 import com.minimo.launcher.utils.Constants
 import com.minimo.launcher.utils.HomeClockMode
 import com.minimo.launcher.utils.HomeDateFormat
@@ -74,7 +74,7 @@ fun TimeAndDateView(
     val dateFontSize = (dateTextSize ?: defaultHomeDateTextSize(showHomeClock, clockMode)).sp
     val dateFontWeight =
         if (showDate && clockMode == HomeClockMode.DateOnly) FontWeight.Bold else null
-    val timeFontFamily = timeFont?.let { getFontFamily(it) ?: FontFamily.Default }
+    val timeFontFamily = timeFont?.let { rememberFontFamily(it) ?: FontFamily.Default }
         ?: LocalTextStyle.current.fontFamily
 
     Column(

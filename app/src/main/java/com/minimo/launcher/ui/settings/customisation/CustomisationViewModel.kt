@@ -1,8 +1,13 @@
 package com.minimo.launcher.ui.settings.customisation
 
+import android.content.Context
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.minimo.launcher.R
 import com.minimo.launcher.data.AppInfoDao
+import com.minimo.launcher.data.CustomFonts
+import com.minimo.launcher.data.FontImportException
 import com.minimo.launcher.data.PreferenceHelper
 import com.minimo.launcher.ui.entities.toAppPreferenceTarget
 import com.minimo.launcher.ui.theme.ThemeMode
@@ -16,23 +21,30 @@ import com.minimo.launcher.utils.HomeDateFormat
 import com.minimo.launcher.utils.ScreenOrientation
 import com.minimo.launcher.utils.SearchMode
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
 class CustomisationViewModel @Inject constructor(
     private val preferenceHelper: PreferenceHelper,
-    private val appInfoDao: AppInfoDao
+    private val appInfoDao: AppInfoDao,
+    @ApplicationContext private val context: Context
 ) : ViewModel() {
     private val _state = MutableStateFlow(CustomisationState())
     val state: StateFlow<CustomisationState> = _state
 
     init {
         viewModelScope.launch {
+            val fonts = withContext(Dispatchers.IO) { CustomFonts.list(context) }
+            _state.update { it.copy(customFonts = fonts) }
             preferenceHelper.getCustomisationPreferencesFlow()
                 .distinctUntilChanged()
                 .collect { prefs ->
@@ -210,6 +222,35 @@ class CustomisationViewModel @Inject constructor(
 
     fun onHomeDateTextSizeChanged(size: Int?) {
         viewModelScope.launch { preferenceHelper.setHomeDateTextSize(size) }
+    }
+
+    fun importFont(uri: Uri, forTime: Boolean) {
+        if (_state.value.importingFont) return
+        _state.update { it.copy(importingFont = true, fontImportError = null) }
+        viewModelScope.launch {
+            try {
+                val font = withContext(Dispatchers.IO) { CustomFonts.importFont(context, uri) }
+                val fonts = withContext(Dispatchers.IO) { CustomFonts.list(context) }
+                _state.update { it.copy(customFonts = fonts) }
+                if (forTime) preferenceHelper.setHomeTimeFont(font.value)
+                else preferenceHelper.setFontPreference(font.value)
+            } catch (error: CancellationException) {
+                throw error
+            } catch (error: Exception) {
+                _state.update {
+                    it.copy(
+                        fontImportError = (error as? FontImportException)?.messageRes
+                            ?: R.string.font_import_failed
+                    )
+                }
+            } finally {
+                _state.update { it.copy(importingFont = false) }
+            }
+        }
+    }
+
+    fun clearFontImportError() {
+        _state.update { it.copy(fontImportError = null) }
     }
 
     fun onHomeTimeFontChanged(font: String?) {

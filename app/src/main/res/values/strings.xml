@@ -156,6 +156,12 @@
     <string name="home_swipe_right_app">Home Swipe Right App</string>
     <string name="none">None</string>
     <string name="font">Font</string>
+    <string name="add_font">Add font (.ttf)</string>
+    <string name="importing_font">Importing font…</string>
+    <string name="font_import_invalid">Choose a valid TrueType (.ttf) font file.</string>
+    <string name="font_import_too_large">Font files must be 10 MB or smaller.</string>
+    <string name="font_import_failed">Could not import this font. Check that the file is readable and there is enough storage, then try again.</string>
+    <string name="font_picker_unavailable">No file picker is available on this device.</string>
     <string name="fast_scroller">Fast Scroller</string>
     <string name="fast_scroller_alignment">Fast Scroller Alignment</string>
     <string name="fast_scroller_description">Show an A-Z fast scroller on the app drawer</string>

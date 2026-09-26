@@ -156,6 +156,12 @@
     <string name="home_swipe_right_app">App al deslizar a la derecha en inicio</string>
     <string name="none">Ninguna</string>
     <string name="font">Fuente</string>
+    <string name="add_font">Añadir fuente (.ttf)</string>
+    <string name="importing_font">Importando fuente…</string>
+    <string name="font_import_invalid">Elige un archivo de fuente TrueType (.ttf) válido.</string>
+    <string name="font_import_too_large">Los archivos de fuentes no deben superar los 10 MB.</string>
+    <string name="font_import_failed">No se ha podido importar esta fuente. Comprueba que el archivo se pueda leer y que haya suficiente espacio de almacenamiento, y vuelve a intentarlo.</string>
+    <string name="font_picker_unavailable">No hay ningún selector de archivos disponible en este dispositivo.</string>
     <string name="fast_scroller">Desplazamiento rápido</string>
     <string name="fast_scroller_alignment">Alineación del desplazamiento rápido</string>
     <string name="fast_scroller_description">Mostrar una barra de desplazamiento rápido A-Z en el cajón de apps</string>
