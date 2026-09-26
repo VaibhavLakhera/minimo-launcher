@@ -20,6 +20,7 @@ data class AppInfo(
     val showNotificationDot: Boolean,
     val orderIndex: Int,
     val launchDelaySeconds: Int = 0,
+    val folderId: String? = null,
 ) {
     val name: String
         get() = alternateAppName.ifEmpty { appName }

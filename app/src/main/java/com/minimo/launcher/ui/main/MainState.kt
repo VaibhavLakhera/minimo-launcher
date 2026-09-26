@@ -5,6 +5,7 @@ import com.minimo.launcher.utils.Constants
 import com.minimo.launcher.utils.ScreenOrientation
 
 data class MainState(
+    val initialLoaded: Boolean = false,
     val themeMode: ThemeMode = ThemeMode.System,
     val fontPreference: String = "",
     val screenOrientation: ScreenOrientation = ScreenOrientation.Portrait,

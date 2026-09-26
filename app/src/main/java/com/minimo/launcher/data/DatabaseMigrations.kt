@@ -312,6 +312,24 @@ object DatabaseMigrations {
         }
     }
 
+    val MIGRATION_7_8 = object : Migration(7, 8) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL(
+                """
+                CREATE TABLE IF NOT EXISTS `folderEntity` (
+                    `id` TEXT NOT NULL PRIMARY KEY,
+                    `name` TEXT NOT NULL,
+                    `normalized_name` TEXT NOT NULL,
+                    `is_favourite` INTEGER NOT NULL DEFAULT 0
+                )
+            """.trimIndent()
+            )
+            db.execSQL("CREATE UNIQUE INDEX `index_folderEntity_normalized_name` ON `folderEntity` (`normalized_name`)")
+            db.execSQL("ALTER TABLE `appInfoEntity` ADD COLUMN `folder_id` TEXT DEFAULT NULL REFERENCES `folderEntity` (`id`) ON UPDATE NO ACTION ON DELETE SET NULL")
+            db.execSQL("CREATE INDEX `index_appInfoEntity_folder_id` ON `appInfoEntity` (`folder_id`)")
+        }
+    }
+
     private fun queryLong(db: SupportSQLiteDatabase, query: String): Long {
         val cursor = db.query(query)
         val value = if (cursor.moveToFirst()) cursor.getLong(0) else 0L

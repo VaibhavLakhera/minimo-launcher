@@ -5,14 +5,21 @@ import android.os.Build
 import android.os.SystemClock
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.clearText
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.minimo.launcher.BuildConfig
 import com.minimo.launcher.R
 import com.minimo.launcher.data.AppInfoDao
+import com.minimo.launcher.data.FolderError
+import com.minimo.launcher.data.FolderOperationException
+import com.minimo.launcher.data.FolderRepository
 import com.minimo.launcher.data.PreferenceHelper
 import com.minimo.launcher.data.entities.AppItemType
+import com.minimo.launcher.data.entities.FolderEntity
 import com.minimo.launcher.data.usecase.UpdateAllAppsUseCase
 import com.minimo.launcher.data.usecase.UpdateAllShortcutsUseCase
 import com.minimo.launcher.ui.entities.AppInfo
@@ -32,16 +39,18 @@ import com.minimo.launcher.utils.StringUtils
 import com.minimo.launcher.utils.isAppUsagePermissionGranted
 import com.minimo.launcher.utils.launchApp
 import com.minimo.launcher.utils.startShortcut
-import com.minimo.launcher.utils.updateNotificationDots
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -49,6 +58,7 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val updateAllAppsUseCase: UpdateAllAppsUseCase,
     private val appInfoDao: AppInfoDao,
+    private val folderRepository: FolderRepository,
     private val appUtils: AppUtils,
     private val preferenceHelper: PreferenceHelper,
     private val notificationDotsNotifier: NotificationDotsNotifier,
@@ -61,11 +71,16 @@ class HomeViewModel @Inject constructor(
 ) : ViewModel() {
     private val _state = MutableStateFlow(HomeScreenState())
     val state: StateFlow<HomeScreenState> = _state
+    val searchState = TextFieldState()
     val iconCacheRevision = appIconRepository.cacheRevision
 
     private var lastScreenTimeUpdateTime = 0L
 
     init {
+        viewModelScope.launch {
+            snapshotFlow { searchState.text.toString().trim() }.collect(::onSearchTextChange)
+        }
+
         viewModelScope.launch {
             val description = applicationContext.getString(R.string.whats_new_description)
             if (preferenceHelper.claimWhatsNew(BuildConfig.VERSION_CODE, description)) {
@@ -82,65 +97,27 @@ class HomeViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
-            appInfoDao.getAllAppsFlow()
-                .collect { appInfoList ->
-                    val dbApps = appUtils.mapToAppInfo(
-                        entities = appInfoList,
-                        notificationDots = notificationDotsNotifier.getNotificationDots()
+            combine(
+                folderRepository.observeCatalog(),
+                notificationDotsNotifier.notificationDots
+            ) { catalog, dots ->
+                catalog to appUtils.mapToAppInfo(catalog.apps, dots)
+            }.collect { (catalog, dbApps) ->
+                _state.update { state ->
+                    val allApps = getCombinedAllApps(
+                        dbApps = dbApps,
+                        hideAppDrawerSearch = state.hideAppDrawerSearch,
+                        minimoSettingsPosition = state.minimoSettingsPosition
                     )
-
-                    _state.update { state ->
-                        val allApps = getCombinedAllApps(
-                            dbApps = dbApps,
-                            hideAppDrawerSearch = state.hideAppDrawerSearch,
-                            minimoSettingsPosition = state.minimoSettingsPosition
-                        )
-
-                        state.copy(
-                            allApps = allApps,
-                            filteredAllApps = getAppsWithSearch(
-                                searchText = state.searchText,
-                                apps = allApps,
-                                includeHiddenApps = state.showHiddenAppsInSearch,
-                                ignoreSpecialCharacters = state.ignoreSpecialCharacters,
-                                searchMode = state.searchMode
-                            )
-                        )
-                    }
-                }
-        }
-
-        viewModelScope.launch {
-            appInfoDao.getFavouriteAppsFlow()
-                .collect { appInfoList ->
-                    _state.update {
-                        it.copy(
-                            initialLoaded = true,
-                            favouriteApps = appUtils.mapToAppInfo(
-                                entities = appInfoList,
-                                notificationDots = notificationDotsNotifier.getNotificationDots()
-                            )
-                        )
-                    }
-                }
-        }
-
-        viewModelScope.launch {
-            notificationDotsNotifier.notificationDots.collect { notificationDotSet ->
-                val allApps = _state.value.allApps.updateNotificationDots(notificationDotSet)
-                val favouriteApps =
-                    _state.value.favouriteApps.updateNotificationDots(notificationDotSet)
-                _state.update {
-                    it.copy(
+                    state.copy(
+                        initialLoaded = true,
                         allApps = allApps,
-                        filteredAllApps = getAppsWithSearch(
-                            searchText = it.searchText,
-                            apps = allApps,
-                            includeHiddenApps = it.showHiddenAppsInSearch,
-                            ignoreSpecialCharacters = it.ignoreSpecialCharacters,
-                            searchMode = it.searchMode
-                        ),
-                        favouriteApps = favouriteApps
+                        favouriteApps = dbApps.filter { it.isFavourite }.sortedBy { it.orderIndex },
+                        folders = projectFolders(catalog.folders, dbApps, state.folders),
+                        filteredAllApps = filterDrawerApps(
+                            state.searchText, allApps, state.showHiddenAppsInSearch,
+                            state.ignoreSpecialCharacters, state.searchMode
+                        )
                     )
                 }
             }
@@ -150,6 +127,10 @@ class HomeViewModel @Inject constructor(
             preferenceHelper.getHomePreferencesFlow()
                 .distinctUntilChanged()
                 .collect { prefs ->
+                    if (prefs.hideAppDrawerSearch) {
+                        searchState.clearText()
+                    }
+
                     if (!prefs.showAppIconInHome &&
                         !prefs.showAppIconInDrawer &&
                         (_state.value.showAppIconInHome || _state.value.showAppIconInDrawer)
@@ -199,7 +180,7 @@ class HomeViewModel @Inject constructor(
                             if (prefs.hideAppDrawerSearch) {
                                 clearSearchText = ""
                             }
-                            newFilteredApps = getAppsWithSearch(
+                            newFilteredApps = filterDrawerApps(
                                 searchText = clearSearchText,
                                 apps = newAllApps,
                                 includeHiddenApps = prefs.showHiddenAppsInSearch,
@@ -211,7 +192,7 @@ class HomeViewModel @Inject constructor(
                             state.ignoreSpecialCharacters != prefs.ignoreSpecialCharacters ||
                             state.searchMode != prefs.searchMode
                         ) {
-                            newFilteredApps = getAppsWithSearch(
+                            newFilteredApps = filterDrawerApps(
                                 searchText = clearSearchText,
                                 apps = newAllApps,
                                 includeHiddenApps = prefs.showHiddenAppsInSearch,
@@ -232,6 +213,10 @@ class HomeViewModel @Inject constructor(
                             appsArrangementVertical = homeAppsArrangementVertical,
                             homeClockAlignment = homeClockAlignment,
                             showHomeClock = prefs.showHomeClock,
+                            homeTimeTextSize = prefs.homeTimeTextSize,
+                            homeDateTextSize = prefs.homeDateTextSize,
+                            homeTimeFont = prefs.homeTimeFont,
+                            homeDateFormat = prefs.homeDateFormat,
                             homeTextSize = prefs.homeTextSize,
                             autoOpenKeyboardAllApps = prefs.autoOpenKeyboardAllApps,
                             homeClockMode = prefs.homeClockMode,
@@ -280,6 +265,88 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun toggleFolderExpanded(id: String) {
+        _state.update { state ->
+            state.copy(folders = state.folders.map { info ->
+                if (info.folder.id == id) info.copy(isExpanded = !info.isExpanded) else info
+            })
+        }
+    }
+
+    fun showFolderPicker(app: AppInfo, fromHome: Boolean) =
+        setFolderDialog(FolderDialog.Picker(app, fromHome))
+
+    fun showCreateFolder(app: AppInfo, fromHome: Boolean) =
+        setFolderDialog(FolderDialog.Create(app, fromHome))
+
+    fun showRenameFolder(folder: FolderEntity) = setFolderDialog(FolderDialog.Rename(folder))
+    fun showDeleteFolder(folder: FolderEntity) = setFolderDialog(FolderDialog.Delete(folder))
+
+    private fun setFolderDialog(dialog: FolderDialog?) {
+        if (!_state.value.folderSaving) {
+            _state.update { it.copy(folderDialog = dialog, folderError = null) }
+        }
+    }
+
+    fun dismissFolderDialog() = setFolderDialog(null)
+    fun clearFolderError() {
+        _state.update { it.copy(folderError = null) }
+    }
+
+    fun assignToFolder(app: AppInfo, id: String) =
+        folderOperation { folderRepository.assign(app, id) }
+
+    fun removeFromFolder(app: AppInfo) = folderOperation { folderRepository.remove(app) }
+    fun toggleFolderFavourite(id: String) = folderOperation { folderRepository.toggleFavourite(id) }
+    fun deleteFolder(id: String) = folderOperation { folderRepository.delete(id) }
+    fun saveFolderName(name: String) {
+        when (val dialog = _state.value.folderDialog) {
+            is FolderDialog.Create -> folderOperation {
+                folderRepository.createWithApp(
+                    name,
+                    dialog.app,
+                    isFavourite = dialog.fromHome
+                )
+            }
+
+            is FolderDialog.Rename -> folderOperation {
+                folderRepository.rename(
+                    dialog.folder.id,
+                    name
+                )
+            }
+
+            else -> Unit
+        }
+    }
+
+    private fun folderOperation(operation: suspend () -> Unit) {
+        if (_state.value.folderSaving) return
+        _state.update { it.copy(folderSaving = true, folderError = null) }
+        viewModelScope.launch {
+            try {
+                operation()
+                _state.update {
+                    it.copy(
+                        folderSaving = false,
+                        folderDialog = null,
+                        folderError = null
+                    )
+                }
+            } catch (cancelled: CancellationException) {
+                _state.update { it.copy(folderSaving = false) }
+                throw cancelled
+            } catch (error: Exception) {
+                Timber.e(error, "Folder operation failed")
+                val reason = (error as? FolderOperationException)?.error ?: FolderError.SAVE_FAILED
+                _state.update { it.copy(folderSaving = false, folderError = reason) }
+                if (_state.value.folderDialog == null) {
+                    Toast.makeText(applicationContext, reason.messageRes, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
     suspend fun loadAppIcon(app: AppInfo, sizePx: Int) = appIconRepository.loadIcon(
         packageName = app.packageName,
         itemType = app.itemType,
@@ -319,32 +386,18 @@ class HomeViewModel @Inject constructor(
     }
 
     fun onAppDrawerClosed() {
-        if (_state.value.searchText.isNotBlank()) {
-            onSearchTextChange("")
-        }
+        searchState.clearText()
     }
 
     fun onToggleFavouriteAppClick(app: AppInfo) {
         viewModelScope.launch {
-            if (app.isFavourite) {
-                appInfoDao.removeAppFromFavouriteTransaction(
-                    app.itemType,
-                    app.targetId,
-                    app.packageName,
-                    app.userHandle,
-                    app.orderIndex
-                )
-            } else {
-                val newOrderIndex =
-                    (_state.value.favouriteApps.maxOfOrNull { it.orderIndex } ?: 0) + 1
-                appInfoDao.addAppToFavourite(
-                    app.itemType,
-                    app.targetId,
-                    app.packageName,
-                    app.userHandle,
-                    newOrderIndex
-                )
-            }
+            appInfoDao.setIndividualFavourite(
+                app.itemType,
+                app.targetId,
+                app.packageName,
+                app.userHandle,
+                isFavourite = !app.isFavourite
+            )
         }
     }
 
@@ -362,8 +415,7 @@ class HomeViewModel @Inject constructor(
                     app.itemType,
                     app.targetId,
                     app.packageName,
-                    app.userHandle,
-                    app.orderIndex
+                    app.userHandle
                 )
             }
         }
@@ -506,8 +558,8 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun onSearchTextChange(searchText: String) {
-        val filteredAllApps = getAppsWithSearch(
+    private fun onSearchTextChange(searchText: String) {
+        val filteredAllApps = filterDrawerApps(
             searchText = searchText,
             apps = _state.value.allApps,
             includeHiddenApps = _state.value.showHiddenAppsInSearch,
@@ -527,36 +579,14 @@ class HomeViewModel @Inject constructor(
 
     fun onKeyboardDone() {
         val state = _state.value
-        if (state.searchText.isBlank()) return
+        // The search flow may not have updated screen state before the keyboard action arrives.
+        val searchText = searchState.text.toString().trim()
+        if (searchText.isBlank()) return
 
-        state.filteredAllApps.firstOrNull()?.let(::onAppLaunchRequest)
-    }
-
-    /**
-     * If searchText is blank, then it should always exclude the favourite and hidden apps from the list.
-     *
-     * If searchText is not blank, then it should use the "showHiddenApps" flag to decide whether
-     * to include the hidden apps in the result.
-     * */
-    private fun getAppsWithSearch(
-        searchText: String,
-        apps: List<AppInfo>,
-        includeHiddenApps: Boolean,
-        ignoreSpecialCharacters: String,
-        searchMode: SearchMode
-    ): List<AppInfo> {
-        if (searchText.isBlank()) {
-            return apps.filterNot { appInfo ->
-                appInfo.isFavourite || appInfo.isHidden
-            }
-        }
-
-        return apps.filter { appInfo ->
-            // Filter out the special characters from the app name before searching
-            val cleanedAppName = appInfo.name.filterNot { ignoreSpecialCharacters.contains(it) }
-            (includeHiddenApps || !appInfo.isHidden) &&
-                    StringUtils.matchesAppSearch(cleanedAppName, searchText, searchMode)
-        }
+        filterDrawerApps(
+            searchText, state.allApps, state.showHiddenAppsInSearch,
+            state.ignoreSpecialCharacters, state.searchMode
+        ).firstOrNull()?.let(::onAppLaunchRequest)
     }
 
     fun refreshScreenTime() {
@@ -584,5 +614,26 @@ class HomeViewModel @Inject constructor(
 
     fun onDismissWhatsNew() {
         _state.update { it.copy(whatsNewDescription = null) }
+    }
+}
+
+private fun filterDrawerApps(
+    searchText: String,
+    apps: List<AppInfo>,
+    includeHiddenApps: Boolean,
+    ignoreSpecialCharacters: String,
+    searchMode: SearchMode
+): List<AppInfo> {
+    // Outside search, folder members and favourites stay in their own sections.
+    if (searchText.isBlank()) {
+        return apps.filterNot { it.isFavourite || it.isHidden || it.folderId != null }
+    }
+    return apps.filter {
+        val name = it.name.filterNot(ignoreSpecialCharacters::contains)
+        (includeHiddenApps || !it.isHidden) && StringUtils.matchesAppSearch(
+            name,
+            searchText,
+            searchMode
+        )
     }
 }

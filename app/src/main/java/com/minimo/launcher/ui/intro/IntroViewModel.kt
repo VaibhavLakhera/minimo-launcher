@@ -1,5 +1,7 @@
 package com.minimo.launcher.ui.intro
 
+import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.minimo.launcher.data.AppInfoDao
@@ -26,8 +28,13 @@ class IntroViewModel @Inject constructor(
 ) : ViewModel() {
     private val _state = MutableStateFlow(IntroState())
     val state: StateFlow<IntroState> = _state
+    val searchState = TextFieldState()
 
     init {
+        viewModelScope.launch {
+            snapshotFlow { searchState.text.toString().trim() }.collect(::onSearchTextChange)
+        }
+
         viewModelScope.launch {
             preferenceHelper.getSearchPreferencesFlow()
                 .collect { prefs ->
@@ -79,25 +86,13 @@ class IntroViewModel @Inject constructor(
 
     fun onToggleFavouriteAppClick(appInfo: AppInfo) {
         viewModelScope.launch {
-            if (appInfo.isFavourite) {
-                appInfoDao.removeAppFromFavouriteTransaction(
-                    appInfo.itemType,
-                    appInfo.targetId,
-                    appInfo.packageName,
-                    appInfo.userHandle,
-                    appInfo.orderIndex
-                )
-            } else {
-                val favouriteApps = _state.value.allApps.filter { it.isFavourite }
-                val newOrderIndex = (favouriteApps.maxOfOrNull { it.orderIndex } ?: 0) + 1
-                appInfoDao.addAppToFavourite(
-                    appInfo.itemType,
-                    appInfo.targetId,
-                    appInfo.packageName,
-                    appInfo.userHandle,
-                    newOrderIndex
-                )
-            }
+            appInfoDao.setIndividualFavourite(
+                appInfo.itemType,
+                appInfo.targetId,
+                appInfo.packageName,
+                appInfo.userHandle,
+                isFavourite = !appInfo.isFavourite
+            )
         }
     }
 
@@ -107,7 +102,7 @@ class IntroViewModel @Inject constructor(
         }
     }
 
-    fun onSearchTextChange(searchText: String) {
+    private fun onSearchTextChange(searchText: String) {
         _state.update {
             it.copy(
                 searchText = searchText,

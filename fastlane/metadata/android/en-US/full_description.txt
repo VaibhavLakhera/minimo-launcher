@@ -1,1 +1,24 @@
-<p>Designed for users who want to de-clutter their home screen, Minimo offers a clean and intuitive minimalist interface that prioritizes functionality without unnecessary distractions.<p>No icons. No distractions.<p><br><b>Key Features:</b><ul><li>Open Source: The app is open source, allowing you to review the code, contribute, and ensure transparency in the development process.<li>App Management: Personalize your app experience by favorite apps, renaming apps and hiding those you don’t use frequently, keeping your home screen tidy and organized.<li>Lightweight Performance: Minimo is designed to be resource-efficient, ensuring smooth operation without draining your battery.<li>Privacy Focused: Your data is yours. We don’t track or collect personal information.</ul>
+Minimo is a minimalist launcher for Android that gives you a clean, text-first home screen. Keep the apps you use most within reach and find everything else in a fast, searchable app drawer. Make your phone feel simpler and use it with more intention.
+
+Focus on what matters
+Choose a few favorite apps for your home screen, or leave it empty. Hide apps you don't want to see every time you open your phone and, if you choose, keep them available through search. Add the optional daily screen-time widget to stay aware of your usage.
+
+Find apps fast
+Search installed apps by name or browse with A-Z fast scrolling. Move or hide the search bar, and optionally open the only matching app automatically. Rename apps, reorder favorites, and access app info or uninstall apps directly from the launcher.
+
+Make it yours
+Use app names alone or show icons. Adjust fonts, text size, spacing, alignment, and icon placement. Choose light, dark, black, system, or dynamic colors. Keep your wallpaper, dim it for readability, or match it to your theme.
+
+Keep the essentials close
+Add an optional clock and date, battery level, notification dots, or web shortcuts. Assign apps to left and right swipe gestures, double-tap to lock your screen, and choose a portrait or landscape layout.
+
+Private and open source
+Minimo does not track you or collect personal information. You can review the source code and contribute to its development.
+
+For a distraction-free home screen, quick app search, and a more focused Android experience, make Minimo your launcher.
+
+Permissions:
+The app uses the Accessibility permission for the feature of "Double tap to lock" the screen. It is a completely optional feature. While enabling the accessibility, a system warning regarding the privacy is shown. No personal data is being collected by the app using accessibility.
+
+Source Code:
+https://github.com/VaibhavLakhera/minimo-launcher

@@ -15,11 +15,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.graphics.createBitmap
-import androidx.core.graphics.drawable.toDrawable
 import androidx.core.graphics.set
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
@@ -32,10 +32,35 @@ private val DarkColorScheme = darkColorScheme()
 
 private val LightColorScheme = lightColorScheme()
 
-private val BlackColorScheme = darkColorScheme(
-    onSurface = Color.White,
-    surface = Color.Black
-)
+/** Resolves colors only; safe to use for previews without changing windows or wallpaper. */
+@Composable
+fun themeColorScheme(
+    themeMode: ThemeMode,
+    blackTheme: Boolean,
+    useDynamicTheme: Boolean
+): ColorScheme {
+    themeMode.preset?.let { return it.colorScheme }
+
+    val context = LocalContext.current
+    val isDarkTheme = when (themeMode) {
+        ThemeMode.System -> isSystemInDarkTheme()
+        ThemeMode.Dark -> true
+        else -> false
+    }
+    val isDynamicTheme = useDynamicTheme && AndroidUtils.isDynamicThemeSupported()
+    val colorScheme = when {
+        isDynamicTheme && isDarkTheme -> dynamicDarkColorScheme(context)
+        isDynamicTheme -> dynamicLightColorScheme(context)
+        isDarkTheme -> DarkColorScheme
+        else -> LightColorScheme
+    }
+
+    return if (isDarkTheme && blackTheme) {
+        colorScheme.copy(onSurface = Color.White, surface = Color.Black)
+    } else {
+        colorScheme
+    }
+}
 
 @Composable
 fun AppTheme(
@@ -52,51 +77,8 @@ fun AppTheme(
     content: @Composable () -> Unit
 ) {
     val context = LocalContext.current
-    val isDynamicTheme = useDynamicTheme && AndroidUtils.isDynamicThemeSupported()
-    var isLightTheme = false
-
-    fun getDarkTheme(context: Context): ColorScheme {
-        return if (isDynamicTheme) {
-            if (blackTheme) {
-                dynamicDarkColorScheme(context).copy(
-                    onSurface = Color.White,
-                    surface = Color.Black
-                )
-            } else {
-                dynamicDarkColorScheme(context)
-            }
-        } else {
-            if (blackTheme) {
-                BlackColorScheme
-            } else {
-                DarkColorScheme
-            }
-        }
-    }
-
-    fun getLightTheme(context: Context): ColorScheme {
-        return if (isDynamicTheme) {
-            dynamicLightColorScheme(context)
-        } else {
-            LightColorScheme
-        }
-    }
-
-    val colorScheme = when (themeMode) {
-        ThemeMode.System -> if (isSystemInDarkTheme()) {
-            getDarkTheme(context)
-        } else {
-            isLightTheme = true
-            getLightTheme(context)
-        }
-
-        ThemeMode.Dark -> getDarkTheme(context)
-
-        ThemeMode.Light -> {
-            isLightTheme = true
-            getLightTheme(context)
-        }
-    }
+    val colorScheme = themeColorScheme(themeMode, blackTheme, useDynamicTheme)
+    val useDarkSystemBarIcons = colorScheme.surface.luminance() > 0.5f
 
     val view = LocalView.current
     if (!view.isInEditMode) {
@@ -120,8 +102,8 @@ fun AppTheme(
                 }
                 // HomeScreen owns its navigation icons because the app drawer can cover that area.
             } else {
-                insetsController.isAppearanceLightStatusBars = isLightTheme
-                insetsController.isAppearanceLightNavigationBars = isLightTheme
+                insetsController.isAppearanceLightStatusBars = useDarkSystemBarIcons
+                insetsController.isAppearanceLightNavigationBars = useDarkSystemBarIcons
             }
 
             if (!statusBarVisible || !navigationBarVisible) {
@@ -140,8 +122,6 @@ fun AppTheme(
             } else {
                 insetsController.hide(WindowInsetsCompat.Type.navigationBars())
             }
-
-            window.setBackgroundDrawable(surfaceColor.toDrawable())
         }
     }
 

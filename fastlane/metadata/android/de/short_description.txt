@@ -1,1 +1,1 @@
-Startbildschirm ohne Ablenkungen. Weniger Bildschirmzeit, mehr Produktivität.
+Minimalistischer Android-Launcher für mehr Fokus und weniger Bildschirmzeit.

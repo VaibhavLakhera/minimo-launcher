@@ -1,5 +1,6 @@
 package com.minimo.launcher.ui.settings.customisation.components
 
+import androidx.annotation.StringRes
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -14,6 +15,7 @@ import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -35,8 +37,10 @@ import com.minimo.launcher.ui.theme.getFontFamily
 
 @Composable
 fun FontDropdown(
-    selectedFont: String,
-    onFontSelected: (String) -> Unit
+    selectedFont: String?,
+    onFontSelected: (String) -> Unit,
+    @StringRes titleRes: Int = R.string.font,
+    onUseAppFont: (() -> Unit)? = null
 ) {
     Row(
         modifier = Modifier
@@ -48,7 +52,7 @@ fun FontDropdown(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = stringResource(R.string.font),
+            text = stringResource(titleRes),
             modifier = Modifier.weight(1f),
             fontSize = 20.sp
         )
@@ -61,8 +65,16 @@ fun FontDropdown(
         )
 
         val systemString = stringResource(R.string.system)
-        val displaySelectedFont = selectedFont.ifEmpty { systemString }
-        val selectedFontFamily = getFontFamily(selectedFont)
+        val appFontString = stringResource(R.string.use_app_font)
+        val displaySelectedFont = when (selectedFont) {
+            null -> appFontString
+            "" -> systemString
+            else -> selectedFont
+        }
+        val selectedFontFamily = when (selectedFont) {
+            null -> LocalTextStyle.current.fontFamily
+            else -> getFontFamily(selectedFont) ?: FontFamily.Default
+        }
 
         Box {
             Row(
@@ -92,7 +104,15 @@ fun FontDropdown(
                 expanded = expanded,
                 onDismissRequest = { expanded = false }
             ) {
-                // First option is always "System"
+                if (onUseAppFont != null) {
+                    DropdownMenuItem(
+                        text = { Text(appFontString) },
+                        onClick = {
+                            onUseAppFont()
+                            expanded = false
+                        }
+                    )
+                }
                 DropdownMenuItem(
                     text = {
                         Text(

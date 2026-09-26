@@ -27,10 +27,11 @@ import androidx.compose.ui.unit.dp
 import com.minimo.launcher.R
 
 @Composable
-fun DropdownView(
+fun <T> DropdownView(
     selectedOption: String,
-    options: List<String>,
-    onOptionSelected: (String) -> Unit
+    options: List<T>,
+    onOptionSelected: (T) -> Unit,
+    optionLabel: (T) -> String = { it.toString() }
 ) {
     var expanded by remember { mutableStateOf(false) }
     val rotationAngle by animateFloatAsState(
@@ -65,7 +66,7 @@ fun DropdownView(
             options.forEach { item ->
                 DropdownMenuItem(
                     text = {
-                        Text(text = item)
+                        Text(text = optionLabel(item))
                     },
                     onClick = {
                         onOptionSelected(item)

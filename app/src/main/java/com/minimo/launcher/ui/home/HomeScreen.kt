@@ -45,12 +45,11 @@ import com.minimo.launcher.R
 import com.minimo.launcher.ui.components.RenameDialog
 import com.minimo.launcher.ui.entities.AppInfo
 import com.minimo.launcher.ui.home.components.AppLaunchConfirmationDialog
+import com.minimo.launcher.ui.home.components.FolderDialogs
 import com.minimo.launcher.ui.home.components.HomeBody
 import com.minimo.launcher.ui.home.components.LaunchDelayDialog
 import com.minimo.launcher.ui.home.components.WhatsNewDialog
-import com.minimo.launcher.utils.isInstalledFromPlayStore
 import com.minimo.launcher.utils.lockScreen
-import com.minimo.launcher.utils.openPlayStorePage
 import com.minimo.launcher.utils.showNotificationDrawer
 
 @Composable
@@ -60,7 +59,8 @@ fun HomeScreen(
     statusBarVisible: Boolean,
     navigationBarVisible: Boolean,
     onOpenAppDrawer: () -> Unit,
-    onSettingsClick: () -> Unit
+    onSettingsClick: () -> Unit,
+    onSupporterClick: () -> Unit
 ) {
     val context = LocalContext.current
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -210,6 +210,11 @@ fun HomeScreen(
         }
     }
 
+    FolderDialogs(
+        state, viewModel, statusBarVisible, navigationBarVisible,
+        useDarkBottomSheetStatusBarIcons, useDarkIconsOnSurface
+    )
+
     if (state.renameAppDialog != null) {
         val app = state.renameAppDialog!!
         RenameDialog(
@@ -256,10 +261,9 @@ fun HomeScreen(
     state.whatsNewDescription?.let { description ->
         WhatsNewDialog(
             description = description,
-            showReviewButton = context.isInstalledFromPlayStore(),
-            onReview = {
+            onSupporterClick = {
                 viewModel.onDismissWhatsNew()
-                context.openPlayStorePage()
+                onSupporterClick()
             },
             onDismiss = viewModel::onDismissWhatsNew
         )

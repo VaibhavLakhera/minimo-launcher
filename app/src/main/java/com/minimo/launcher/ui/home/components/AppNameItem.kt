@@ -72,7 +72,10 @@ fun AppNameItem(
     useDarkBottomSheetStatusBarIcons: Boolean? = null,
     useDarkBottomSheetNavigationBarIcons: Boolean? = null,
     textColor: Color = MaterialTheme.colorScheme.onSurface,
-    shadow: Shadow? = null
+    shadow: Shadow? = null,
+    folderId: String? = null,
+    onFolderClick: (() -> Unit)? = null,
+    onRemoveFromFolderClick: (() -> Unit)? = null
 ) {
     var appBottomSheetVisible by remember { mutableStateOf(false) }
     val lineHeight by remember { derivedStateOf { textSize * 1.2 } }
@@ -210,6 +213,17 @@ fun AppNameItem(
     if (appBottomSheetVisible) {
         AppListBottomSheetDialog(
             appName = appName,
+            folderId = folderId,
+            onFolderClick = onFolderClick?.let { action ->
+                {
+                    appBottomSheetVisible = false; action()
+                }
+            },
+            onRemoveFromFolderClick = onRemoveFromFolderClick?.let { action ->
+                {
+                    appBottomSheetVisible = false; action()
+                }
+            },
             isFavourite = isFavourite,
             isHidden = isHidden,
             isShortcut = isShortcut,

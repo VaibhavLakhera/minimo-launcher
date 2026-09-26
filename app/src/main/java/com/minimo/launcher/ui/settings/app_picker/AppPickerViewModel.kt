@@ -1,5 +1,8 @@
 package com.minimo.launcher.ui.settings.app_picker
 
+import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.clearText
+import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.minimo.launcher.data.AppInfoDao
@@ -20,8 +23,13 @@ class AppPickerViewModel @Inject constructor(
 ) : ViewModel() {
     private val _state = MutableStateFlow(AppPickerState())
     val state: StateFlow<AppPickerState> = _state
+    val searchState = TextFieldState()
 
     init {
+        viewModelScope.launch {
+            snapshotFlow { searchState.text.toString().trim() }.collect(::onSearchTextChange)
+        }
+
         viewModelScope.launch {
             preferenceHelper.getSearchPreferencesFlow()
                 .collect { prefs ->
@@ -60,7 +68,11 @@ class AppPickerViewModel @Inject constructor(
         }
     }
 
-    fun onSearchTextChange(searchText: String) {
+    fun clearSearch() {
+        searchState.clearText()
+    }
+
+    private fun onSearchTextChange(searchText: String) {
         _state.update {
             it.copy(
                 searchText = searchText,

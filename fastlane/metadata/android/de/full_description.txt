@@ -1,1 +1,24 @@
-<p>Minimo wurde für Benutzer entwickelt, die ihren Startbildschirm aufräumen möchten. Es bietet eine klare und intuitive minimalistische Benutzeroberfläche, die Funktionalität ohne unnötige Ablenkungen priorisiert.<p>Kein Hintergrundbild. Keine Symbole. Keine Ablenkungen.<p><br><b>Hauptfunktionen:</b><ul><li>Open Source: Die App ist Open Source. Sie können den Code überprüfen, Beiträge leisten und Transparenz im Entwicklungsprozess gewährleisten.<li>App-Verwaltung: Personalisieren Sie Ihr App-Erlebnis, indem Sie Apps als Favoriten markieren, umbenennen und selten verwendete Apps ausblenden. So bleibt Ihr Startbildschirm aufgeräumt und übersichtlich.<li>Geringe Leistung: Minimo ist ressourceneffizient konzipiert und gewährleistet einen reibungslosen Betrieb, ohne den Akku zu belasten.<li>Datenschutz im Fokus: Ihre Daten gehören Ihnen. Wir verfolgen oder sammeln keine personenbezogenen Daten.</ul>
+Minimo ist ein minimalistischer Android-Launcher mit einem aufgeräumten, textbasierten Startbildschirm. Deine wichtigsten Apps bleiben griffbereit; alle anderen findest du schnell in der durchsuchbaren App-Übersicht. So wird dein Smartphone übersichtlicher und du nutzt es bewusster.
+
+Mehr Fokus im Alltag
+Wähle nur wenige Favoriten für deinen Startbildschirm oder lasse ihn ganz leer. Blende Apps aus, die du nicht ständig sehen möchtest. Auf Wunsch bleiben ausgeblendete Apps über die Suche erreichbar. Das optionale Bildschirmzeit-Widget zeigt dir deine tägliche Nutzung.
+
+Apps schnell finden
+Suche installierte Apps nach Namen oder nutze die A-Z-Schnellnavigation. Verschiebe die Suchleiste oder blende sie aus. Optional öffnet Minimo den einzigen Suchtreffer automatisch. Benenne Apps um, sortiere Favoriten neu und öffne App-Infos oder die Deinstallation direkt aus dem Launcher.
+
+Dein Startbildschirm, dein Stil
+Nutze nur App-Namen oder blende Symbole ein. Passe Schriftarten, Textgröße, Abstände, Ausrichtung und die Position der Symbole an. Wähle ein helles, dunkles, schwarzes, systemabhängiges oder dynamisches Design. Nutze dein Hintergrundbild, dunkle es für bessere Lesbarkeit ab oder passe es an die Designfarbe an.
+
+Alles Wichtige im Blick
+Zeige bei Bedarf Uhrzeit und Datum, Akkustand oder Benachrichtigungspunkte an. Füge Web-Verknüpfungen hinzu, starte Apps per Wischgeste nach links oder rechts und sperre den Bildschirm durch Doppeltippen. Nutze Minimo im Hoch- oder Querformat.
+
+Privat und Open Source
+Minimo verfolgt dich nicht und erfasst keine personenbezogenen Daten. Der Quellcode ist öffentlich einsehbar und offen für Beiträge.
+
+Für einen ablenkungsfreien Startbildschirm, schnelle App-Suche und eine bewusstere Smartphone-Nutzung: Mach Minimo zu deinem Launcher.
+
+Berechtigungen: Die App verwendet die Berechtigung für Bedienungshilfen für die Funktion „Doppeltippen zum Sperren des Bildschirms“. Diese Funktion ist optional. Beim Aktivieren der Barrierefreiheit wird ein Systemhinweis zum Datenschutz angezeigt. Die App erhebt mithilfe der Barrierefreiheit keine personenbezogenen Daten.
+
+Quellcode:
+
+https://github.com/VaibhavLakhera/minimo-launcher

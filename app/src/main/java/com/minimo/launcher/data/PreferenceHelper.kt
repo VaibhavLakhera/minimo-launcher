@@ -18,6 +18,7 @@ import com.minimo.launcher.utils.HomeAppsAlignmentHorizontal
 import com.minimo.launcher.utils.HomeAppsAlignmentVertical
 import com.minimo.launcher.utils.HomeClockAlignment
 import com.minimo.launcher.utils.HomeClockMode
+import com.minimo.launcher.utils.HomeDateFormat
 import com.minimo.launcher.utils.MinimoSettingsPosition
 import com.minimo.launcher.utils.ScreenOrientation
 import com.minimo.launcher.utils.SearchMode
@@ -52,6 +53,10 @@ class PreferenceHelper @Inject constructor(
             stringPreferencesKey("KEY_HOME_APPS_ALIGN_VERTICAL")
         private val KEY_HOME_CLOCK_ALIGNMENT = stringPreferencesKey("KEY_HOME_CLOCK_ALIGNMENT")
         private val KEY_HOME_CLOCK_MODE = stringPreferencesKey("KEY_HOME_CLOCK_MODE")
+        private val KEY_HOME_TIME_TEXT_SIZE = intPreferencesKey("KEY_HOME_TIME_TEXT_SIZE")
+        private val KEY_HOME_DATE_TEXT_SIZE = intPreferencesKey("KEY_HOME_DATE_TEXT_SIZE")
+        private val KEY_HOME_TIME_FONT = stringPreferencesKey("KEY_HOME_TIME_FONT")
+        private val KEY_HOME_DATE_FORMAT = stringPreferencesKey("KEY_HOME_DATE_FORMAT")
         private val KEY_SHOW_HOME_CLOCK = booleanPreferencesKey("KEY_SHOW_HOME_CLOCK")
         private val KEY_SHOW_STATUS_BAR = booleanPreferencesKey("KEY_SHOW_STATUS_BAR")
         private val KEY_SHOW_NAVIGATION_BAR = booleanPreferencesKey("KEY_SHOW_NAVIGATION_BAR")
@@ -191,6 +196,31 @@ class PreferenceHelper @Inject constructor(
         preferences.edit {
             it[KEY_SHOW_HOME_CLOCK] = show
         }
+    }
+
+    suspend fun setHomeTimeTextSize(size: Int?) {
+        preferences.edit {
+            if (size == null) it.remove(KEY_HOME_TIME_TEXT_SIZE)
+            else it[KEY_HOME_TIME_TEXT_SIZE] = size
+        }
+    }
+
+    suspend fun setHomeDateTextSize(size: Int?) {
+        preferences.edit {
+            if (size == null) it.remove(KEY_HOME_DATE_TEXT_SIZE)
+            else it[KEY_HOME_DATE_TEXT_SIZE] = size
+        }
+    }
+
+    suspend fun setHomeTimeFont(font: String?) {
+        preferences.edit {
+            if (font == null) it.remove(KEY_HOME_TIME_FONT)
+            else it[KEY_HOME_TIME_FONT] = font
+        }
+    }
+
+    suspend fun setHomeDateFormat(format: HomeDateFormat) {
+        preferences.edit { it[KEY_HOME_DATE_FORMAT] = format.name }
     }
 
     suspend fun setShowStatusBar(show: Boolean) {
@@ -546,6 +576,10 @@ class PreferenceHelper @Inject constructor(
                 homeAppsAlignmentVertical = getHomeAppsAlignmentVerticalFromPref(prefs[KEY_HOME_APPS_ALIGN_VERTICAL]),
                 homeClockAlignment = getHomeClockAlignmentFromPref(prefs[KEY_HOME_CLOCK_ALIGNMENT]),
                 showHomeClock = prefs[KEY_SHOW_HOME_CLOCK] ?: false,
+                homeTimeTextSize = prefs[KEY_HOME_TIME_TEXT_SIZE],
+                homeDateTextSize = prefs[KEY_HOME_DATE_TEXT_SIZE],
+                homeTimeFont = prefs[KEY_HOME_TIME_FONT],
+                homeDateFormat = HomeDateFormat.fromPreference(prefs[KEY_HOME_DATE_FORMAT]),
                 homeTextSize = prefs[KEY_HOME_TEXT_SIZE] ?: Constants.DEFAULT_HOME_TEXT_SIZE,
                 autoOpenKeyboardAllApps = prefs[KEY_AUTO_OPEN_KEYBOARD_ALL_APPS] ?: false,
                 homeClockMode = getHomeClockModeFromPref(prefs[KEY_HOME_CLOCK_MODE]),
@@ -610,6 +644,10 @@ class PreferenceHelper @Inject constructor(
                 homeAppsAlignmentVertical = getHomeAppsAlignmentVerticalFromPref(prefs[KEY_HOME_APPS_ALIGN_VERTICAL]),
                 homeClockAlignment = getHomeClockAlignmentFromPref(prefs[KEY_HOME_CLOCK_ALIGNMENT]),
                 showHomeClock = prefs[KEY_SHOW_HOME_CLOCK] ?: false,
+                homeTimeTextSize = prefs[KEY_HOME_TIME_TEXT_SIZE],
+                homeDateTextSize = prefs[KEY_HOME_DATE_TEXT_SIZE],
+                homeTimeFont = prefs[KEY_HOME_TIME_FONT],
+                homeDateFormat = HomeDateFormat.fromPreference(prefs[KEY_HOME_DATE_FORMAT]),
                 showStatusBar = prefs[KEY_SHOW_STATUS_BAR] ?: true,
                 showNavigationBar = prefs[KEY_SHOW_NAVIGATION_BAR] ?: true,
                 homeTextSize = prefs[KEY_HOME_TEXT_SIZE] ?: Constants.DEFAULT_HOME_TEXT_SIZE,
@@ -677,16 +715,11 @@ class PreferenceHelper @Inject constructor(
     }
 
     private fun getThemeModeFromPref(mode: String?): ThemeMode {
-        // Added mode check of "Black" for backward compatibility. Previously "Black" theme was part of ThemeMode.
-        if (mode == "Black") {
-            return ThemeMode.Dark
+        // Preserve the old Black mode, which predates the separate Black Theme toggle.
+        return when (mode) {
+            "Black" -> ThemeMode.Dark
+            else -> ThemeMode.entries.find { it.name == mode } ?: ThemeMode.System
         }
-
-        if (!mode.isNullOrBlank() && ThemeMode.entries.any { entry -> entry.name == mode }) {
-            return ThemeMode.valueOf(mode)
-        }
-
-        return ThemeMode.System
     }
 
     private fun getBlackThemeFromPref(blackTheme: Boolean?, themeMode: String?): Boolean {

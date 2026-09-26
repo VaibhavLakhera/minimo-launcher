@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -58,8 +59,7 @@ fun SearchBarBorderSlider(
 
     SearchItem(
         modifier = Modifier.fillMaxWidth(),
-        searchText = "",
-        onSearchTextChange = {},
+        searchState = rememberTextFieldState(),
         searchBarBorderPercent = searchBarBorderPercent.roundToInt(),
         searchBarBackground = searchBarBackground,
         enabled = false

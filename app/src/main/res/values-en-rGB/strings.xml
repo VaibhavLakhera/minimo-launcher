@@ -26,12 +26,15 @@
     <string name="orientation">Orientation</string>
     <string name="orientation_large_screen_note">Android controls orientation on large screens and may ignore this preference.</string>
     <string name="home_apps_alignment_horizontal">Home Apps Alignment Horizontal</string>
-    <string name="clock_alignment">Clock Alignment</string>
+    <string name="clock_alignment">Widget Alignment</string>
     <string name="clock_mode">Clock Mode</string>
 
     <string name="system">System</string>
     <string name="dark">Dark</string>
     <string name="light">Light</string>
+    <string name="theme_selector_description">Theme: %1$s</string>
+    <string name="theme_menu_expanded">Expanded</string>
+    <string name="theme_menu_collapsed">Collapsed</string>
     <string name="portrait">Portrait</string>
     <string name="landscape">Landscape</string>
     <string name="full">Full</string>
@@ -194,6 +197,28 @@
 
     <!-- Current release notes. Update for each release, or leave blank to skip the dialog. -->
     <string name="whats_new_title">What\'s New</string>
-    <string name="whats_new_description">• Customise your search bar’s background and border.\n• Choose how app search matches names.\n• Improved app syncing and settings loading.\n• Added Android 17 support.\n• Join reddit community at /r/MinimoLauncher</string>
-    <string name="review_on_play_store">Review on Play Store</string>
+    <string name="whats_new_description">• Added folder support. Long-press any app to add it to a folder.\n• Added 19 new themes.\n• Customise the time and date text size, time font, and date format.\n• See a charging indicator next to the battery percentage.\n• The time, date, and battery percentage now follow your locale.\n• Performance improvements.\n• Join reddit community at /r/MinimoLauncher</string>
+    <string name="time_size">Time Size</string>
+    <string name="date_battery_size">Date &amp; Battery Size</string>
+    <string name="time_font">Time Font</string>
+    <string name="use_app_font">App Font</string>
+    <string name="date_format">Date Format</string>
+    <string name="battery_charging">Charging</string>
+    <string name="add_to_folder">Add To Folder</string>
+    <string name="remove_from_folder">Remove From Folder</string>
+    <string name="folders">Folders</string>
+    <string name="new_folder_plus">+ New</string>
+    <string name="new_folder">New Folder</string>
+    <string name="create_folder">Create Folder</string>
+    <string name="rename_folder">Rename Folder</string>
+    <string name="delete_folder">Delete Folder</string>
+    <string name="folder_name">Folder Name</string>
+    <string name="folder_no_apps">No Apps</string>
+    <string name="folder_expanded">Expanded</string>
+    <string name="folder_collapsed">Collapsed</string>
+    <string name="folder_invalid_name">Enter a name between 1 and 150 characters.</string>
+    <string name="folder_duplicate_name">A folder with this name already exists.</string>
+    <string name="folder_unavailable">This item or folder is no longer available. Close this dialog and try again.</string>
+    <string name="folder_save_failed">Could not save the change. Please try again.</string>
+    <string name="delete_folder_confirmation">Delete “%1$s”? Apps and their favourite settings will be kept.</string>
 </resources>

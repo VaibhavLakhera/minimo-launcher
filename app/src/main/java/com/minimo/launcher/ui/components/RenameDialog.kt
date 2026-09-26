@@ -31,41 +31,65 @@ fun RenameDialog(
     onRenameClick: (String) -> Unit,
     onCancelClick: () -> Unit
 ) {
+    var name by remember {
+        mutableStateOf(TextFieldValue(currentName, selection = TextRange(currentName.length)))
+    }
+    RenameDialog(
+        title = title,
+        label = label,
+        value = name,
+        onValueChange = { name = it },
+        placeholder = originalName,
+        confirmText = stringResource(R.string.rename),
+        onConfirm = { onRenameClick(name.text.trim()) },
+        onDismiss = onCancelClick
+    )
+}
+
+@Composable
+fun RenameDialog(
+    title: String,
+    label: String,
+    value: TextFieldValue,
+    onValueChange: (TextFieldValue) -> Unit,
+    confirmText: String,
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit,
+    placeholder: String? = null,
+    errorMessage: String? = null,
+    enabled: Boolean = true,
+    confirmEnabled: Boolean = true
+) {
     val focusRequester = remember { FocusRequester() }
 
-    var newName by remember {
-        mutableStateOf(
-            TextFieldValue(
-                text = currentName,
-                selection = TextRange(currentName.length)
-            )
-        )
-    }
     AlertDialog(
-        onDismissRequest = onCancelClick,
+        onDismissRequest = { if (enabled) onDismiss() },
         title = { Text(title) },
         text = {
             OutlinedTextField(
                 modifier = Modifier.focusRequester(focusRequester),
-                value = newName,
+                value = value,
                 onValueChange = { newValue ->
                     if (newValue.text.length <= 150) {
-                        newName = newValue
+                        onValueChange(newValue)
                     }
                 },
                 singleLine = true,
                 label = { Text(label) },
-                placeholder = { Text(originalName) },
+                placeholder = placeholder?.let { { Text(it) } },
+                enabled = enabled,
+                isError = errorMessage != null,
+                supportingText = errorMessage?.let { { Text(it) } },
                 keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences)
             )
         },
         confirmButton = {
-            Button(onClick = { onRenameClick(newName.text.trim()) }) {
-                Text(stringResource(R.string.rename))
+            Button(onClick = onConfirm, enabled = enabled && confirmEnabled) {
+                Text(confirmText)
             }
         },
         dismissButton = {
-            TextButton(onClick = onCancelClick) {
+            TextButton(onClick = onDismiss, enabled = enabled) {
                 Text(stringResource(R.string.cancel))
             }
         }

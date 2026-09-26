@@ -2,11 +2,13 @@ package com.minimo.launcher.ui.home
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.ui.Alignment
+import com.minimo.launcher.data.FolderError
 import com.minimo.launcher.ui.entities.AppInfo
 import com.minimo.launcher.utils.AppIconAlignment
 import com.minimo.launcher.utils.Constants
 import com.minimo.launcher.utils.FastScrollerAlignment
 import com.minimo.launcher.utils.HomeClockMode
+import com.minimo.launcher.utils.HomeDateFormat
 import com.minimo.launcher.utils.MinimoSettingsPosition
 import com.minimo.launcher.utils.SearchMode
 
@@ -16,6 +18,10 @@ data class PendingAppLaunch(
 )
 
 data class HomeScreenState(
+    val folders: List<FolderInfo> = emptyList(),
+    val folderDialog: FolderDialog? = null,
+    val folderError: FolderError? = null,
+    val folderSaving: Boolean = false,
     val whatsNewDescription: String? = null,
     val initialLoaded: Boolean = false,
     val favouriteApps: List<AppInfo> = emptyList(),
@@ -29,6 +35,10 @@ data class HomeScreenState(
     val drawerAppsArrangementHorizontal: Arrangement.Horizontal = Arrangement.Start,
     val appsArrangementVertical: Arrangement.Vertical = Arrangement.Center,
     val showHomeClock: Boolean = false,
+    val homeTimeTextSize: Int? = null,
+    val homeDateTextSize: Int? = null,
+    val homeTimeFont: String? = null,
+    val homeDateFormat: HomeDateFormat = HomeDateFormat.Default,
     val homeClockAlignment: Alignment.Horizontal = Alignment.Start,
     val homeTextSize: Int = Constants.DEFAULT_HOME_TEXT_SIZE,
     val autoOpenKeyboardAllApps: Boolean = false,
@@ -71,4 +81,15 @@ data class HomeScreenState(
     val backOpensAppDrawer: Boolean = true,
     val compactAppTouchArea: Boolean = false,
     val keyboardDoneOpensFirstApp: Boolean = false
-)
+) {
+    val homeRows: List<LauncherRow>
+        get() = launcherRows(
+            folders.filter { it.folder.isFavourite },
+            favouriteApps.filter { it.folderId == null }
+        )
+    val drawerRows: List<LauncherRow>
+        get() = launcherRows(
+            if (searchText.isBlank()) folders.filterNot { it.folder.isFavourite } else emptyList(),
+            filteredAllApps
+        )
+}

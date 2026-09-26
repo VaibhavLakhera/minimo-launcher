@@ -28,12 +28,15 @@
     <string name="orientation">Orientamento</string>
     <string name="orientation_large_screen_note">Android controlla l\'orientamento sugli schermi grandi e potrebbe ignorare questa preferenza.</string>
     <string name="home_apps_alignment_horizontal">Allineamento orizzontale app nella home</string>
-    <string name="clock_alignment">Allineamento orologio</string>
+    <string name="clock_alignment">Allineamento widget</string>
     <string name="clock_mode">Modalità orologio</string>
 
     <string name="system">Sistema</string>
     <string name="dark">Scuro</string>
     <string name="light">Chiaro</string>
+    <string name="theme_selector_description">Tema: %1$s</string>
+    <string name="theme_menu_expanded">Espanso</string>
+    <string name="theme_menu_collapsed">Compresso</string>
     <string name="portrait">Verticale</string>
     <string name="landscape">Orizzontale</string>
     <string name="full">Completo</string>
@@ -194,6 +197,28 @@
 
     <!-- Current release notes. Update for each release, or leave blank to skip the dialog. -->
     <string name="whats_new_title">Novità</string>
-    <string name="whats_new_description">• Personalizza lo sfondo e il bordo della barra di ricerca.\n• Scegli come cercare le app per nome.\n• Migliorate la sincronizzazione delle app e il caricamento delle impostazioni.\n• Aggiunto il supporto per Android 17.\n• Unisciti alla community di Reddit su /r/MinimoLauncher</string>
-    <string name="review_on_play_store">Recensisci sul Play Store</string>
+    <string name="whats_new_description">• Aggiunto il supporto per le cartelle. Tieni premuta un\'app per aggiungerla a una cartella.\n• Aggiunti 19 nuovi temi.\n• Personalizza la dimensione del testo di ora e data, il carattere dell\'ora e il formato della data.\n• Visualizza un indicatore di ricarica accanto alla percentuale della batteria.\n• Ora, data e percentuale della batteria seguono le impostazioni locali.\n• Miglioramenti delle prestazioni.\n• Unisciti alla community di Reddit su /r/MinimoLauncher</string>
+    <string name="time_size">Dimensione ora</string>
+    <string name="date_battery_size">Dimensione data e batteria</string>
+    <string name="time_font">Carattere ora</string>
+    <string name="use_app_font">Carattere dell’app</string>
+    <string name="date_format">Formato data</string>
+    <string name="battery_charging">In carica</string>
+    <string name="add_to_folder">Aggiungi a cartella</string>
+    <string name="remove_from_folder">Rimuovi dalla cartella</string>
+    <string name="folders">Cartelle</string>
+    <string name="new_folder_plus">+ Nuova</string>
+    <string name="new_folder">Nuova cartella</string>
+    <string name="create_folder">Crea cartella</string>
+    <string name="rename_folder">Rinomina cartella</string>
+    <string name="delete_folder">Elimina cartella</string>
+    <string name="folder_name">Nome della cartella</string>
+    <string name="folder_no_apps">Nessuna app</string>
+    <string name="folder_expanded">Espansa</string>
+    <string name="folder_collapsed">Compressa</string>
+    <string name="folder_invalid_name">Inserisci un nome da 1 a 150 caratteri.</string>
+    <string name="folder_duplicate_name">Esiste già una cartella con questo nome.</string>
+    <string name="folder_unavailable">Questo elemento o questa cartella non è più disponibile. Chiudi questa finestra e riprova.</string>
+    <string name="folder_save_failed">Impossibile salvare la modifica. Riprova.</string>
+    <string name="delete_folder_confirmation">Eliminare «%1$s»? Le app e le relative impostazioni dei preferiti saranno mantenute.</string>
 </resources>

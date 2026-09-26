@@ -12,6 +12,7 @@ import com.minimo.launcher.utils.HomeAppsAlignmentHorizontal
 import com.minimo.launcher.utils.HomeAppsAlignmentVertical
 import com.minimo.launcher.utils.HomeClockAlignment
 import com.minimo.launcher.utils.HomeClockMode
+import com.minimo.launcher.utils.HomeDateFormat
 import com.minimo.launcher.utils.ScreenOrientation
 import com.minimo.launcher.utils.SearchMode
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -77,6 +78,10 @@ class CustomisationViewModel @Inject constructor(
                             homeAppsAlignmentVertical = prefs.homeAppsAlignmentVertical,
                             homeClockAlignment = prefs.homeClockAlignment,
                             showHomeClock = prefs.showHomeClock,
+                            homeTimeTextSize = prefs.homeTimeTextSize,
+                            homeDateTextSize = prefs.homeDateTextSize,
+                            homeTimeFont = prefs.homeTimeFont,
+                            homeDateFormat = prefs.homeDateFormat,
                             showStatusBar = prefs.showStatusBar,
                             showNavigationBar = prefs.showNavigationBar,
                             homeTextSize = prefs.homeTextSize.toFloat(),
@@ -197,6 +202,22 @@ class CustomisationViewModel @Inject constructor(
         viewModelScope.launch {
             preferenceHelper.setHomeClockMode(mode)
         }
+    }
+
+    fun onHomeTimeTextSizeChanged(size: Int?) {
+        viewModelScope.launch { preferenceHelper.setHomeTimeTextSize(size) }
+    }
+
+    fun onHomeDateTextSizeChanged(size: Int?) {
+        viewModelScope.launch { preferenceHelper.setHomeDateTextSize(size) }
+    }
+
+    fun onHomeTimeFontChanged(font: String?) {
+        viewModelScope.launch { preferenceHelper.setHomeTimeFont(font) }
+    }
+
+    fun onHomeDateFormatChanged(format: HomeDateFormat) {
+        viewModelScope.launch { preferenceHelper.setHomeDateFormat(format) }
     }
 
     fun onToggleShowHomeClock() {

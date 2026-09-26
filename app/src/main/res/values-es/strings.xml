@@ -26,12 +26,15 @@
     <string name="orientation">Orientación</string>
     <string name="orientation_large_screen_note">Android controla la orientación en pantallas grandes y puede ignorar esta preferencia.</string>
     <string name="home_apps_alignment_horizontal">Alineación horizontal de apps en inicio</string>
-    <string name="clock_alignment">Alineación del reloj</string>
+    <string name="clock_alignment">Alineación de widgets</string>
     <string name="clock_mode">Modo de reloj</string>
 
     <string name="system">Sistema</string>
     <string name="dark">Oscuro</string>
     <string name="light">Claro</string>
+    <string name="theme_selector_description">Tema: %1$s</string>
+    <string name="theme_menu_expanded">Expandido</string>
+    <string name="theme_menu_collapsed">Contraído</string>
     <string name="portrait">Vertical</string>
     <string name="landscape">Horizontal</string>
     <string name="full">Completo</string>
@@ -194,6 +197,28 @@
 
     <!-- Current release notes. Update for each release, or leave blank to skip the dialog. -->
     <string name="whats_new_title">Novedades</string>
-    <string name="whats_new_description">• Personaliza el fondo y el borde de la barra de búsqueda.\n• Elige cómo se buscan las apps por nombre.\n• Mejoras en la sincronización de apps y la carga de ajustes.\n• Compatibilidad con Android 17.\n• Únete a la comunidad de Reddit en /r/MinimoLauncher</string>
-    <string name="review_on_play_store">Valorar en Play Store</string>
+    <string name="whats_new_description">• Se añadió compatibilidad con carpetas. Mantén pulsada una app para añadirla a una carpeta.\n• Se añadieron 19 temas nuevos.\n• Personaliza el tamaño del texto de la hora y la fecha, la fuente de la hora y el formato de la fecha.\n• Consulta el indicador de carga junto al porcentaje de batería.\n• La hora, la fecha y el porcentaje de batería ahora se muestran según tu configuración regional.\n• Mejoras de rendimiento.\n• Únete a la comunidad de Reddit en /r/MinimoLauncher</string>
+    <string name="time_size">Tamaño de hora</string>
+    <string name="date_battery_size">Tamaño de fecha y batería</string>
+    <string name="time_font">Fuente de hora</string>
+    <string name="use_app_font">Fuente de la app</string>
+    <string name="date_format">Formato de fecha</string>
+    <string name="battery_charging">Cargando</string>
+    <string name="add_to_folder">Añadir a carpeta</string>
+    <string name="remove_from_folder">Quitar de la carpeta</string>
+    <string name="folders">Carpetas</string>
+    <string name="new_folder_plus">+ Nueva</string>
+    <string name="new_folder">Nueva carpeta</string>
+    <string name="create_folder">Crear carpeta</string>
+    <string name="rename_folder">Renombrar carpeta</string>
+    <string name="delete_folder">Eliminar carpeta</string>
+    <string name="folder_name">Nombre de la carpeta</string>
+    <string name="folder_no_apps">No hay aplicaciones</string>
+    <string name="folder_expanded">Expandida</string>
+    <string name="folder_collapsed">Contraída</string>
+    <string name="folder_invalid_name">Introduce un nombre de entre 1 y 150 caracteres.</string>
+    <string name="folder_duplicate_name">Ya existe una carpeta con este nombre.</string>
+    <string name="folder_unavailable">Este elemento o carpeta ya no está disponible. Cierra este diálogo e inténtalo de nuevo.</string>
+    <string name="folder_save_failed">No se pudo guardar el cambio. Inténtalo de nuevo.</string>
+    <string name="delete_folder_confirmation">¿Eliminar «%1$s»? Se conservarán las aplicaciones y sus ajustes de favoritos.</string>
 </resources>

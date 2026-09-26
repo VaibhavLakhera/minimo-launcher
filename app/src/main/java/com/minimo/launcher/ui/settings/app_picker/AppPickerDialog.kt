@@ -48,7 +48,7 @@ fun AppPickerDialog(
 
     DisposableEffect(Unit) {
         onDispose {
-            viewModel.onSearchTextChange("")
+            viewModel.clearSearch()
         }
     }
 
@@ -82,8 +82,7 @@ fun AppPickerDialog(
                 if (state.searchPreferencesLoaded) {
                     SearchItem(
                         modifier = Modifier.fillMaxWidth(),
-                        searchText = state.searchText,
-                        onSearchTextChange = viewModel::onSearchTextChange,
+                        searchState = viewModel.searchState,
                         searchBarBorderPercent = state.searchBarBorderPercent,
                         searchBarBackground = state.searchBarBackground
                     )
