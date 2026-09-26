@@ -1,9 +1,7 @@
 # Minimo
 
-Designed for users who want to de-clutter their home screen, Minimo offers a clean and intuitive
-interface that prioritizes functionality without unnecessary distractions.
-
-No icons. No distractions.
+Minimo is a minimalist Android launcher that clears the clutter from your home screen. Find the
+apps you need quickly, stay focused, and use your phone more intentionally.
 
 ## Screenshots:
 
@@ -21,13 +19,18 @@ No icons. No distractions.
 
 ## Key Features:
 
-- **App Management**: Personalize your app experience by favourite apps, renaming apps and hiding
-  those you don’t use frequently, keeping your home screen tidy and organized.
-- **Lightweight Performance**: Minimo is designed to be resource-efficient, ensuring smooth
-  operation without draining your battery.
-- **Privacy Focused**: Your data is yours. We don’t track or collect personal information.
-- **Open Source**: Our app is open source, allowing you to review the code, contribute, and ensure
-  transparency in our development process.
+- **Minimalist Home Screen**: Use a text-first layout with optional app icons. Keep a few favourite
+  apps visible or leave your home screen empty.
+- **Fast App Search**: Find apps in a searchable drawer with A-Z fast scrolling and optional
+  automatic opening of the only matching result.
+- **Simple App Management**: Reorder favourites, rename or hide apps, and access app info or
+  uninstall apps from the launcher.
+- **Personalisation**: Adjust fonts, text size, spacing, alignment, themes, wallpaper, and icon
+  placement to suit your style.
+- **Useful Extras**: Add an optional clock, battery level, notification dots, and daily screen-time
+  widget. Use swipe gestures, web shortcuts, and double-tap to lock.
+- **Privacy and Open Source**: Minimo does not track you or collect personal information. Its source
+  code is available to review and contribute to.
 
 ## Download:
 
@@ -41,7 +44,7 @@ height="80">](https://apt.izzysoft.de/fdroid/index/apk/com.minimo.launcher)
 ## Tech stack & Libraries
 
 - Minimum SDK level 26.
-- Target SDK level 35.
+- Target SDK level 37.
 - [Kotlin](https://kotlinlang.org/) based,
   utilizing [Coroutines](https://github.com/Kotlin/kotlinx.coroutines) + [Flow](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines.flow/)
   for asynchronous operations.
@@ -57,6 +60,7 @@ height="80">](https://apt.izzysoft.de/fdroid/index/apk/com.minimo.launcher)
 
 ## Socials:
 
+- [Join Reddit](https://www.reddit.com/r/MinimoLauncher)
 - [Join Discord Channel](https://discord.gg/f4wpPppCDk)
 - [X/Twitter](https://x.com/VaibhavLakhera)
 - [LinkedIn](https://www.linkedin.com/in/vaibhav-lakhera/)

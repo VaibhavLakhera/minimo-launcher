@@ -78,7 +78,7 @@ class HomeViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            snapshotFlow { searchState.text.toString() }.collect(::onSearchTextChange)
+            snapshotFlow { searchState.text.toString().trim() }.collect(::onSearchTextChange)
         }
 
         viewModelScope.launch {
@@ -580,7 +580,7 @@ class HomeViewModel @Inject constructor(
     fun onKeyboardDone() {
         val state = _state.value
         // The search flow may not have updated screen state before the keyboard action arrives.
-        val searchText = searchState.text.toString()
+        val searchText = searchState.text.toString().trim()
         if (searchText.isBlank()) return
 
         filterDrawerApps(

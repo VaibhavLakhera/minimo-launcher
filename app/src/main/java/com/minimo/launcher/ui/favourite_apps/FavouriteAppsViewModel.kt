@@ -27,7 +27,7 @@ class FavouriteAppsViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            snapshotFlow { searchState.text.toString() }.collect(::onSearchTextChange)
+            snapshotFlow { searchState.text.toString().trim() }.collect(::onSearchTextChange)
         }
 
         viewModelScope.launch {

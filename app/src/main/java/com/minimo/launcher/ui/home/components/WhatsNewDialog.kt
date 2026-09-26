@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
@@ -55,8 +56,12 @@ fun WhatsNewDialog(
                         text = stringResource(R.string.whats_new_title),
                         style = MaterialTheme.typography.headlineSmall
                     )
-                    OutlinedIconButton(onClick = onDismiss) {
+                    OutlinedIconButton(
+                        modifier = Modifier.size(32.dp),
+                        onClick = onDismiss
+                    ) {
                         Icon(
+                            modifier = Modifier.size(18.dp),
                             painter = painterResource(R.drawable.ic_close),
                             contentDescription = stringResource(R.string.dismiss)
                         )
