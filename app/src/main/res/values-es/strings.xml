@@ -162,6 +162,9 @@
     <string name="font_import_too_large">Los archivos de fuentes no deben superar los 10 MB.</string>
     <string name="font_import_failed">No se ha podido importar esta fuente. Comprueba que el archivo se pueda leer y que haya suficiente espacio de almacenamiento, y vuelve a intentarlo.</string>
     <string name="font_picker_unavailable">No hay ningún selector de archivos disponible en este dispositivo.</string>
+    <string name="delete_font">Eliminar fuente</string>
+    <string name="delete_font_confirmation">¿Eliminar «%1$s»? Los ajustes que la usan volverán a la fuente predeterminada.</string>
+    <string name="font_delete_failed">No se ha podido eliminar esta fuente. Vuelve a intentarlo.</string>
     <string name="fast_scroller">Desplazamiento rápido</string>
     <string name="fast_scroller_alignment">Alineación del desplazamiento rápido</string>
     <string name="fast_scroller_description">Mostrar una barra de desplazamiento rápido A-Z en el cajón de apps</string>
@@ -227,4 +230,6 @@
     <string name="folder_unavailable">Este elemento o carpeta ya no está disponible. Cierra este diálogo e inténtalo de nuevo.</string>
     <string name="folder_save_failed">No se pudo guardar el cambio. Inténtalo de nuevo.</string>
     <string name="delete_folder_confirmation">¿Eliminar «%1$s»? Se conservarán las aplicaciones y sus ajustes de favoritos.</string>
+    <string name="icon_pack">Paquete de iconos</string>
+    <string name="icon_pack_description">Instala una aplicación de paquete de iconos para seleccionarla aquí. Las aplicaciones sin un icono correspondiente conservan sus iconos predeterminados.</string>
 </resources>

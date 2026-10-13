@@ -14,9 +14,11 @@ import androidx.lifecycle.viewModelScope
 import com.minimo.launcher.BuildConfig
 import com.minimo.launcher.R
 import com.minimo.launcher.data.AppInfoDao
+import com.minimo.launcher.data.CustomFonts
 import com.minimo.launcher.data.FolderError
 import com.minimo.launcher.data.FolderOperationException
 import com.minimo.launcher.data.FolderRepository
+import com.minimo.launcher.data.FontUse
 import com.minimo.launcher.data.PreferenceHelper
 import com.minimo.launcher.data.entities.AppItemType
 import com.minimo.launcher.data.entities.FolderEntity
@@ -127,6 +129,9 @@ class HomeViewModel @Inject constructor(
             preferenceHelper.getHomePreferencesFlow()
                 .distinctUntilChanged()
                 .collect { prefs ->
+                    // Load a custom clock font before publishing it so the clock never flashes the default.
+                    CustomFonts.activate(applicationContext, FontUse.Clock, prefs.homeTimeFont)
+
                     if (prefs.hideAppDrawerSearch) {
                         searchState.clearText()
                     }
@@ -135,7 +140,9 @@ class HomeViewModel @Inject constructor(
                         !prefs.showAppIconInDrawer &&
                         (_state.value.showAppIconInHome || _state.value.showAppIconInDrawer)
                     ) {
-                        appIconRepository.clear()
+                        appIconRepository.release()
+                    } else if (prefs.iconPack != _state.value.iconPack) {
+                        appIconRepository.onIconPackSelected(prefs.iconPack)
                     }
 
                     _state.update { state ->
@@ -230,6 +237,7 @@ class HomeViewModel @Inject constructor(
                             homeAppIconAlignment = prefs.homeAppIconAlignment,
                             drawerAppIconAlignment = prefs.drawerAppIconAlignment,
                             appIconSizePercent = prefs.appIconSizePercent,
+                            iconPack = prefs.iconPack,
                             applyHomeAppSizeToAllApps = prefs.applyHomeAppSizeToAllApps,
                             autoOpenApp = prefs.autoOpenApp,
                             homeAppVerticalPadding = prefs.homeAppVerticalPadding,
@@ -270,6 +278,13 @@ class HomeViewModel @Inject constructor(
             state.copy(folders = state.folders.map { info ->
                 if (info.folder.id == id) info.copy(isExpanded = !info.isExpanded) else info
             })
+        }
+    }
+
+    fun collapseAllFolders() {
+        _state.update { state ->
+            if (state.folders.none { it.isExpanded }) return@update state
+            state.copy(folders = state.folders.map { it.copy(isExpanded = false) })
         }
     }
 
@@ -347,11 +362,22 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    suspend fun loadAppIcon(app: AppInfo, sizePx: Int) = appIconRepository.loadIcon(
+    fun cachedAppIcon(app: AppInfo, iconPack: String, sizePx: Int) = appIconRepository.cachedIcon(
         packageName = app.packageName,
         itemType = app.itemType,
         targetId = app.targetId,
         userHandle = app.userHandle,
+        iconPack = iconPack,
+        sizePx = sizePx
+    )
+
+    suspend fun loadAppIcon(app: AppInfo, iconPack: String, sizePx: Int) =
+        appIconRepository.loadIcon(
+        packageName = app.packageName,
+        itemType = app.itemType,
+        targetId = app.targetId,
+        userHandle = app.userHandle,
+            iconPack = iconPack,
         sizePx = sizePx
     )
 
@@ -387,6 +413,7 @@ class HomeViewModel @Inject constructor(
 
     fun onAppDrawerClosed() {
         searchState.clearText()
+        collapseAllFolders()
     }
 
     fun onToggleFavouriteAppClick(app: AppInfo) {

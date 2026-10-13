@@ -53,6 +53,7 @@ data class HomeScreenState(
     val homeAppIconAlignment: AppIconAlignment = AppIconAlignment.Left,
     val drawerAppIconAlignment: AppIconAlignment = AppIconAlignment.Left,
     val appIconSizePercent: Int = Constants.DEFAULT_APP_ICON_SIZE_PERCENT,
+    val iconPack: String = "",
     val applyHomeAppSizeToAllApps: Boolean = false,
     val autoOpenApp: Boolean = false,
     val homeAppVerticalPadding: Int = Constants.DEFAULT_HOME_VERTICAL_PADDING,

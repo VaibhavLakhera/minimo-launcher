@@ -14,7 +14,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
@@ -24,6 +23,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import com.minimo.launcher.R
 import com.minimo.launcher.ui.theme.Dimens
+import com.minimo.launcher.utils.LoadedAppIcon
 
 @Composable
 fun appIconSizeFor(textSize: TextUnit, scale: Float): Dp {
@@ -32,7 +32,7 @@ fun appIconSizeFor(textSize: TextUnit, scale: Float): Dp {
 
 @Composable
 fun AppIcon(
-    image: ImageBitmap?,
+    image: LoadedAppIcon?,
     size: Dp,
     isWorkProfile: Boolean,
     showNotificationDot: Boolean,
@@ -42,14 +42,17 @@ fun AppIcon(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .shadow(
-                    elevation = Dimens.APP_ICON_SHADOW_ELEVATION,
-                    shape = shape
+                .then(
+                    // An icon still loading has no shape to shade, and may turn out to be pack art.
+                    if (image == null || image.fromIconPack) Modifier else Modifier.shadow(
+                        elevation = Dimens.APP_ICON_SHADOW_ELEVATION,
+                        shape = shape
+                    )
                 )
         ) {
             if (image != null) {
                 Image(
-                    bitmap = image,
+                    bitmap = image.bitmap,
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize()

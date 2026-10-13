@@ -80,6 +80,7 @@ import com.minimo.launcher.ui.settings.customisation.components.EnableSetWallpap
 import com.minimo.launcher.ui.settings.customisation.components.FastScrollerAlignmentDropdown
 import com.minimo.launcher.ui.settings.customisation.components.FontDropdown
 import com.minimo.launcher.ui.settings.customisation.components.HomeTextSizeSlider
+import com.minimo.launcher.ui.settings.customisation.components.IconPackDropdown
 import com.minimo.launcher.ui.settings.customisation.components.IgnoreSpecialCharacters
 import com.minimo.launcher.ui.settings.customisation.components.MinimoSettingsPositionDropdown
 import com.minimo.launcher.ui.settings.customisation.components.OrientationDropdown
@@ -134,10 +135,10 @@ fun CustomisationScreen(
             Toast.makeText(context, R.string.font_picker_unavailable, Toast.LENGTH_LONG).show()
         }
     }
-    LaunchedEffect(state.fontImportError) {
-        state.fontImportError?.let { message ->
+    LaunchedEffect(state.fontError) {
+        state.fontError?.let { message ->
             Toast.makeText(context, message, Toast.LENGTH_LONG).show()
-            viewModel.clearFontImportError()
+            viewModel.clearFontError()
         }
     }
 
@@ -165,6 +166,8 @@ fun CustomisationScreen(
     LaunchedEffect(Unit) {
         lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
             hasLockScreenPermission = context.hasLockScreenPermission()
+            // Picks up packs installed or removed while the user was away from this screen.
+            viewModel.refreshIconPacks()
 
             if (!context.isNotificationPermissionGranted()) {
                 viewModel.onNotificationPermissionNotGrantedOnStarted()
@@ -241,12 +244,20 @@ fun CustomisationScreen(
                 onOptionSelected = viewModel::onScreenOrientationChanged
             )
 
+            IconPackDropdown(
+                selectedPackage = state.iconPack,
+                packs = state.iconPacks,
+                loading = state.loadingIconPacks,
+                onPackSelected = viewModel::onIconPackChanged
+            )
+
             FontDropdown(
                 selectedFont = state.fontPreference,
                 onFontSelected = viewModel::onFontPreferenceChanged,
                 customFonts = state.customFonts,
                 importingFont = state.importingFont,
-                onAddFont = { openFontPicker(false) }
+                onAddFont = { openFontPicker(false) },
+                onDeleteFont = viewModel::deleteFont
             )
 
             ThemeDropdown(
@@ -566,6 +577,7 @@ fun CustomisationScreen(
                         customFonts = state.customFonts,
                         importingFont = state.importingFont,
                         onAddFont = { openFontPicker(true) },
+                        onDeleteFont = viewModel::deleteFont,
                         onUseAppFont = { viewModel.onHomeTimeFontChanged(null) }
                     )
                 }

@@ -77,9 +77,14 @@ fun HomeScreen(
     val swipeLeftThreshold = -swipeHorizontalThresholdPx
     val swipeRightThreshold = swipeHorizontalThresholdPx
 
+    fun openAppDrawer() {
+        viewModel.collapseAllFolders()
+        onOpenAppDrawer()
+    }
+
     BackHandler {
         if (state.whatsNewDescription == null && state.backOpensAppDrawer) {
-            onOpenAppDrawer()
+            openAppDrawer()
         }
     }
 
@@ -116,12 +121,12 @@ fun HomeScreen(
                 if (swipeYAccumulator > swipeDownThreshold) {
                     context.showNotificationDrawer()
                 } else if (swipeYAccumulator < swipeUpThreshold) {
-                    onOpenAppDrawer()
+                    openAppDrawer()
                 } else {
                     if (available.y > 1000f && !homeLazyListState.canScrollBackward) {
                         context.showNotificationDrawer()
                     } else if (available.y < -1000f && !homeLazyListState.canScrollForward) {
-                        onOpenAppDrawer()
+                        openAppDrawer()
                     }
                 }
                 swipeYAccumulator = 0f

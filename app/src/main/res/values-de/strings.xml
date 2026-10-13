@@ -164,6 +164,9 @@
     <string name="font_import_too_large">Schriftdateien dürfen höchstens 10 MB groß sein.</string>
     <string name="font_import_failed">Diese Schriftart konnte nicht importiert werden. Prüfe, ob die Datei lesbar ist und genügend Speicherplatz verfügbar ist, und versuche es erneut.</string>
     <string name="font_picker_unavailable">Auf diesem Gerät ist keine Dateiauswahl verfügbar.</string>
+    <string name="delete_font">Schriftart löschen</string>
+    <string name="delete_font_confirmation">„%1$s“ löschen? Einstellungen, die sie verwenden, wechseln zur Standardschriftart.</string>
+    <string name="font_delete_failed">Diese Schriftart konnte nicht gelöscht werden. Versuche es erneut.</string>
     <string name="fast_scroller">Schnellscroller</string>
     <string name="fast_scroller_alignment">Schnellscroller-Ausrichtung</string>
     <string name="fast_scroller_description">Zeige einen A-Z-Schnellscroller in der App-Schublade</string>
@@ -227,4 +230,6 @@
     <string name="folder_unavailable">Dieses Element oder dieser Ordner ist nicht mehr verfügbar. Schließe diesen Dialog und versuche es erneut.</string>
     <string name="folder_save_failed">Die Änderung konnte nicht gespeichert werden. Bitte versuche es erneut.</string>
     <string name="delete_folder_confirmation">„%1$s“ löschen? Apps und ihre Favoriteneinstellungen bleiben erhalten.</string>
+    <string name="icon_pack">Symbolpaket</string>
+    <string name="icon_pack_description">Installiere eine Symbolpaket-App, um sie hier auszuwählen. Apps ohne passendes Symbol behalten ihre Standardsymbole.</string>
 </resources>

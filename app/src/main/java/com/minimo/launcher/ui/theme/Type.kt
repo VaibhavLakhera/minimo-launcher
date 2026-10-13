@@ -96,15 +96,22 @@ fun rememberFontFamily(fontName: String): FontFamily? {
         "DynaPuff" -> return DynaPuffFontFamily
         "Nunito" -> return NunitoFontFamily
     }
-    if (!fontName.startsWith("custom:")) return null
+    if (!CustomFonts.isCustom(fontName)) return null
 
     val context = LocalContext.current.applicationContext
-    var family by remember(context, fontName) { mutableStateOf<FontFamily?>(null) }
+    // Start from the cache so an already loaded font is used in the first frame, not the default.
+    var family by remember(context, fontName) {
+        mutableStateOf(CustomFonts.cachedTypeface(fontName)?.let(::customFontFamily))
+    }
     LaunchedEffect(context, fontName) {
-        family = CustomFonts.typeface(context, fontName)?.let { FontFamily(LoadedCustomFont(it)) }
+        if (family == null) {
+            family = CustomFonts.typeface(context, fontName)?.let(::customFontFamily)
+        }
     }
     return family
 }
+
+private fun customFontFamily(typeface: Typeface) = FontFamily(LoadedCustomFont(typeface))
 
 // Unlike FontFamily(Typeface), a Font participates in Compose's weight/style synthesis.
 // The typeface is already loaded on IO; Compose's blocking loader only returns it from memory.

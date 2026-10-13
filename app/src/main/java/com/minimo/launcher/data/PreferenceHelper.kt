@@ -118,6 +118,7 @@ class PreferenceHelper @Inject constructor(
             KEY_SWIPE_LEFT_APP_PREFERENCE,
             KEY_SWIPE_RIGHT_APP_PREFERENCE
         )
+        private val KEY_ICON_PACK = stringPreferencesKey("KEY_ICON_PACK")
         private val KEY_FONT_PREFERENCE = stringPreferencesKey("KEY_FONT_PREFERENCE")
         private val KEY_MINIMO_SETTINGS_POSITION =
             stringPreferencesKey("KEY_MINIMO_SETTINGS_POSITION")
@@ -464,9 +465,33 @@ class PreferenceHelper @Inject constructor(
         }
     }
 
+    suspend fun setIconPack(packageName: String) {
+        preferences.edit {
+            it[KEY_ICON_PACK] = packageName
+        }
+    }
+
+    /** Switches back to the default icons when the selected pack is no longer installed. */
+    suspend fun clearIconPackIfUnavailable(installedPacks: Set<String>) {
+        preferences.edit { prefs ->
+            val selected = prefs[KEY_ICON_PACK]
+            if (!selected.isNullOrEmpty() && selected !in installedPacks) {
+                prefs.remove(KEY_ICON_PACK)
+            }
+        }
+    }
+
     suspend fun setFontPreference(font: String) {
         preferences.edit {
             it[KEY_FONT_PREFERENCE] = font
+        }
+    }
+
+    // Switches every setting that uses [font] back to its default.
+    suspend fun clearFontPreferences(font: String) {
+        preferences.edit {
+            if (it[KEY_FONT_PREFERENCE] == font) it[KEY_FONT_PREFERENCE] = ""
+            if (it[KEY_HOME_TIME_FONT] == font) it.remove(KEY_HOME_TIME_FONT)
         }
     }
 
@@ -598,6 +623,7 @@ class PreferenceHelper @Inject constructor(
                 ),
                 appIconSizePercent = prefs[KEY_APP_ICON_SIZE_PERCENT]
                     ?: Constants.DEFAULT_APP_ICON_SIZE_PERCENT,
+                iconPack = prefs[KEY_ICON_PACK] ?: "",
                 applyHomeAppSizeToAllApps = prefs[KEY_APPLY_HOME_APP_SIZE_TO_ALL_APPS] ?: false,
                 autoOpenApp = prefs[KEY_AUTO_OPEN_APP] ?: false,
                 homeAppVerticalPadding = prefs[KEY_HOME_APP_VERTICAL_PADDING] ?: Constants.DEFAULT_HOME_VERTICAL_PADDING,
@@ -669,6 +695,7 @@ class PreferenceHelper @Inject constructor(
                 ),
                 appIconSizePercent = prefs[KEY_APP_ICON_SIZE_PERCENT]
                     ?: Constants.DEFAULT_APP_ICON_SIZE_PERCENT,
+                iconPack = prefs[KEY_ICON_PACK] ?: "",
                 applyHomeAppSizeToAllApps = prefs[KEY_APPLY_HOME_APP_SIZE_TO_ALL_APPS] ?: false,
                 blackTheme = getBlackThemeFromPref(prefs[KEY_BLACK_THEME], prefs[KEY_THEME_MODE]),
                 setWallpaperToThemeColor = prefs[KEY_SET_WALLPAPER_TO_THEME_COLOR] ?: false,

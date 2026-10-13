@@ -8,6 +8,7 @@ import android.content.pm.LauncherApps
 import android.content.pm.ShortcutInfo
 import android.os.Handler
 import android.os.Looper
+import android.os.Process
 import android.os.UserHandle
 import com.minimo.launcher.data.usecase.AddUpdateAppsUseCase
 import com.minimo.launcher.data.usecase.RemoveAppsUseCase
@@ -69,6 +70,7 @@ class AppsManager @Inject constructor(
 
     override fun onPackageRemoved(packageName: String?, user: UserHandle?) {
         if (packageName == null || user == null) return
+        invalidateIconPacks(user, packageName)
         val userHandle = user.hashCode()
         // A true removal must win over any delayed component sync for this package/profile.
         cancelPendingPackageChange(packageName, userHandle)
@@ -80,6 +82,7 @@ class AppsManager @Inject constructor(
 
     override fun onPackageAdded(packageName: String?, user: UserHandle?) {
         if (packageName == null || user == null) return
+        invalidateIconPacks(user, packageName)
         val userHandle = user.hashCode()
         cancelPendingPackageChange(packageName, userHandle)
         coroutineScope.launch {
@@ -93,6 +96,7 @@ class AppsManager @Inject constructor(
 
     override fun onPackageChanged(packageName: String?, user: UserHandle?) {
         if (packageName == null || user == null) return
+        invalidateIconPacks(user, packageName)
         val userHandle = user.hashCode()
         // Icon switching can enable and disable launcher aliases in consecutive callbacks. Waiting
         // briefly lets one authoritative sync observe the final component set.
@@ -105,6 +109,7 @@ class AppsManager @Inject constructor(
         replacing: Boolean
     ) {
         if (packageNames == null || user == null) return
+        invalidateIconPacks(user, *packageNames)
         val userHandle = user.hashCode()
         packageNames.forEach { packageName ->
             cancelPendingPackageChange(packageName, userHandle)
@@ -126,6 +131,7 @@ class AppsManager @Inject constructor(
         replacing: Boolean
     ) {
         if (packageNames == null || user == null) return
+        invalidateIconPacks(user, *packageNames)
         val userHandle = user.hashCode()
         packageNames.forEach { packageName ->
             cancelPendingPackageChange(packageName, userHandle)
@@ -147,6 +153,7 @@ class AppsManager @Inject constructor(
 
     override fun onPackagesUnsuspended(packageNames: Array<out String>?, user: UserHandle?) {
         if (packageNames == null || user == null) return
+        invalidateIconPacks(user, *packageNames)
         coroutineScope.launch {
             packageNames.forEach { packageName ->
                 addUpdateAppsUseCase.invoke(
@@ -173,6 +180,12 @@ class AppsManager @Inject constructor(
         launcherApps.unregisterCallback(this)
         context.unregisterReceiver(managedProfileReceiver)
         coroutineScope.cancel()
+    }
+
+    // Icon packs are only discovered in this profile, so other profiles cannot change pack artwork.
+    private fun invalidateIconPacks(user: UserHandle, vararg packageNames: String) {
+        if (user != Process.myUserHandle()) return
+        appIconRepository.onPackagesChanged(packageNames.toSet())
     }
 
     private fun schedulePackageChange(packageName: String, userHandle: Int) {

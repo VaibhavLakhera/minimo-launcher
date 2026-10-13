@@ -58,6 +58,7 @@ data class HomePreferences(
     val homeAppIconAlignment: AppIconAlignment = AppIconAlignment.Left,
     val drawerAppIconAlignment: AppIconAlignment = AppIconAlignment.Left,
     val appIconSizePercent: Int = Constants.DEFAULT_APP_ICON_SIZE_PERCENT,
+    val iconPack: String = "",
     val applyHomeAppSizeToAllApps: Boolean = false,
     val autoOpenApp: Boolean = false,
     val homeAppVerticalPadding: Int = Constants.DEFAULT_HOME_VERTICAL_PADDING,
@@ -89,6 +90,7 @@ data class HomePreferences(
 data class CustomisationPreferences(
     val themeMode: ThemeMode = ThemeMode.System,
     val fontPreference: String = "",
+    val iconPack: String = "",
     val screenOrientation: ScreenOrientation = ScreenOrientation.Portrait,
     val homeAppsAlignmentHorizontal: HomeAppsAlignmentHorizontal = HomeAppsAlignmentHorizontal.Start,
     val drawerAppsAlignmentHorizontal: HomeAppsAlignmentHorizontal = HomeAppsAlignmentHorizontal.Start,
