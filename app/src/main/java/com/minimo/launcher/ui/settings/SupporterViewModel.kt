@@ -52,7 +52,6 @@ class SupporterViewModel @Inject constructor(
     }
 
     override fun onCleared() {
-        super.onCleared()
-        billingManager.endBillingConnection()
+        billingManager.endBillingConnection(this)
     }
 }

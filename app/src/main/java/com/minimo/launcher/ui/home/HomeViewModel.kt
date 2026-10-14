@@ -655,12 +655,9 @@ private fun filterDrawerApps(
     if (searchText.isBlank()) {
         return apps.filterNot { it.isFavourite || it.isHidden || it.folderId != null }
     }
+    val matchesSearch = StringUtils.appSearchMatcher(searchText, searchMode)
     return apps.filter {
         val name = it.name.filterNot(ignoreSpecialCharacters::contains)
-        (includeHiddenApps || !it.isHidden) && StringUtils.matchesAppSearch(
-            name,
-            searchText,
-            searchMode
-        )
+        (includeHiddenApps || !it.isHidden) && matchesSearch(name)
     }
 }

@@ -40,7 +40,14 @@ fun themeColorScheme(
     blackTheme: Boolean,
     useDynamicTheme: Boolean
 ): ColorScheme {
-    themeMode.preset?.let { return it.colorScheme }
+    themeMode.preset?.let { preset ->
+        val darkPreset = themeMode.darkPreset
+        return if (darkPreset != null && isSystemInDarkTheme()) {
+            darkPreset.colorScheme
+        } else {
+            preset.colorScheme
+        }
+    }
 
     val context = LocalContext.current
     val isDarkTheme = when (themeMode) {

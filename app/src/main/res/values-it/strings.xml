@@ -206,7 +206,7 @@
 
     <!-- Current release notes. Update for each release, or leave blank to skip the dialog. -->
     <string name="whats_new_title">Novità</string>
-    <string name="whats_new_description">• Aggiunto il supporto per le cartelle. Tieni premuta un\'app per aggiungerla a una cartella.\n• Aggiunti 19 nuovi temi.\n• Personalizza la dimensione del testo di ora e data, il carattere dell\'ora e il formato della data.\n• Visualizza un indicatore di ricarica accanto alla percentuale della batteria.\n• Ora, data e percentuale della batteria seguono le impostazioni locali.\n• Miglioramenti delle prestazioni.\n• Unisciti alla community di Reddit su /r/MinimoLauncher</string>
+    <string name="whats_new_description">• Aggiunto il supporto per i pacchetti di icone personalizzati.\n• Aggiunto il supporto per i caratteri personalizzati (.ttf).\n• Aggiunto il tema Gruvbox, che segue la modalità scura di sistema.\n• La ricerca ora ignora gli accenti, ad esempio «skoda» trova «Škoda».\n• Le cartelle ora si chiudono automaticamente quando il drawer viene aperto o chiuso.\n• Unisciti alla community di Reddit su /r/MinimoLauncher</string>
     <string name="time_size">Dimensione ora</string>
     <string name="date_battery_size">Dimensione data e batteria</string>
     <string name="time_font">Carattere ora</string>

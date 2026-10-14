@@ -206,7 +206,7 @@
 
     <!-- Current release notes. Update for each release, or leave blank to skip the dialog. -->
     <string name="whats_new_title">Was ist neu?</string>
-    <string name="whats_new_description">• Ordner werden jetzt unterstützt. Halte eine App gedrückt, um sie einem Ordner hinzuzufügen.\n• 19 neue Designs hinzugefügt.\n• Passe die Textgröße von Uhrzeit und Datum, die Schriftart der Uhrzeit und das Datumsformat an.\n• Eine Ladeanzeige erscheint neben dem Akkustand.\n• Uhrzeit, Datum und Akkustand verwenden jetzt deine Regionseinstellungen.\n• Leistungsverbesserungen.\n• Tritt der Reddit-Community unter /r/MinimoLauncher bei</string>
+    <string name="whats_new_description">• Unterstützung für eigene Symbolpakete hinzugefügt.\n• Unterstützung für eigene Schriftarten (.ttf) hinzugefügt.\n• Neues Design „Gruvbox“ hinzugefügt, das dem Dunkelmodus des Systems folgt.\n• Die Suche ignoriert jetzt Akzente, z. B. findet „skoda“ auch „Škoda“.\n• Ordner schließen sich jetzt automatisch, wenn die App-Schublade geöffnet oder geschlossen wird.\n• Tritt der Reddit-Community unter /r/MinimoLauncher bei</string>
     <string name="time_size">Uhrzeitgröße</string>
     <string name="date_battery_size">Größe von Datum und Akku</string>
     <string name="time_font">Uhrzeitschrift</string>

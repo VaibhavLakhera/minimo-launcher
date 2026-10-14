@@ -108,9 +108,8 @@ class AppUtils @Inject constructor(
     ): List<AppInfo> {
         if (searchText.isBlank()) return apps
 
-        return apps.filter { appInfo ->
-            StringUtils.matchesAppSearch(appInfo.name, searchText, searchMode)
-        }
+        val matchesSearch = StringUtils.appSearchMatcher(searchText, searchMode)
+        return apps.filter { appInfo -> matchesSearch(appInfo.name) }
     }
 
     private fun AppInfoEntity.toAppInfo(myUserHandle: Int, showNotificationDot: Boolean): AppInfo {

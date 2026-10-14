@@ -25,6 +25,7 @@ import com.minimo.launcher.ui.navigation.AppNavGraph
 import com.minimo.launcher.ui.navigation.Routes
 import com.minimo.launcher.ui.theme.AppTheme
 import com.minimo.launcher.utils.AppsManager
+import com.minimo.launcher.utils.BillingManager
 import com.minimo.launcher.utils.HomePressedNotifier
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -37,6 +38,9 @@ import javax.inject.Inject
 class MainActivity : ComponentActivity() {
     @Inject
     lateinit var appsManager: AppsManager
+
+    @Inject
+    lateinit var billingManager: BillingManager
 
     private val viewModel: MainViewModel by viewModels()
     private val homeViewModel: HomeViewModel by viewModels()
@@ -120,6 +124,11 @@ class MainActivity : ComponentActivity() {
                     requestedOrientation = orientation
                 }
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        billingManager.checkUnconsumedPurchases()
     }
 
     override fun onNewIntent(intent: Intent) {
