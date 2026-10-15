@@ -1,5 +1,6 @@
 package com.minimo.launcher.ui.settings.customisation
 
+import com.minimo.launcher.data.CustomFont
 import com.minimo.launcher.ui.theme.ThemeMode
 import com.minimo.launcher.utils.AppIconAlignment
 import com.minimo.launcher.utils.Constants
@@ -9,6 +10,7 @@ import com.minimo.launcher.utils.HomeAppsAlignmentVertical
 import com.minimo.launcher.utils.HomeClockAlignment
 import com.minimo.launcher.utils.HomeClockMode
 import com.minimo.launcher.utils.HomeDateFormat
+import com.minimo.launcher.utils.IconPackOption
 import com.minimo.launcher.utils.MinimoSettingsPosition
 import com.minimo.launcher.utils.ScreenOrientation
 import com.minimo.launcher.utils.SearchMode
@@ -16,7 +18,13 @@ import com.minimo.launcher.utils.SearchMode
 data class CustomisationState(
     val initialLoaded: Boolean = false,
     val themeMode: ThemeMode? = null,
+    val iconPack: String = "",
+    val iconPacks: List<IconPackOption> = emptyList(),
+    val loadingIconPacks: Boolean = true,
     val fontPreference: String = "",
+    val customFonts: List<CustomFont> = emptyList(),
+    val importingFont: Boolean = false,
+    val fontError: Int? = null,
     val screenOrientation: ScreenOrientation = ScreenOrientation.Portrait,
     val homeAppsAlignmentHorizontal: HomeAppsAlignmentHorizontal? = null,
     val drawerAppsAlignmentHorizontal: HomeAppsAlignmentHorizontal? = null,

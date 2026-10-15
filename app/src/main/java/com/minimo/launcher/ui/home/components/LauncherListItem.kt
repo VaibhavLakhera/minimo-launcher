@@ -6,11 +6,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.produceState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -97,13 +99,16 @@ fun LauncherListItem(
             val app = row.app
             val iconSizePx =
                 with(LocalDensity.current) { appIconSizeFor(textSize, iconScale).roundToPx() }
-            val icon by produceState<ImageBitmap?>(
-                null,
-                showIcon,
-                app.id,
-                iconSizePx to iconCacheRevision
-            ) {
-                value = if (showIcon) viewModel.loadAppIcon(app, iconSizePx) else null
+            // Start from the cache so a row scrolling into view shows its icon in the first frame,
+            // not an empty placeholder.
+            var icon by remember {
+                mutableStateOf(
+                    if (showIcon) viewModel.cachedAppIcon(app, state.iconPack, iconSizePx) else null
+                )
+            }
+            LaunchedEffect(showIcon, app.id, state.iconPack, iconSizePx, iconCacheRevision) {
+                icon =
+                    if (showIcon) viewModel.loadAppIcon(app, state.iconPack, iconSizePx) else null
             }
             AppNameItem(
                 modifier = modifier.padding(horizontal = if (row.parentFolderId != null) 16.dp else 0.dp),

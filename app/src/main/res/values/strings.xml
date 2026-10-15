@@ -156,6 +156,15 @@
     <string name="home_swipe_right_app">Home Swipe Right App</string>
     <string name="none">None</string>
     <string name="font">Font</string>
+    <string name="add_font">Add font (.ttf)</string>
+    <string name="importing_font">Importing font…</string>
+    <string name="font_import_invalid">Choose a valid TrueType (.ttf) font file.</string>
+    <string name="font_import_too_large">Font files must be 10 MB or smaller.</string>
+    <string name="font_import_failed">Could not import this font. Check that the file is readable and there is enough storage, then try again.</string>
+    <string name="font_picker_unavailable">No file picker is available on this device.</string>
+    <string name="delete_font">Delete Font</string>
+    <string name="delete_font_confirmation">Delete “%1$s”? Settings using it will switch back to the default font.</string>
+    <string name="font_delete_failed">Could not delete this font. Try again.</string>
     <string name="fast_scroller">Fast Scroller</string>
     <string name="fast_scroller_alignment">Fast Scroller Alignment</string>
     <string name="fast_scroller_description">Show an A-Z fast scroller on the app drawer</string>
@@ -200,7 +209,7 @@
 
     <!-- Current release notes. Update for each release, or leave blank to skip the dialog. -->
     <string name="whats_new_title">What\'s New</string>
-    <string name="whats_new_description">• Added folder support. Long-press any app to add it to a folder.\n• Added 19 new themes.\n• Customize the time and date text size, time font, and date format.\n• See a charging indicator next to the battery percentage.\n• The time, date, and battery percentage now follow your locale.\n• Performance improvements.\n• Join reddit community at /r/MinimoLauncher</string>
+    <string name="whats_new_description">• Added support for custom icon packs.\n• Added support for custom fonts (.ttf).\n• Added the Gruvbox theme, which follows the system dark mode.\n• Search now ignores accents, e.g. \"skoda\" finds \"Škoda\".\n• Folders now close automatically when the app drawer opens or closes.\n• Join reddit community at /r/MinimoLauncher</string>
     <string name="time_size">Time Size</string>
     <string name="date_battery_size">Date &amp; Battery Size</string>
     <string name="time_font">Time Font</string>
@@ -224,4 +233,6 @@
     <string name="folder_unavailable">This item or folder is no longer available. Close this dialog and try again.</string>
     <string name="folder_save_failed">Could not save the change. Please try again.</string>
     <string name="delete_folder_confirmation">Delete “%1$s”? Apps and their favourite settings will be kept.</string>
+    <string name="icon_pack">Icon Pack</string>
+    <string name="icon_pack_description">Install an icon pack app to select it here. Apps without matching icons keep their default icons.</string>
 </resources>

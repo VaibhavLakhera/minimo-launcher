@@ -3,7 +3,11 @@ package com.minimo.launcher.ui.theme
 import androidx.compose.ui.graphics.Color
 
 // Entry names are persisted preference IDs. Preset names are intentionally not localized.
-enum class ThemeMode(internal val preset: ThemePreset? = null) {
+// Presets with a darkPreset follow the system dark mode.
+enum class ThemeMode(
+    internal val preset: ThemePreset? = null,
+    internal val darkPreset: ThemePreset? = null
+) {
     System, Dark, Light,
     ClassicPaper(
         ThemePreset(
@@ -47,6 +51,22 @@ enum class ThemeMode(internal val preset: ThemePreset? = null) {
             background = Color(0xFF002B36),
             foreground = Color(0xFFEEE8D5),
             accent = Color(0xFF2AA198),
+            dark = true
+        )
+    ),
+    Gruvbox(
+        preset = ThemePreset(
+            name = "Gruvbox",
+            background = Color(0xFFFBF1C7),
+            foreground = Color(0xFF3C3836),
+            accent = Color(0xFFAF3A03),
+            dark = false
+        ),
+        darkPreset = ThemePreset(
+            name = "Gruvbox",
+            background = Color(0xFF282828),
+            foreground = Color(0xFFEBDBB2),
+            accent = Color(0xFFFE8019),
             dark = true
         )
     ),

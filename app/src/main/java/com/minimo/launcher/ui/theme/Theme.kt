@@ -14,6 +14,7 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.toArgb
@@ -39,7 +40,14 @@ fun themeColorScheme(
     blackTheme: Boolean,
     useDynamicTheme: Boolean
 ): ColorScheme {
-    themeMode.preset?.let { return it.colorScheme }
+    themeMode.preset?.let { preset ->
+        val darkPreset = themeMode.darkPreset
+        return if (darkPreset != null && isSystemInDarkTheme()) {
+            darkPreset.colorScheme
+        } else {
+            preset.colorScheme
+        }
+    }
 
     val context = LocalContext.current
     val isDarkTheme = when (themeMode) {
@@ -134,9 +142,10 @@ fun AppTheme(
         }
     }
 
+    val fontFamily = rememberFontFamily(fontPreference)
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = getTypographyForFont(fontPreference),
+        typography = remember(fontFamily) { getTypographyForFont(fontFamily) },
         content = content
     )
 }

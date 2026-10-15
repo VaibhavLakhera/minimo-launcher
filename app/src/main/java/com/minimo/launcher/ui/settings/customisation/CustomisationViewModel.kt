@@ -1,10 +1,17 @@
 package com.minimo.launcher.ui.settings.customisation
 
+import android.content.Context
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.minimo.launcher.R
 import com.minimo.launcher.data.AppInfoDao
+import com.minimo.launcher.data.CustomFont
+import com.minimo.launcher.data.CustomFonts
+import com.minimo.launcher.data.FontImportException
 import com.minimo.launcher.data.PreferenceHelper
 import com.minimo.launcher.ui.entities.toAppPreferenceTarget
+import com.minimo.launcher.ui.theme.AvailableFonts
 import com.minimo.launcher.ui.theme.ThemeMode
 import com.minimo.launcher.utils.AppIconAlignment
 import com.minimo.launcher.utils.FastScrollerAlignment
@@ -13,26 +20,43 @@ import com.minimo.launcher.utils.HomeAppsAlignmentVertical
 import com.minimo.launcher.utils.HomeClockAlignment
 import com.minimo.launcher.utils.HomeClockMode
 import com.minimo.launcher.utils.HomeDateFormat
+import com.minimo.launcher.utils.IconPackRepository
 import com.minimo.launcher.utils.ScreenOrientation
 import com.minimo.launcher.utils.SearchMode
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class CustomisationViewModel @Inject constructor(
     private val preferenceHelper: PreferenceHelper,
-    private val appInfoDao: AppInfoDao
+    private val appInfoDao: AppInfoDao,
+    private val iconPackRepository: IconPackRepository,
+    @ApplicationContext private val context: Context
 ) : ViewModel() {
-    private val _state = MutableStateFlow(CustomisationState())
+    private val _state = MutableStateFlow(
+        iconPackRepository.lastInstalledPacks.let { packs ->
+            CustomisationState(iconPacks = packs.orEmpty(), loadingIconPacks = packs == null)
+        }
+    )
     val state: StateFlow<CustomisationState> = _state
+
+    private var iconPacksJob: Job? = null
 
     init {
         viewModelScope.launch {
+            val fonts = withContext(Dispatchers.IO) { CustomFonts.list(context) }
+            _state.update { it.copy(customFonts = fonts) }
             preferenceHelper.getCustomisationPreferencesFlow()
                 .distinctUntilChanged()
                 .collect { prefs ->
@@ -72,6 +96,7 @@ class CustomisationViewModel @Inject constructor(
                             initialLoaded = true,
                             themeMode = prefs.themeMode,
                             fontPreference = prefs.fontPreference,
+                            iconPack = prefs.iconPack,
                             screenOrientation = prefs.screenOrientation,
                             homeAppsAlignmentHorizontal = prefs.homeAppsAlignmentHorizontal,
                             drawerAppsAlignmentHorizontal = prefs.drawerAppsAlignmentHorizontal,
@@ -168,6 +193,32 @@ class CustomisationViewModel @Inject constructor(
         }
     }
 
+    fun refreshIconPacks() {
+        // A refresh that is still running lists the same packs, and two could finish out of order.
+        if (iconPacksJob?.isActive == true) return
+        iconPacksJob = viewModelScope.launch {
+            try {
+                val packs = iconPackRepository.installedPacks()
+                // Checked inside the preference edit, so it works before the saved pack has loaded.
+                val installed = packs.mapTo(HashSet()) { it.packageName }
+                preferenceHelper.clearIconPackIfUnavailable(installed)
+                _state.update { it.copy(iconPacks = packs) }
+            } catch (error: CancellationException) {
+                throw error
+            } catch (error: Exception) {
+                Timber.w(error, "Unable to list icon packs")
+            } finally {
+                _state.update { it.copy(loadingIconPacks = false) }
+            }
+        }
+    }
+
+    fun onIconPackChanged(packageName: String) {
+        viewModelScope.launch {
+            preferenceHelper.setIconPack(packageName)
+        }
+    }
+
     fun onScreenOrientationChanged(orientation: ScreenOrientation) {
         viewModelScope.launch {
             preferenceHelper.setScreenOrientation(orientation)
@@ -210,6 +261,61 @@ class CustomisationViewModel @Inject constructor(
 
     fun onHomeDateTextSizeChanged(size: Int?) {
         viewModelScope.launch { preferenceHelper.setHomeDateTextSize(size) }
+    }
+
+    fun importFont(uri: Uri, forTime: Boolean) {
+        if (_state.value.importingFont) return
+        _state.update { it.copy(importingFont = true, fontError = null) }
+        viewModelScope.launch {
+            try {
+                // Keep imported names distinct from the other entries in the font list.
+                val reservedNames = AvailableFonts + listOf(
+                    context.getString(R.string.system),
+                    context.getString(R.string.use_app_font)
+                )
+                val font = withContext(Dispatchers.IO) {
+                    CustomFonts.importFont(context, uri, reservedNames)
+                }
+                val fonts = withContext(Dispatchers.IO) { CustomFonts.list(context) }
+                _state.update { it.copy(customFonts = fonts) }
+                if (forTime) preferenceHelper.setHomeTimeFont(font.value)
+                else preferenceHelper.setFontPreference(font.value)
+            } catch (error: CancellationException) {
+                throw error
+            } catch (error: Exception) {
+                _state.update {
+                    it.copy(
+                        fontError = (error as? FontImportException)?.messageRes
+                            ?: R.string.font_import_failed
+                    )
+                }
+            } finally {
+                _state.update { it.copy(importingFont = false) }
+            }
+        }
+    }
+
+    fun deleteFont(font: CustomFont) {
+        if (_state.value.importingFont) return
+        viewModelScope.launch {
+            try {
+                // Switch settings away from the font before its file disappears.
+                preferenceHelper.clearFontPreferences(font.value)
+                val fonts = withContext(Dispatchers.IO) {
+                    CustomFonts.delete(context, font.value)
+                    CustomFonts.list(context)
+                }
+                _state.update { it.copy(customFonts = fonts) }
+            } catch (error: CancellationException) {
+                throw error
+            } catch (_: Exception) {
+                _state.update { it.copy(fontError = R.string.font_delete_failed) }
+            }
+        }
+    }
+
+    fun clearFontError() {
+        _state.update { it.copy(fontError = null) }
     }
 
     fun onHomeTimeFontChanged(font: String?) {

@@ -12,7 +12,8 @@ class BillingManager @Inject constructor(
         callback.onSetupFinished(false)
     }
 
-    fun endBillingConnection() {}
+    fun endBillingConnection(callback: BillingManagerCallback) {}
+    fun checkUnconsumedPurchases() {}
     suspend fun queryProducts(): List<AppProduct> = emptyList()
     fun launchBilling(activity: Activity, product: AppProduct) {}
 }

@@ -1,13 +1,17 @@
 package com.minimo.launcher.utils
 
+import android.content.ComponentCallbacks2
+import android.content.ComponentName
 import android.content.Context
 import android.content.pm.LauncherApps
+import android.content.res.Configuration
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
 import android.graphics.drawable.AdaptiveIconDrawable
 import android.graphics.drawable.Drawable
+import android.os.UserHandle
 import android.os.UserManager
 import android.util.DisplayMetrics
 import android.util.LruCache
@@ -32,7 +36,8 @@ import kotlin.math.roundToInt
 @Singleton
 class AppIconRepository @Inject constructor(
     @ApplicationContext context: Context,
-    private val shortcutsUtils: ShortcutsUtils
+    private val shortcutsUtils: ShortcutsUtils,
+    private val iconPackRepository: IconPackRepository
 ) {
     private val launcherApps = context.getSystemService(LauncherApps::class.java)
     private val userManager = context.getSystemService(UserManager::class.java)
@@ -41,17 +46,57 @@ class AppIconRepository @Inject constructor(
     // app's cached icons were removed. Loads only cache results from the generation they started in.
     private val cacheGeneration = AtomicInteger()
 
+    // Makes the generation check and cache write atomic with respect to clearing.
+    private val cacheLock = Any()
+
     // Notifies active Compose icon loaders after invalidated entries have been removed.
     private val _cacheRevision = MutableStateFlow(0)
     val cacheRevision = _cacheRevision.asStateFlow()
     private val loadSemaphore = Semaphore(permits = 2)
 
-    // Reuses icons by item identity, user profile, and rendered size. Entries are measured in KB so
-    // the cache stays within the memory-based limit returned by maxCacheSizeKb().
-    private val iconCache = object : LruCache<AppIconKey, ImageBitmap>(maxCacheSizeKb()) {
-        override fun sizeOf(key: AppIconKey, value: ImageBitmap): Int {
-            return (value.width * value.height * BYTES_PER_PIXEL / 1024).coerceAtLeast(1)
+    // Reuses icons by item identity, user profile, icon pack, and rendered size. Entries are
+    // measured in KB so the cache stays within the memory-based limit returned by maxCacheSizeKb().
+    private val iconCache = object : LruCache<AppIconKey, LoadedAppIcon>(maxCacheSizeKb()) {
+        override fun sizeOf(key: AppIconKey, value: LoadedAppIcon): Int {
+            val bitmap = value.bitmap
+            return (bitmap.width * bitmap.height * BYTES_PER_PIXEL / 1024).coerceAtLeast(1)
         }
+    }
+
+    init {
+        context.registerComponentCallbacks(object : ComponentCallbacks2 {
+            private var nightMode = context.resources.configuration.nightMode()
+
+            // App and pack icons can have night variants. Size and density changes already
+            // produce new cache keys, so other configuration changes keep the cache.
+            override fun onConfigurationChanged(newConfig: Configuration) {
+                val newNightMode = newConfig.nightMode()
+                if (newNightMode == nightMode) return
+                nightMode = newNightMode
+                clear()
+            }
+
+            override fun onTrimMemory(level: Int) {
+                if (level >= ComponentCallbacks2.TRIM_MEMORY_BACKGROUND) release()
+            }
+
+            @Deprecated("Never called on API 34+; onTrimMemory handles memory pressure.")
+            override fun onLowMemory() = Unit
+        })
+    }
+
+    /** Safe on the main thread: returns the icon only if it has already been loaded. */
+    fun cachedIcon(
+        packageName: String,
+        itemType: AppItemType,
+        targetId: String,
+        userHandle: Int,
+        iconPack: String,
+        sizePx: Int
+    ): LoadedAppIcon? {
+        if (sizePx <= 0) return null
+        val key = AppIconKey(packageName, itemType, targetId, userHandle, iconPack, sizePx)
+        return iconCache.get(key)
     }
 
     suspend fun loadIcon(
@@ -59,11 +104,12 @@ class AppIconRepository @Inject constructor(
         itemType: AppItemType,
         targetId: String,
         userHandle: Int,
+        iconPack: String,
         sizePx: Int
-    ): ImageBitmap? {
+    ): LoadedAppIcon? {
         if (sizePx <= 0) return null
 
-        val key = AppIconKey(packageName, itemType, targetId, userHandle, sizePx)
+        val key = AppIconKey(packageName, itemType, targetId, userHandle, iconPack, sizePx)
         iconCache.get(key)?.let { return it }
 
         return loadSemaphore.withPermit {
@@ -71,58 +117,151 @@ class AppIconRepository @Inject constructor(
             val generation = cacheGeneration.get()
 
             withContext(Dispatchers.IO) {
-                val loadedImage = runCatching {
-                    val profile = userManager.userProfiles.firstOrNull {
-                        it.hashCode() == userHandle
-                    } ?: return@runCatching null
-
-                    val requestedDensity = (sizePx * DisplayMetrics.DENSITY_DEFAULT /
-                            DEFAULT_ICON_SIZE_DP.toFloat())
-                        .toInt()
-                        .coerceAtLeast(DisplayMetrics.DENSITY_LOW)
-                    when (itemType) {
-                        AppItemType.APP -> launcherApps.getActivityList(packageName, profile)
-                            .firstOrNull { it.componentName.className == targetId }
-                            ?.getIcon(requestedDensity)
-
-                        AppItemType.SHORTCUT -> shortcutsUtils.getShortcut(
-                            packageName = packageName,
-                            shortcutId = targetId,
-                            userHandle = userHandle
-                        )?.let { shortcut ->
-                            launcherApps.getShortcutIconDrawable(shortcut, requestedDensity)
-                        }
-                    }?.renderToImageBitmap(sizePx)
-                }.onFailure {
-                    Timber.w(it, "Unable to load icon for %s/%s", packageName, targetId)
-                }.getOrNull()
-                val image = loadedImage ?: if (itemType == AppItemType.SHORTCUT) {
-                    createGenericShortcutIcon(sizePx)
+                val packIcon = if (itemType == AppItemType.APP) {
+                    loadPackIcon(iconPack, ComponentName(packageName, targetId), userHandle, sizePx)
                 } else {
-                    createWhiteIcon(sizePx)
+                    null
                 }
+                val icon = packIcon?.let { LoadedAppIcon(it, fromIconPack = true) }
+                    ?: LoadedAppIcon(
+                        loadDefaultIcon(packageName, itemType, targetId, userHandle, sizePx)
+                    )
 
                 ensureActive()
-                if (generation == cacheGeneration.get()) {
-                    iconCache.put(key, image)
+                synchronized(cacheLock) {
+                    if (generation == cacheGeneration.get()) iconCache.put(key, icon)
                 }
-                image
+                icon
             }
         }
     }
 
-    fun clear() {
+    fun clear() = synchronized(cacheLock) {
         val revision = cacheGeneration.incrementAndGet()
         iconCache.evictAll()
         _cacheRevision.value = revision
     }
 
-    fun removeIcon(packageName: String, userHandle: Int) {
+    /** Also frees the parsed icon pack, which [clear] keeps because reading it again is slow. */
+    fun release() {
+        iconPackRepository.clear()
+        clear()
+    }
+
+    fun removeIcon(packageName: String, userHandle: Int) = removeIcons {
+        it.packageName == packageName && it.userHandle == userHandle
+    }
+
+    /** Any installed, updated or removed package may be an icon pack; drop its artwork. */
+    fun onPackagesChanged(packageNames: Set<String>) {
+        val packInvalidated = iconPackRepository.invalidate(packageNames)
+        // Most package events are not about an icon pack in use. Those leave the cache alone, so
+        // icons being loaded are not thrown away and the visible ones are not loaded again.
+        removeIcons(onlyIfMatched = !packInvalidated) { it.iconPack in packageNames }
+    }
+
+    /** Frees what was loaded for any other icon pack once [iconPack] is the selected one. */
+    fun onIconPackSelected(iconPack: String) {
+        iconPackRepository.retainOnly(iconPack)
+        removeIcons(onlyIfMatched = true) { it.iconPack != iconPack }
+    }
+
+    private fun removeIcons(
+        onlyIfMatched: Boolean = false,
+        predicate: (AppIconKey) -> Boolean
+    ) = synchronized(cacheLock) {
+        val keys = iconCache.snapshot().keys.filter(predicate)
+        if (onlyIfMatched && keys.isEmpty()) return@synchronized
         val revision = cacheGeneration.incrementAndGet()
-        iconCache.snapshot().keys
-            .filter { it.packageName == packageName && it.userHandle == userHandle }
-            .forEach(iconCache::remove)
+        keys.forEach(iconCache::remove)
         _cacheRevision.value = revision
+    }
+
+    private suspend fun loadPackIcon(
+        iconPack: String,
+        component: ComponentName,
+        userHandle: Int,
+        sizePx: Int
+    ): ImageBitmap? {
+        val drawable = iconPackRepository.drawable(
+            iconPack = iconPack,
+            component = component,
+            density = requestedDensity(sizePx),
+            // Packs keep entries for an app's old activity names. Reusing one after the activity is
+            // renamed is only safe when there is no other launcher activity that could share it.
+            canUseAppEntry = { hasSingleLauncherActivity(component.packageName, userHandle) }
+        ) ?: return null
+        // A broken pack drawable falls back to the app icon instead of a blank tile.
+        return runCatching { drawable.renderPackIcon(sizePx) }
+            .onFailure { Timber.w(it, "Unable to render icon pack drawable for %s", component) }
+            .getOrNull()
+    }
+
+    private fun loadDefaultIcon(
+        packageName: String,
+        itemType: AppItemType,
+        targetId: String,
+        userHandle: Int,
+        sizePx: Int
+    ): ImageBitmap {
+        val loadedImage = runCatching {
+            val profile = profileFor(userHandle) ?: return@runCatching null
+
+            val requestedDensity = requestedDensity(sizePx)
+            when (itemType) {
+                AppItemType.APP -> launcherApps.getActivityList(packageName, profile)
+                    .firstOrNull { it.componentName.className == targetId }
+                    ?.getIcon(requestedDensity)
+
+                AppItemType.SHORTCUT -> shortcutsUtils.getShortcut(
+                    packageName = packageName,
+                    shortcutId = targetId,
+                    userHandle = userHandle
+                )?.let { shortcut ->
+                    launcherApps.getShortcutIconDrawable(shortcut, requestedDensity)
+                }
+            }?.renderToImageBitmap(sizePx)
+        }.onFailure {
+            Timber.w(it, "Unable to load icon for %s/%s", packageName, targetId)
+        }.getOrNull()
+
+        return loadedImage ?: if (itemType == AppItemType.SHORTCUT) {
+            createGenericShortcutIcon(sizePx)
+        } else {
+            createWhiteIcon(sizePx)
+        }
+    }
+
+    private fun hasSingleLauncherActivity(packageName: String, userHandle: Int): Boolean {
+        return runCatching {
+            val profile = profileFor(userHandle) ?: return false
+            launcherApps.getActivityList(packageName, profile).size == 1
+        }.getOrDefault(false)
+    }
+
+    private fun profileFor(userHandle: Int): UserHandle? {
+        return userManager.userProfiles.firstOrNull { it.hashCode() == userHandle }
+    }
+
+    private fun requestedDensity(sizePx: Int): Int {
+        return (sizePx * DisplayMetrics.DENSITY_DEFAULT / DEFAULT_ICON_SIZE_DP.toFloat())
+            .toInt()
+            .coerceAtLeast(DisplayMetrics.DENSITY_LOW)
+    }
+
+    private fun Drawable.renderPackIcon(sizePx: Int): ImageBitmap {
+        // Preserve the pack's transparency, padding and shape (including adaptive icon masks).
+        val bitmap = createBitmap(sizePx, sizePx)
+        val width = intrinsicWidth.takeIf { it > 0 } ?: sizePx
+        val height = intrinsicHeight.takeIf { it > 0 } ?: sizePx
+        val scale = sizePx.toFloat() / maxOf(width, height)
+        val iconWidth = (width * scale).roundToInt().coerceAtLeast(1)
+        val iconHeight = (height * scale).roundToInt().coerceAtLeast(1)
+        val left = (sizePx - iconWidth) / 2
+        val top = (sizePx - iconHeight) / 2
+        setBounds(left, top, left + iconWidth, top + iconHeight)
+        draw(Canvas(bitmap))
+        return bitmap.asImageBitmap()
     }
 
     private fun Drawable.renderToImageBitmap(sizePx: Int): ImageBitmap {
@@ -215,6 +354,7 @@ class AppIconRepository @Inject constructor(
         val itemType: AppItemType,
         val targetId: String,
         val userHandle: Int,
+        val iconPack: String,
         val sizePx: Int
     )
 
@@ -229,5 +369,10 @@ class AppIconRepository @Inject constructor(
             val memoryFractionKb = Runtime.getRuntime().maxMemory() / 16 / 1024
             return memoryFractionKb.toInt().coerceIn(MIN_CACHE_SIZE_KB, MAX_CACHE_SIZE_KB)
         }
+
+        fun Configuration.nightMode() = uiMode and Configuration.UI_MODE_NIGHT_MASK
     }
 }
+
+/** Pack artwork keeps its own shape; default icons retain Minimo’s mask and shadow. */
+data class LoadedAppIcon(val bitmap: ImageBitmap, val fromIconPack: Boolean = false)

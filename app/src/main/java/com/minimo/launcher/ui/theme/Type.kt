@@ -1,10 +1,25 @@
 package com.minimo.launcher.ui.theme
 
+import android.content.Context
+import android.graphics.Typeface
+import android.os.Build
 import androidx.compose.material3.Typography
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.AndroidFont
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontLoadingStrategy
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontVariation
 import androidx.compose.ui.text.font.FontWeight
 import com.minimo.launcher.R
+import com.minimo.launcher.data.CustomFonts
 
 val AvailableFonts = listOf("DynaPuff", "Inter", "Lexend", "Nunito", "Poppins")
 
@@ -48,8 +63,7 @@ val NunitoFontFamily by lazy {
     )
 }
 
-fun getTypographyForFont(fontName: String): Typography {
-    val fontFamily = getFontFamily(fontName)
+fun getTypographyForFont(fontFamily: FontFamily?): Typography {
     return if (fontFamily != null) {
         Typography().copy(
             displayLarge = Typography().displayLarge.copy(fontFamily = fontFamily),
@@ -73,13 +87,57 @@ fun getTypographyForFont(fontName: String): Typography {
     }
 }
 
-fun getFontFamily(fontName: String): FontFamily? {
-    return when (fontName) {
-        "Inter" -> InterFontFamily
-        "Lexend" -> LexendFontFamily
-        "Poppins" -> PoppinsFontFamily
-        "DynaPuff" -> DynaPuffFontFamily
-        "Nunito" -> NunitoFontFamily
-        else -> null
+@Composable
+fun rememberFontFamily(fontName: String): FontFamily? {
+    when (fontName) {
+        "Inter" -> return InterFontFamily
+        "Lexend" -> return LexendFontFamily
+        "Poppins" -> return PoppinsFontFamily
+        "DynaPuff" -> return DynaPuffFontFamily
+        "Nunito" -> return NunitoFontFamily
+    }
+    if (!CustomFonts.isCustom(fontName)) return null
+
+    val context = LocalContext.current.applicationContext
+    // Start from the cache so an already loaded font is used in the first frame, not the default.
+    var family by remember(context, fontName) {
+        mutableStateOf(CustomFonts.cachedTypeface(fontName)?.let(::customFontFamily))
+    }
+    LaunchedEffect(context, fontName) {
+        if (family == null) {
+            family = CustomFonts.typeface(context, fontName)?.let(::customFontFamily)
+        }
+    }
+    return family
+}
+
+private fun customFontFamily(typeface: Typeface) = FontFamily(LoadedCustomFont(typeface))
+
+// Unlike FontFamily(Typeface), a Font participates in Compose's weight/style synthesis.
+// The typeface is already loaded on IO; Compose's blocking loader only returns it from memory.
+private data class LoadedCustomFont(val typeface: Typeface) : AndroidFont(
+    loadingStrategy = FontLoadingStrategy.Blocking,
+    typefaceLoader = Loader,
+    variationSettings = FontVariation.Settings()
+) {
+    override val weight = when {
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.P -> FontWeight(
+            typeface.weight.coerceIn(
+                1,
+                1000
+            )
+        )
+
+        typeface.isBold -> FontWeight.Bold
+        else -> FontWeight.Normal
+    }
+    override val style = if (typeface.isItalic) FontStyle.Italic else FontStyle.Normal
+
+    private object Loader : TypefaceLoader {
+        override fun loadBlocking(context: Context, font: AndroidFont): Typeface =
+            (font as LoadedCustomFont).typeface
+
+        override suspend fun awaitLoad(context: Context, font: AndroidFont): Typeface =
+            loadBlocking(context, font)
     }
 }

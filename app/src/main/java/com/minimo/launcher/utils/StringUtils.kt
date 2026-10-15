@@ -3,12 +3,45 @@ package com.minimo.launcher.utils
 import android.content.Context
 import com.minimo.launcher.R
 import com.minimo.launcher.ui.theme.ThemeMode
+import java.text.Normalizer
 
 object StringUtils {
-    fun matchesAppSearch(appName: String, searchText: String, mode: SearchMode): Boolean {
-        return when (mode) {
-            SearchMode.Contains -> appName.contains(searchText, ignoreCase = true)
-            SearchMode.StartsWith -> appName.startsWith(searchText, ignoreCase = true)
+    // Generic accents used by Latin, Greek and Cyrillic. Marks of other scripts
+    // (Devanagari vowel signs, kana voicing marks, etc.) change meaning, so they are kept.
+    private val combiningDiacriticalMarks = Regex("[\\u0300-\\u036F]+")
+
+    // Letters that have no Unicode decomposition into a base letter and an accent.
+    private val accentFreeLetters = mapOf(
+        'ø' to "o", 'ł' to "l", 'đ' to "d", 'æ' to "ae", 'œ' to "oe", 'ß' to "ss",
+        'ħ' to "h", 'ŧ' to "t", 'þ' to "th", 'ð' to "d", 'ŋ' to "n", 'ŀ' to "l"
+    )
+
+    /** Normalizes [searchText] once, so filtering a list does not repeat it for every app. */
+    fun appSearchMatcher(searchText: String, mode: SearchMode): (appName: String) -> Boolean {
+        val query = searchText.removeAccents()
+        // A query of only accents is empty now and would otherwise match every app.
+        if (query.isEmpty()) return { false }
+
+        return { appName ->
+            val name = appName.removeAccents()
+            when (mode) {
+                SearchMode.Contains -> name.contains(query, ignoreCase = true)
+                SearchMode.StartsWith -> name.startsWith(query, ignoreCase = true)
+            }
+        }
+    }
+
+    /** Makes search accent-insensitive, e.g. "MyŠkoda" becomes "myskoda". */
+    private fun String.removeAccents(): String {
+        if (all { it.code < 0x80 }) return this
+
+        val stripped = Normalizer.normalize(lowercase(), Normalizer.Form.NFD)
+            .replace(combiningDiacriticalMarks, "")
+        // Re-compose so scripts like Hangul are compared as whole syllables again.
+        return buildString {
+            Normalizer.normalize(stripped, Normalizer.Form.NFC).forEach { char ->
+                append(accentFreeLetters[char] ?: char)
+            }
         }
     }
 

@@ -158,6 +158,15 @@
     <string name="home_swipe_right_app">App scorrimento destra nella home</string>
     <string name="none">Nessuna</string>
     <string name="font">Carattere</string>
+    <string name="add_font">Aggiungi carattere (.ttf)</string>
+    <string name="importing_font">Importazione del carattere…</string>
+    <string name="font_import_invalid">Scegli un file di carattere TrueType (.ttf) valido.</string>
+    <string name="font_import_too_large">I file dei caratteri non devono superare i 10 MB.</string>
+    <string name="font_import_failed">Impossibile importare questo carattere. Verifica che il file sia leggibile e che ci sia spazio di archiviazione sufficiente, quindi riprova.</string>
+    <string name="font_picker_unavailable">Nessun selettore di file disponibile su questo dispositivo.</string>
+    <string name="delete_font">Elimina carattere</string>
+    <string name="delete_font_confirmation">Eliminare «%1$s»? Le impostazioni che lo usano torneranno al carattere predefinito.</string>
+    <string name="font_delete_failed">Impossibile eliminare questo carattere. Riprova.</string>
     <string name="fast_scroller">Scorrimento rapido</string>
     <string name="fast_scroller_alignment">Allineamento scorrimento rapido</string>
     <string name="fast_scroller_description">Mostra uno scorrimento rapido A-Z nel drawer</string>
@@ -197,7 +206,7 @@
 
     <!-- Current release notes. Update for each release, or leave blank to skip the dialog. -->
     <string name="whats_new_title">Novità</string>
-    <string name="whats_new_description">• Aggiunto il supporto per le cartelle. Tieni premuta un\'app per aggiungerla a una cartella.\n• Aggiunti 19 nuovi temi.\n• Personalizza la dimensione del testo di ora e data, il carattere dell\'ora e il formato della data.\n• Visualizza un indicatore di ricarica accanto alla percentuale della batteria.\n• Ora, data e percentuale della batteria seguono le impostazioni locali.\n• Miglioramenti delle prestazioni.\n• Unisciti alla community di Reddit su /r/MinimoLauncher</string>
+    <string name="whats_new_description">• Aggiunto il supporto per i pacchetti di icone personalizzati.\n• Aggiunto il supporto per i caratteri personalizzati (.ttf).\n• Aggiunto il tema Gruvbox, che segue la modalità scura di sistema.\n• La ricerca ora ignora gli accenti, ad esempio «skoda» trova «Škoda».\n• Le cartelle ora si chiudono automaticamente quando il drawer viene aperto o chiuso.\n• Unisciti alla community di Reddit su /r/MinimoLauncher</string>
     <string name="time_size">Dimensione ora</string>
     <string name="date_battery_size">Dimensione data e batteria</string>
     <string name="time_font">Carattere ora</string>
@@ -221,4 +230,6 @@
     <string name="folder_unavailable">Questo elemento o questa cartella non è più disponibile. Chiudi questa finestra e riprova.</string>
     <string name="folder_save_failed">Impossibile salvare la modifica. Riprova.</string>
     <string name="delete_folder_confirmation">Eliminare «%1$s»? Le app e le relative impostazioni dei preferiti saranno mantenute.</string>
+    <string name="icon_pack">Pacchetto di icone</string>
+    <string name="icon_pack_description">Installa un’app di icone per selezionarla qui. Le app senza un’icona corrispondente mantengono le icone predefinite.</string>
 </resources>

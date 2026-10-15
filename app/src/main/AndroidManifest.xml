@@ -23,6 +23,19 @@
         tools:ignore="ProtectedPermissions" />
 
     <queries>
+        <!-- To list installed icon packs, which declare one of these launcher theme actions -->
+        <intent>
+            <action android:name="org.adw.launcher.THEMES" />
+        </intent>
+        <intent>
+            <action android:name="org.adw.ActivityStarter.THEMES" />
+        </intent>
+        <intent>
+            <action android:name="com.gau.go.launcherex.theme" />
+        </intent>
+        <intent>
+            <action android:name="com.novalauncher.THEME" />
+        </intent>
         <intent>
             <action android:name="android.intent.action.MAIN" />
         </intent>

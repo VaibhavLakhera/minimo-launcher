@@ -27,7 +27,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
@@ -39,6 +38,7 @@ import com.minimo.launcher.R
 import com.minimo.launcher.ui.theme.Dimens
 import com.minimo.launcher.utils.AppIconAlignment
 import com.minimo.launcher.utils.Constants
+import com.minimo.launcher.utils.LoadedAppIcon
 
 @Composable
 fun AppNameItem(
@@ -53,7 +53,7 @@ fun AppNameItem(
     showNotificationDot: Boolean,
     compactTouchArea: Boolean = false,
     showAppIcon: Boolean = false,
-    appIcon: ImageBitmap? = null,
+    appIcon: LoadedAppIcon? = null,
     appIconSizeScale: Float = Constants.DEFAULT_APP_ICON_SIZE_PERCENT / 100f,
     appIconAlignment: AppIconAlignment = AppIconAlignment.Left,
     onClick: () -> Unit,

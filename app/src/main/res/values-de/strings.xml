@@ -158,6 +158,15 @@
     <string name="home_swipe_right_app">App beim Wischen nach rechts</string>
     <string name="none">Keine</string>
     <string name="font">Schriftart</string>
+    <string name="add_font">Schriftart hinzufügen (.ttf)</string>
+    <string name="importing_font">Schriftart wird importiert…</string>
+    <string name="font_import_invalid">Wähle eine gültige TrueType-Schriftdatei (.ttf) aus.</string>
+    <string name="font_import_too_large">Schriftdateien dürfen höchstens 10 MB groß sein.</string>
+    <string name="font_import_failed">Diese Schriftart konnte nicht importiert werden. Prüfe, ob die Datei lesbar ist und genügend Speicherplatz verfügbar ist, und versuche es erneut.</string>
+    <string name="font_picker_unavailable">Auf diesem Gerät ist keine Dateiauswahl verfügbar.</string>
+    <string name="delete_font">Schriftart löschen</string>
+    <string name="delete_font_confirmation">„%1$s“ löschen? Einstellungen, die sie verwenden, wechseln zur Standardschriftart.</string>
+    <string name="font_delete_failed">Diese Schriftart konnte nicht gelöscht werden. Versuche es erneut.</string>
     <string name="fast_scroller">Schnellscroller</string>
     <string name="fast_scroller_alignment">Schnellscroller-Ausrichtung</string>
     <string name="fast_scroller_description">Zeige einen A-Z-Schnellscroller in der App-Schublade</string>
@@ -197,7 +206,7 @@
 
     <!-- Current release notes. Update for each release, or leave blank to skip the dialog. -->
     <string name="whats_new_title">Was ist neu?</string>
-    <string name="whats_new_description">• Ordner werden jetzt unterstützt. Halte eine App gedrückt, um sie einem Ordner hinzuzufügen.\n• 19 neue Designs hinzugefügt.\n• Passe die Textgröße von Uhrzeit und Datum, die Schriftart der Uhrzeit und das Datumsformat an.\n• Eine Ladeanzeige erscheint neben dem Akkustand.\n• Uhrzeit, Datum und Akkustand verwenden jetzt deine Regionseinstellungen.\n• Leistungsverbesserungen.\n• Tritt der Reddit-Community unter /r/MinimoLauncher bei</string>
+    <string name="whats_new_description">• Unterstützung für eigene Symbolpakete hinzugefügt.\n• Unterstützung für eigene Schriftarten (.ttf) hinzugefügt.\n• Neues Design „Gruvbox“ hinzugefügt, das dem Dunkelmodus des Systems folgt.\n• Die Suche ignoriert jetzt Akzente, z. B. findet „skoda“ auch „Škoda“.\n• Ordner schließen sich jetzt automatisch, wenn die App-Schublade geöffnet oder geschlossen wird.\n• Tritt der Reddit-Community unter /r/MinimoLauncher bei</string>
     <string name="time_size">Uhrzeitgröße</string>
     <string name="date_battery_size">Größe von Datum und Akku</string>
     <string name="time_font">Uhrzeitschrift</string>
@@ -221,4 +230,6 @@
     <string name="folder_unavailable">Dieses Element oder dieser Ordner ist nicht mehr verfügbar. Schließe diesen Dialog und versuche es erneut.</string>
     <string name="folder_save_failed">Die Änderung konnte nicht gespeichert werden. Bitte versuche es erneut.</string>
     <string name="delete_folder_confirmation">„%1$s“ löschen? Apps und ihre Favoriteneinstellungen bleiben erhalten.</string>
+    <string name="icon_pack">Symbolpaket</string>
+    <string name="icon_pack_description">Installiere eine Symbolpaket-App, um sie hier auszuwählen. Apps ohne passendes Symbol behalten ihre Standardsymbole.</string>
 </resources>

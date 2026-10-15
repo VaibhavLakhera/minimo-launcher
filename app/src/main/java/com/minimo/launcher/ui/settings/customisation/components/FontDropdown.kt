@@ -10,13 +10,19 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,17 +34,23 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.minimo.launcher.R
+import com.minimo.launcher.data.CustomFont
 import com.minimo.launcher.ui.theme.AvailableFonts
 import com.minimo.launcher.ui.theme.Dimens
-import com.minimo.launcher.ui.theme.getFontFamily
+import com.minimo.launcher.ui.theme.rememberFontFamily
 
 @Composable
 fun FontDropdown(
     selectedFont: String?,
     onFontSelected: (String) -> Unit,
+    customFonts: List<CustomFont>,
+    importingFont: Boolean,
+    onAddFont: () -> Unit,
+    onDeleteFont: (CustomFont) -> Unit,
     @StringRes titleRes: Int = R.string.font,
     onUseAppFont: (() -> Unit)? = null
 ) {
@@ -59,6 +71,7 @@ fun FontDropdown(
         Spacer(modifier = Modifier.width(16.dp))
 
         var expanded by remember { mutableStateOf(false) }
+        var fontToDelete by remember { mutableStateOf<CustomFont?>(null) }
         val rotationAngle by animateFloatAsState(
             targetValue = if (expanded) 180f else 0f,
             label = "dropdown_rotation"
@@ -69,11 +82,12 @@ fun FontDropdown(
         val displaySelectedFont = when (selectedFont) {
             null -> appFontString
             "" -> systemString
-            else -> selectedFont
+            else -> customFonts.firstOrNull { it.value == selectedFont }?.name
+                ?: selectedFont.takeIf { it in AvailableFonts } ?: systemString
         }
         val selectedFontFamily = when (selectedFont) {
             null -> LocalTextStyle.current.fontFamily
-            else -> getFontFamily(selectedFont) ?: FontFamily.Default
+            else -> rememberFontFamily(selectedFont) ?: FontFamily.Default
         }
 
         Box {
@@ -90,7 +104,10 @@ fun FontDropdown(
             ) {
                 Text(
                     text = displaySelectedFont,
-                    fontFamily = selectedFontFamily
+                    fontFamily = selectedFontFamily,
+                    modifier = Modifier.widthIn(max = 180.dp),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Icon(
@@ -131,7 +148,7 @@ fun FontDropdown(
                         text = {
                             Text(
                                 text = fontName,
-                                fontFamily = getFontFamily(fontName)
+                                fontFamily = rememberFontFamily(fontName)
                             )
                         },
                         onClick = {
@@ -140,7 +157,72 @@ fun FontDropdown(
                         }
                     )
                 }
+                // Separates imported fonts from the built-in ones, even when their names match.
+                HorizontalDivider()
+                customFonts.forEach { font ->
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                text = font.name,
+                                fontFamily = rememberFontFamily(font.value) ?: FontFamily.Default,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        },
+                        trailingIcon = {
+                            IconButton(
+                                onClick = {
+                                    expanded = false
+                                    fontToDelete = font
+                                },
+                                enabled = !importingFont
+                            ) {
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_close),
+                                    contentDescription = stringResource(R.string.delete_font)
+                                )
+                            }
+                        },
+                        onClick = {
+                            onFontSelected(font.value)
+                            expanded = false
+                        }
+                    )
+                }
+                DropdownMenuItem(
+                    text = {
+                        Text(stringResource(if (importingFont) R.string.importing_font else R.string.add_font))
+                    },
+                    enabled = !importingFont,
+                    onClick = {
+                        expanded = false
+                        onAddFont()
+                    }
+                )
             }
+        }
+
+        fontToDelete?.let { font ->
+            AlertDialog(
+                onDismissRequest = { fontToDelete = null },
+                title = { Text(stringResource(R.string.delete_font)) },
+                text = { Text(stringResource(R.string.delete_font_confirmation, font.name)) },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            fontToDelete = null
+                            onDeleteFont(font)
+                        }
+                    ) {
+                        Text(stringResource(R.string.delete))
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { fontToDelete = null }) {
+                        Text(stringResource(R.string.cancel))
+                    }
+                }
+            )
         }
     }
 }
