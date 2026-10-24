@@ -24,6 +24,10 @@ Most launchers push you to spend more time on your phone with busy home screens,
 - Improved bottom search search if enabled
 - Lightweight with low battery and RAM usage
 - No ads, no tracking, no unnecessary permissions
+- Dubble tap on launch
+- New Jost font
+- New seprate select of dark and light theme mode
 - Open source
+  
 
 Less things. Less addictive 
