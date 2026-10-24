@@ -45,6 +45,11 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            // Don't embed the git commit in the APK, so F-Droid's rebuild of a release tag
+            // matches the APK we sign, even if it was built from a different commit with the same code.
+            vcsInfo {
+                include = false
+            }
         }
     }
 

@@ -1,0 +1,5 @@
+• Added support for custom icon packs.
+• Added support for custom fonts (.ttf).
+• Added the Gruvbox theme, which follows the system dark mode.
+• Search now ignores accents, e.g. "skoda" finds "Škoda".
+• Folders now close automatically when the app drawer opens or closes.
