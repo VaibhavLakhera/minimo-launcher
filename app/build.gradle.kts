@@ -10,6 +10,10 @@ android {
     namespace = "com.minimo.launcher"
     compileSdk = 37
 
+    // Pinned so release APKs strip native libs the same way as F-Droid's build (its recipe uses `ndk: 28.2.13676358`).
+    // If you change this, update the `ndk:` line in F-Droid's metadata too.
+    ndkVersion = "28.2.13676358"
+
     defaultConfig {
         applicationId = "com.minimo.launcher"
         minSdk = 26
@@ -45,6 +49,11 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            // Don't embed the git commit in the APK, so F-Droid's rebuild of a release tag
+            // matches the APK we sign, even if it was built from a different commit with the same code.
+            vcsInfo {
+                include = false
+            }
         }
     }
 
