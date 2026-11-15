@@ -20,8 +20,9 @@ class UpdateAllAppsUseCase @Inject constructor(
         appSyncMutex.withLock {
             val installedApps = appUtils.getInstalledApps()
             val dbApps = appInfoDao.getItemsByType(AppItemType.APP)
+                .filter { installedApps.canSyncProfile(it.userHandle) }
             val syncResult = syncInstalledApps(
-                installedApps = installedApps,
+                installedApps = installedApps.apps,
                 dbApps = dbApps,
                 removeMissing = true
             )

@@ -31,6 +31,9 @@ fun SettingsScreen(
     onBackClick: () -> Unit,
     onFavouriteAppsClick: () -> Unit,
     onHiddenAppsClick: () -> Unit,
+    // Only while a locked private space is hidden from the drawer, the one time it has no other way in.
+    showPrivateSpace: Boolean,
+    onPrivateSpaceClick: () -> Unit,
     onCustomisationClick: () -> Unit,
     onSupporterClick: () -> Unit,
     onAboutAppClick: () -> Unit
@@ -68,6 +71,12 @@ fun SettingsScreen(
                 onClick = onFavouriteAppsClick
             )
             SettingsItem(name = stringResource(R.string.hidden_apps), onClick = onHiddenAppsClick)
+            if (showPrivateSpace) {
+                SettingsItem(
+                    name = stringResource(R.string.private_space),
+                    onClick = onPrivateSpaceClick
+                )
+            }
             SettingsItem(
                 name = stringResource(R.string.customisation),
                 onClick = onCustomisationClick

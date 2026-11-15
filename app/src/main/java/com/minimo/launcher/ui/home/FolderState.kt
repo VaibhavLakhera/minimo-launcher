@@ -30,6 +30,19 @@ sealed interface FolderDialog {
     data class Delete(val folder: FolderEntity) : FolderDialog
 }
 
+/** The private space row's contents. It looks like a folder but is not saved as one. */
+data class PrivateSpaceSection(
+    val isLocked: Boolean,
+    val isExpanded: Boolean,
+    val apps: List<AppInfo>,
+    val canAddFiles: Boolean = false
+) {
+    val showNotificationDot: Boolean get() = !isLocked && apps.any { it.showNotificationDot }
+}
+
+/** Parent ID of the private space's member rows. Folder IDs are UUIDs, so this cannot clash. */
+const val PRIVATE_SPACE_ROW_ID = "private_space"
+
 sealed interface LauncherRow {
     val key: String
 
@@ -44,6 +57,10 @@ sealed interface LauncherRow {
 
     data class Empty(val folderId: String) : LauncherRow {
         override val key = "empty:$folderId"
+    }
+
+    data class PrivateSpace(val section: PrivateSpaceSection) : LauncherRow {
+        override val key = PRIVATE_SPACE_ROW_ID
     }
 }
 
@@ -67,7 +84,9 @@ internal fun projectFolders(
 }
 
 internal fun launcherRows(
-    folders: List<FolderInfo>, apps: List<AppInfo>
+    folders: List<FolderInfo>,
+    apps: List<AppInfo>,
+    privateSpace: PrivateSpaceSection? = null
 ): List<LauncherRow> = buildList {
     // Keep children as separate lazy-list rows so expansion animates and scroll indices stay exact.
     folders.forEach { info ->
@@ -75,6 +94,14 @@ internal fun launcherRows(
         if (info.isExpanded) {
             if (info.apps.isEmpty()) add(LauncherRow.Empty(info.folder.id))
             info.apps.forEach { add(LauncherRow.App(it, info.folder.id)) }
+        }
+    }
+    // Always after the user's folders and before the app list, so the fast scroller offset counts it.
+    if (privateSpace != null) {
+        add(LauncherRow.PrivateSpace(privateSpace))
+        if (privateSpace.isExpanded && !privateSpace.isLocked) {
+            if (privateSpace.apps.isEmpty()) add(LauncherRow.Empty(PRIVATE_SPACE_ROW_ID))
+            privateSpace.apps.forEach { add(LauncherRow.App(it, PRIVATE_SPACE_ROW_ID)) }
         }
     }
     apps.forEach { add(LauncherRow.App(it)) }

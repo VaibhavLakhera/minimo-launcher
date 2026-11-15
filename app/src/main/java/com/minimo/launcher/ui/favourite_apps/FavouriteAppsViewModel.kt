@@ -52,7 +52,7 @@ class FavouriteAppsViewModel @Inject constructor(
         viewModelScope.launch {
             appInfoDao.getAllNonHiddenAppsFlow()
                 .collect { appInfoList ->
-                    val allApps = appUtils.mapToAppInfo(appInfoList)
+                    val allApps = appUtils.mapToMainAppInfo(appInfoList)
                     val favouriteApps = allApps.filter { it.isFavourite }
                     val showReorderButton = favouriteApps.size > 1
                     val currentAllApps = if (_state.value.showFavouritesOnly) {

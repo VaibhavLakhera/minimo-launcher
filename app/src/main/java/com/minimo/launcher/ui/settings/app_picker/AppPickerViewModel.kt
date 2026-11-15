@@ -52,7 +52,7 @@ class AppPickerViewModel @Inject constructor(
         viewModelScope.launch {
             appInfoDao.getAllAppsFlow()
                 .collect { appInfoList ->
-                    val allApps = appUtils.mapToAppInfo(appInfoList)
+                    val allApps = appUtils.mapToMainAppInfo(appInfoList)
 
                     _state.update {
                         it.copy(

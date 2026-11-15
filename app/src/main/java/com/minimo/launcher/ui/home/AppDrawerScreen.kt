@@ -229,10 +229,23 @@ fun AppDrawerScreen(
         }
     }
 
-    val drawerRows = remember(state.folders, state.filteredAllApps, state.searchText.isBlank()) {
+    val drawerRows = remember(
+        state.folders,
+        state.filteredAllApps,
+        state.searchText.isBlank(),
+        state.privateSpaceSection
+    ) {
         state.drawerRows
     }
-    // The letter scroller must skip folder headers and expanded members before the app list.
+    // Settings may return to a drawer scrolled away from the private space, so bring its row up.
+    LaunchedEffect(state.privateSpaceScrollPending, drawerRows) {
+        if (!state.privateSpaceScrollPending) return@LaunchedEffect
+        val index = drawerRows.indexOfFirst { it is LauncherRow.PrivateSpace }
+        if (index < 0) return@LaunchedEffect
+        allAppsLazyListState.scrollToItem(index)
+        viewModel.onPrivateSpaceScrolled()
+    }
+    // The letter scroller must skip folder headers, the private space and expanded members.
     val folderRowCount = drawerRows.size - state.filteredAllApps.size
     val showFastScroller =
         state.enableFastScroller && state.searchText.isBlank() && state.filteredAllApps.isNotEmpty()

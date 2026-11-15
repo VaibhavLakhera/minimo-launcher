@@ -2,6 +2,7 @@ package com.minimo.launcher.ui.entities
 
 import android.net.Uri
 import com.minimo.launcher.data.entities.AppItemType
+import com.minimo.launcher.utils.ProfileType
 
 private const val PREFERENCE_VERSION = "2"
 private const val LEGACY_PREFERENCE_PART_COUNT = 3
@@ -16,7 +17,7 @@ data class AppInfo(
     val alternateAppName: String,
     val isFavourite: Boolean,
     val isHidden: Boolean,
-    val isWorkProfile: Boolean,
+    val profileType: ProfileType,
     val showNotificationDot: Boolean,
     val orderIndex: Int,
     val launchDelaySeconds: Int = 0,
@@ -27,6 +28,12 @@ data class AppInfo(
 
     val isShortcut: Boolean
         get() = itemType == AppItemType.SHORTCUT
+
+    val isWorkProfile: Boolean
+        get() = profileType == ProfileType.WORK
+
+    val isPrivateSpace: Boolean
+        get() = profileType == ProfileType.PRIVATE
 
     val id: String
         get() = "${itemType.persistedValue}|$packageName|$targetId|$userHandle"

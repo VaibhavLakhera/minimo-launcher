@@ -65,7 +65,7 @@ class IntroViewModel @Inject constructor(
         viewModelScope.launch {
             appInfoDao.getAllNonHiddenAppsFlow()
                 .collect { appInfoList ->
-                    val allApps = appUtils.mapToAppInfo(appInfoList)
+                    val allApps = appUtils.mapToMainAppInfo(appInfoList)
                     val minimumFavouriteAdded =
                         allApps.count { it.isFavourite } >= INTRO_MINIMUM_FAVOURITE_COUNT
 

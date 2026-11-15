@@ -24,6 +24,7 @@ class AddUpdateAppsUseCase @Inject constructor(
     ) = withContext(Dispatchers.IO) {
         appSyncMutex.withLock {
             val installedApps = appUtils.getInstalledApps(packageName, userHandle)
+                ?: return@withLock
             val dbApps = appInfoDao.getAppsByPackageName(packageName, userHandle)
             val syncResult = syncInstalledApps(
                 installedApps = installedApps,
@@ -35,4 +36,12 @@ class AddUpdateAppsUseCase @Inject constructor(
             }
         }
     }
+
+    /**
+     * A launch failed, so the saved row no longer matches the device: its profile was just locked,
+     * or the app's launcher activity changed. Re-reading the package removes or corrects the row,
+     * and a locked private space is left alone (its rows stay hidden until it is unlocked again).
+     */
+    suspend fun resyncAfterFailedLaunch(packageName: String, userHandle: Int) =
+        invoke(packageName = packageName, userHandle = userHandle, removeMissing = true)
 }

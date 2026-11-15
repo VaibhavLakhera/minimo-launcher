@@ -232,4 +232,13 @@
     <string name="delete_folder_confirmation">„%1$s“ löschen? Apps und ihre Favoriteneinstellungen bleiben erhalten.</string>
     <string name="icon_pack">Symbolpaket</string>
     <string name="icon_pack_description">Installiere eine Symbolpaket-App, um sie hier auszuwählen. Apps ohne passendes Symbol behalten ihre Standardsymbole.</string>
+    <string name="private_space">Privater Bereich</string>
+    <string name="lock_private_space">Sperren</string>
+    <string name="unlock_private_space">Entsperren</string>
+    <string name="private_space_install_apps">Apps installieren</string>
+    <string name="private_space_add_files">Dateien hinzufügen</string>
+    <string name="private_space_settings">Einstellungen für privaten Bereich</string>
+    <string name="private_space_locked">Gesperrt</string>
+    <string name="private_space_no_app_store">Kein App-Store gefunden.</string>
+    <string name="app_launch_failed">App konnte nicht geöffnet werden.</string>
 </resources>

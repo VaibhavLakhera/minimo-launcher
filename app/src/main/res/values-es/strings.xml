@@ -232,4 +232,13 @@
     <string name="delete_folder_confirmation">¿Eliminar «%1$s»? Se conservarán las aplicaciones y sus ajustes de favoritos.</string>
     <string name="icon_pack">Paquete de iconos</string>
     <string name="icon_pack_description">Instala una aplicación de paquete de iconos para seleccionarla aquí. Las aplicaciones sin un icono correspondiente conservan sus iconos predeterminados.</string>
+    <string name="private_space">Espacio privado</string>
+    <string name="lock_private_space">Bloquear</string>
+    <string name="unlock_private_space">Desbloquear</string>
+    <string name="private_space_install_apps">Instalar apps</string>
+    <string name="private_space_add_files">Añadir archivos</string>
+    <string name="private_space_settings">Ajustes del espacio privado</string>
+    <string name="private_space_locked">Bloqueado</string>
+    <string name="private_space_no_app_store">No se ha encontrado ninguna tienda de aplicaciones.</string>
+    <string name="app_launch_failed">No se ha podido abrir esta aplicación.</string>
 </resources>

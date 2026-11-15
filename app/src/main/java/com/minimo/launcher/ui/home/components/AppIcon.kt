@@ -1,5 +1,6 @@
 package com.minimo.launcher.ui.home.components
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -24,17 +25,26 @@ import androidx.compose.ui.unit.dp
 import com.minimo.launcher.R
 import com.minimo.launcher.ui.theme.Dimens
 import com.minimo.launcher.utils.LoadedAppIcon
+import com.minimo.launcher.utils.ProfileType
 
 @Composable
 fun appIconSizeFor(textSize: TextUnit, scale: Float): Dp {
     return with(LocalDensity.current) { (textSize * scale).toDp() }
 }
 
+/** The badge that tells a work or private space app apart from the same app in the main profile. */
+val ProfileType.badgeRes: Int?
+    @DrawableRes get() = when (this) {
+        ProfileType.MAIN -> null
+        ProfileType.WORK -> R.drawable.ic_work_profile
+        ProfileType.PRIVATE -> R.drawable.ic_private_space_badge
+    }
+
 @Composable
 fun AppIcon(
     image: LoadedAppIcon?,
     size: Dp,
-    isWorkProfile: Boolean,
+    @DrawableRes badgeRes: Int?,
     showNotificationDot: Boolean,
     shape: Shape = CircleShape
 ) {
@@ -62,7 +72,7 @@ fun AppIcon(
 
         if (showNotificationDot) NotificationDot(size)
 
-        if (isWorkProfile) {
+        if (badgeRes != null) {
             Box(
                 modifier = Modifier
                     .align(Alignment.BottomStart)
@@ -76,7 +86,7 @@ fun AppIcon(
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    painter = painterResource(R.drawable.ic_work_profile),
+                    painter = painterResource(badgeRes),
                     contentDescription = null,
                     tint = WORK_BADGE_ICON_COLOR,
                     modifier = Modifier.size(size * WORK_ICON_SCALE)

@@ -1,5 +1,6 @@
 package com.minimo.launcher.ui.home
 
+import android.app.Activity
 import android.content.Context
 import android.os.Build
 import android.os.SystemClock
@@ -22,6 +23,7 @@ import com.minimo.launcher.data.FontUse
 import com.minimo.launcher.data.PreferenceHelper
 import com.minimo.launcher.data.entities.AppItemType
 import com.minimo.launcher.data.entities.FolderEntity
+import com.minimo.launcher.data.usecase.AddUpdateAppsUseCase
 import com.minimo.launcher.data.usecase.UpdateAllAppsUseCase
 import com.minimo.launcher.data.usecase.UpdateAllShortcutsUseCase
 import com.minimo.launcher.ui.entities.AppInfo
@@ -34,6 +36,8 @@ import com.minimo.launcher.utils.HomeAppsAlignmentVertical
 import com.minimo.launcher.utils.HomeClockAlignment
 import com.minimo.launcher.utils.MinimoSettingsPosition
 import com.minimo.launcher.utils.NotificationDotsNotifier
+import com.minimo.launcher.utils.PrivateSpaceManager
+import com.minimo.launcher.utils.ProfileType
 import com.minimo.launcher.utils.ScreenTimeHelper
 import com.minimo.launcher.utils.SearchMode
 import com.minimo.launcher.utils.ShortcutsUtils
@@ -59,6 +63,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val updateAllAppsUseCase: UpdateAllAppsUseCase,
+    private val addUpdateAppsUseCase: AddUpdateAppsUseCase,
     private val appInfoDao: AppInfoDao,
     private val folderRepository: FolderRepository,
     private val appUtils: AppUtils,
@@ -69,7 +74,8 @@ class HomeViewModel @Inject constructor(
     private val screenTimeHelper: ScreenTimeHelper,
     private val updateAllShortcutsUseCase: UpdateAllShortcutsUseCase,
     private val shortcutsUtils: ShortcutsUtils,
-    private val appIconRepository: AppIconRepository
+    private val appIconRepository: AppIconRepository,
+    private val privateSpaceManager: PrivateSpaceManager
 ) : ViewModel() {
     private val _state = MutableStateFlow(HomeScreenState())
     val state: StateFlow<HomeScreenState> = _state
@@ -77,6 +83,12 @@ class HomeViewModel @Inject constructor(
     val iconCacheRevision = appIconRepository.cacheRevision
 
     private var lastScreenTimeUpdateTime = 0L
+
+    // Set when the user asks to open the locked private space, so it opens once Android unlocks it.
+    private var expandPrivateSpaceOnUnlock = false
+
+    // Set when that request came from Settings, whose drawer may be scrolled away from the row.
+    private var scrollToPrivateSpaceOnUnlock = false
 
     init {
         viewModelScope.launch {
@@ -101,10 +113,28 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             combine(
                 folderRepository.observeCatalog(),
-                notificationDotsNotifier.notificationDots
-            ) { catalog, dots ->
-                catalog to appUtils.mapToAppInfo(catalog.apps, dots)
-            }.collect { (catalog, dbApps) ->
+                notificationDotsNotifier.notificationDots,
+                privateSpaceManager.loadedState
+            ) { catalog, dots, privateSpace ->
+                Triple(
+                    catalog,
+                    appUtils.mapToAppInfo(catalog.apps, dots, privateSpace),
+                    privateSpace
+                )
+            }.collect { (catalog, mappedApps, privateSpace) ->
+                // Private apps stay out of Home and folders. They reach search only while unlocked.
+                // Filtering in place keeps the database's name order, so search stays sorted.
+                val unlockedHandle = privateSpace.userHandle.takeIf { privateSpace.isUnlocked }
+                val dbApps = mappedApps.filter {
+                    !it.isPrivateSpace || it.userHandle == unlockedHandle
+                }
+                val (privateApps, mainApps) = dbApps.partition { it.isPrivateSpace }
+                val expandPrivateSpace = expandPrivateSpaceOnUnlock && privateSpace.isUnlocked
+                val scrollToPrivateSpace = expandPrivateSpace && scrollToPrivateSpaceOnUnlock
+                if (expandPrivateSpace || !privateSpace.isAvailable) {
+                    expandPrivateSpaceOnUnlock = false
+                    scrollToPrivateSpaceOnUnlock = false
+                }
                 _state.update { state ->
                     val allApps = getCombinedAllApps(
                         dbApps = dbApps,
@@ -114,8 +144,19 @@ class HomeViewModel @Inject constructor(
                     state.copy(
                         initialLoaded = true,
                         allApps = allApps,
-                        favouriteApps = dbApps.filter { it.isFavourite }.sortedBy { it.orderIndex },
-                        folders = projectFolders(catalog.folders, dbApps, state.folders),
+                        favouriteApps = mainApps.filter { it.isFavourite }
+                            .sortedBy { it.orderIndex },
+                        folders = projectFolders(catalog.folders, mainApps, state.folders),
+                        privateSpace = privateSpace,
+                        privateSpaceApps = privateApps.filterNot { it.isHidden }.sortedWith(
+                            compareBy<AppInfo, String>(String.CASE_INSENSITIVE_ORDER) { it.name }
+                                .thenBy { it.id }
+                        ),
+                        // Locking always closes it, so unlocking never reveals apps unasked.
+                        privateSpaceExpanded = privateSpace.isUnlocked &&
+                                (state.privateSpaceExpanded || expandPrivateSpace),
+                        privateSpaceScrollPending = state.privateSpaceScrollPending ||
+                                scrollToPrivateSpace,
                         filteredAllApps = filterDrawerApps(
                             state.searchText, allApps, state.showHiddenAppsInSearch,
                             state.ignoreSpecialCharacters, state.searchMode
@@ -283,10 +324,62 @@ class HomeViewModel @Inject constructor(
 
     fun collapseAllFolders() {
         _state.update { state ->
-            if (state.folders.none { it.isExpanded }) return@update state
-            state.copy(folders = state.folders.map { it.copy(isExpanded = false) })
+            if (state.folders.none { it.isExpanded } && !state.privateSpaceExpanded) {
+                return@update state
+            }
+            state.copy(
+                folders = state.folders.map { it.copy(isExpanded = false) },
+                privateSpaceExpanded = false
+            )
         }
     }
+
+    /** The drawer row: opens or closes the private space, asking Android to unlock it when locked. */
+    fun onPrivateSpaceClick() = showPrivateSpace(toggle = true)
+
+    /** The settings entry: opens the private space in the drawer, unlocking it first when locked. */
+    fun openPrivateSpace() = showPrivateSpace(toggle = false)
+
+    private fun showPrivateSpace(toggle: Boolean) {
+        viewModelScope.launch {
+            // The system calls stay off the main thread; the flag below is set back on it.
+            val privateSpace = withContext(Dispatchers.IO) { privateSpaceManager.refresh() }
+            if (!privateSpace.isAvailable) return@launch
+            if (privateSpace.isLocked) {
+                expandPrivateSpaceOnUnlock = true
+                scrollToPrivateSpaceOnUnlock = !toggle
+                // Android shows its own unlock screen when a PIN, pattern or biometric is needed.
+                privateSpaceManager.unlock()
+            } else {
+                _state.update {
+                    it.copy(
+                        privateSpaceExpanded = !toggle || !it.privateSpaceExpanded,
+                        // The drawer row is already on screen when tapped; Settings may not be.
+                        privateSpaceScrollPending = it.privateSpaceScrollPending || !toggle
+                    )
+                }
+            }
+        }
+    }
+
+    fun onPrivateSpaceScrolled() {
+        _state.update { it.copy(privateSpaceScrollPending = false) }
+    }
+
+    fun onLockPrivateSpaceClick() {
+        expandPrivateSpaceOnUnlock = false
+        scrollToPrivateSpaceOnUnlock = false
+        _state.update { it.copy(privateSpaceExpanded = false) }
+        viewModelScope.launch { privateSpaceManager.lock() }
+    }
+
+    fun onPrivateSpaceInstallAppsClick(activity: Activity) =
+        privateSpaceManager.openInstallApps(activity)
+
+    fun onPrivateSpaceAddFilesClick() = privateSpaceManager.openAddFiles()
+
+    fun onPrivateSpaceSettingsClick(activity: Activity) =
+        privateSpaceManager.openSettings(activity)
 
     fun showFolderPicker(app: AppInfo, fromHome: Boolean) =
         setFolderDialog(FolderDialog.Picker(app, fromHome))
@@ -396,7 +489,7 @@ class HomeViewModel @Inject constructor(
                 alternateAppName = "",
                 isFavourite = false,
                 isHidden = false,
-                isWorkProfile = false,
+                profileType = ProfileType.MAIN,
                 showNotificationDot = false,
                 orderIndex = 0
             )
@@ -414,6 +507,9 @@ class HomeViewModel @Inject constructor(
     fun onAppDrawerClosed() {
         searchState.clearText()
         collapseAllFolders()
+        expandPrivateSpaceOnUnlock = false
+        scrollToPrivateSpaceOnUnlock = false
+        _state.update { it.copy(privateSpaceScrollPending = false) }
     }
 
     fun onToggleFavouriteAppClick(app: AppInfo) {
@@ -543,17 +639,27 @@ class HomeViewModel @Inject constructor(
 
     private fun launchApp(app: AppInfo) {
         when (app.itemType) {
-            AppItemType.APP -> applicationContext.launchApp(
-                app.packageName,
-                app.targetId,
-                app.userHandle
-            )
+            AppItemType.APP -> {
+                val launched = applicationContext.launchApp(
+                    app.packageName,
+                    app.targetId,
+                    app.userHandle
+                )
+                if (!launched) onAppLaunchFailed(app)
+            }
 
             AppItemType.SHORTCUT -> applicationContext.startShortcut(
                 app.packageName,
                 app.targetId,
                 app.userHandle
             )
+        }
+    }
+
+    private fun onAppLaunchFailed(app: AppInfo) {
+        Toast.makeText(applicationContext, R.string.app_launch_failed, Toast.LENGTH_SHORT).show()
+        viewModelScope.launch {
+            addUpdateAppsUseCase.resyncAfterFailedLaunch(app.packageName, app.userHandle)
         }
     }
 
@@ -651,9 +757,11 @@ private fun filterDrawerApps(
     ignoreSpecialCharacters: String,
     searchMode: SearchMode
 ): List<AppInfo> {
-    // Outside search, folder members and favourites stay in their own sections.
+    // Outside search, folder members, private space apps and favourites stay in their own sections.
     if (searchText.isBlank()) {
-        return apps.filterNot { it.isFavourite || it.isHidden || it.folderId != null }
+        return apps.filterNot {
+            it.isFavourite || it.isHidden || it.folderId != null || it.isPrivateSpace
+        }
     }
     val matchesSearch = StringUtils.appSearchMatcher(searchText, searchMode)
     return apps.filter {
