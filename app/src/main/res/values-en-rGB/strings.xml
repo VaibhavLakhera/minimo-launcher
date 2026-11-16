@@ -24,7 +24,6 @@
 
     <string name="theme">Theme</string>
     <string name="orientation">Orientation</string>
-    <string name="orientation_large_screen_note">Android controls orientation on large screens and may ignore this preference.</string>
     <string name="home_apps_alignment_horizontal">Home Apps Alignment Horizontal</string>
     <string name="clock_alignment">Widget Alignment</string>
     <string name="clock_mode">Clock Mode</string>
@@ -89,7 +88,6 @@
     <string name="enable_accessibility_dialog_title">Enable Accessibility</string>
     <string name="enable_accessibility_dialog_message">Accessibility permission is required for double tap to turn off the screen.\nNo data is being collected during the process.\n\nTo allow the permission, enable accessibility for %s in the settings.</string>
     <string name="open_settings">Open Settings</string>
-    <string name="twenty_four_hour_format">24 Hour Format</string>
     <string name="show_battery_level">Show Battery Level</string>
     <string name="favourites_only">Favourites only</string>
     <string name="hidden_only">Hidden only</string>
@@ -213,6 +211,9 @@
     <string name="time_font">Time Font</string>
     <string name="use_app_font">App Font</string>
     <string name="date_format">Date Format</string>
+    <string name="time_format">Time Format</string>
+    <string name="twelve_hour">12-Hour</string>
+    <string name="twenty_four_hour">24-Hour</string>
     <string name="battery_charging">Charging</string>
     <string name="add_to_folder">Add To Folder</string>
     <string name="remove_from_folder">Remove From Folder</string>

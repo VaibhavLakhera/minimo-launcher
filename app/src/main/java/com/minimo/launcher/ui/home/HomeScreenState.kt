@@ -9,6 +9,7 @@ import com.minimo.launcher.utils.Constants
 import com.minimo.launcher.utils.FastScrollerAlignment
 import com.minimo.launcher.utils.HomeClockMode
 import com.minimo.launcher.utils.HomeDateFormat
+import com.minimo.launcher.utils.HomeTimeFormat
 import com.minimo.launcher.utils.MinimoSettingsPosition
 import com.minimo.launcher.utils.PrivateSpaceState
 import com.minimo.launcher.utils.SearchMode
@@ -53,7 +54,7 @@ data class HomeScreenState(
     val autoOpenKeyboardAllApps: Boolean = false,
     val homeClockMode: HomeClockMode = HomeClockMode.Full,
     val doubleTapToLock: Boolean = false,
-    val twentyFourHourFormat: Boolean = false,
+    val timeFormat: HomeTimeFormat = HomeTimeFormat.TwelveHour,
     val showBatteryLevel: Boolean = false,
     val showHiddenAppsInSearch: Boolean = true,
     val drawerSearchBarAtBottom: Boolean = false,

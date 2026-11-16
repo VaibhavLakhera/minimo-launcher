@@ -9,6 +9,7 @@ import com.minimo.launcher.utils.HomeAppsAlignmentVertical
 import com.minimo.launcher.utils.HomeClockAlignment
 import com.minimo.launcher.utils.HomeClockMode
 import com.minimo.launcher.utils.HomeDateFormat
+import com.minimo.launcher.utils.HomeTimeFormat
 import com.minimo.launcher.utils.MinimoSettingsPosition
 import com.minimo.launcher.utils.ScreenOrientation
 import com.minimo.launcher.utils.SearchMode
@@ -50,7 +51,7 @@ data class HomePreferences(
     val autoOpenKeyboardAllApps: Boolean = false,
     val homeClockMode: HomeClockMode = HomeClockMode.Full,
     val doubleTapToLock: Boolean = false,
-    val twentyFourHourFormat: Boolean = false,
+    val timeFormat: HomeTimeFormat = HomeTimeFormat.TwelveHour,
     val showBatteryLevel: Boolean = false,
     val showHiddenAppsInSearch: Boolean = true,
     val drawerSearchBarAtBottom: Boolean = false,
@@ -110,7 +111,7 @@ data class CustomisationPreferences(
     val dynamicTheme: Boolean = false,
     val homeClockMode: HomeClockMode = HomeClockMode.Full,
     val doubleTapToLock: Boolean = false,
-    val twentyFourHourFormat: Boolean = false,
+    val timeFormat: HomeTimeFormat = HomeTimeFormat.TwelveHour,
     val showBatteryLevel: Boolean = false,
     val showHiddenAppsInSearch: Boolean = true,
     val drawerSearchBarAtBottom: Boolean = false,

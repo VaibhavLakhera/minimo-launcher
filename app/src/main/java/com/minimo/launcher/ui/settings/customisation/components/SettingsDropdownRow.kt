@@ -11,19 +11,23 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.minimo.launcher.R
 import com.minimo.launcher.ui.components.DropdownView
 import com.minimo.launcher.ui.theme.Dimens
-import com.minimo.launcher.utils.SearchMode
 
+/**
+ * A settings row with a title (and optional [description] below it) on the left and a dropdown
+ * of [options] on the right. A null [selectedOption] (preferences not loaded yet) shows no label.
+ */
 @Composable
-fun SearchModeDropdown(
-    selectedOption: String,
-    options: List<Pair<SearchMode, String>>,
-    onOptionSelected: (SearchMode) -> Unit
+fun <T> SettingsDropdownRow(
+    title: String,
+    selectedOption: T?,
+    options: List<T>,
+    onOptionSelected: (T) -> Unit,
+    optionLabel: (T) -> String,
+    description: String? = null
 ) {
     Row(
         modifier = Modifier
@@ -31,25 +35,25 @@ fun SearchModeDropdown(
             .padding(horizontal = Dimens.APP_HORIZONTAL_SPACING, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Column(modifier = Modifier.weight(1f)) {
+        if (description == null) {
             Text(
-                text = stringResource(R.string.search_mode),
-                fontSize = 20.sp
+                text = title,
+                fontSize = 20.sp,
+                modifier = Modifier.weight(1f)
             )
-
-            Spacer(modifier = Modifier.height(4.dp))
-
-            Text(text = stringResource(R.string.search_mode_description))
-        }
-
-        Spacer(modifier = Modifier.width(16.dp))
-
-        DropdownView(
-            selectedOption = selectedOption,
-            options = options.map { it.second },
-            onOptionSelected = { selected ->
-                onOptionSelected(options.first { it.second == selected }.first)
+        } else {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(text = title, fontSize = 20.sp)
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(text = description)
             }
+        }
+        Spacer(modifier = Modifier.width(16.dp))
+        DropdownView(
+            selectedOption = selectedOption?.let(optionLabel).orEmpty(),
+            options = options,
+            onOptionSelected = onOptionSelected,
+            optionLabel = optionLabel
         )
     }
 }

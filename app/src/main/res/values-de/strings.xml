@@ -26,7 +26,6 @@
 
     <string name="theme">Design</string>
     <string name="orientation">Ausrichtung</string>
-    <string name="orientation_large_screen_note">Android steuert die Ausrichtung auf großen Bildschirmen und ignoriert möglicherweise diese Einstellung.</string>
     <string name="home_apps_alignment_horizontal">Horizontale Ausrichtung der Start-Apps</string>
     <string name="clock_alignment">Widget-Ausrichtung</string>
     <string name="clock_mode">Uhrmodus</string>
@@ -91,7 +90,6 @@
     <string name="enable_accessibility_dialog_title">Bedienungshilfe aktivieren</string>
     <string name="enable_accessibility_dialog_message">Die Bedienungshilfe-Berechtigung ist erforderlich, um den Bildschirm durch Doppeltippen auszuschalten.\nEs werden dabei keine Daten gesammelt.\n\nUm die Berechtigung zu erteilen, aktivieren Sie die Bedienungshilfe für %s in den Einstellungen.</string>
     <string name="open_settings">Einstellungen öffnen</string>
-    <string name="twenty_four_hour_format">24-Stunden-Format</string>
     <string name="show_battery_level">Akkustand anzeigen</string>
     <string name="favourites_only">Nur Favoriten</string>
     <string name="hidden_only">Nur ausgeblendete</string>
@@ -213,6 +211,9 @@
     <string name="time_font">Uhrzeitschrift</string>
     <string name="use_app_font">App-Schrift</string>
     <string name="date_format">Datumsformat</string>
+    <string name="time_format">Zeitformat</string>
+    <string name="twelve_hour">12-Stunden</string>
+    <string name="twenty_four_hour">24-Stunden</string>
     <string name="battery_charging">Wird geladen</string>
     <string name="add_to_folder">Zum Ordner hinzufügen</string>
     <string name="remove_from_folder">Aus Ordner entfernen</string>

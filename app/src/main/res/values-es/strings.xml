@@ -24,7 +24,6 @@
 
     <string name="theme">Tema</string>
     <string name="orientation">Orientación</string>
-    <string name="orientation_large_screen_note">Android controla la orientación en pantallas grandes y puede ignorar esta preferencia.</string>
     <string name="home_apps_alignment_horizontal">Alineación horizontal de apps en inicio</string>
     <string name="clock_alignment">Alineación de widgets</string>
     <string name="clock_mode">Modo de reloj</string>
@@ -89,7 +88,6 @@
     <string name="enable_accessibility_dialog_title">Activar accesibilidad</string>
     <string name="enable_accessibility_dialog_message">El permiso de accesibilidad es necesario para apagar la pantalla con un doble toque.\nNo se recopilan datos durante el proceso.\n\nPara conceder el permiso, activa la accesibilidad para %s en los ajustes.</string>
     <string name="open_settings">Abrir ajustes</string>
-    <string name="twenty_four_hour_format">Formato de 24 horas</string>
     <string name="show_battery_level">Mostrar nivel de batería</string>
     <string name="favourites_only">Solo favoritos</string>
     <string name="hidden_only">Solo ocultas</string>
@@ -213,6 +211,9 @@
     <string name="time_font">Fuente de hora</string>
     <string name="use_app_font">Fuente de la app</string>
     <string name="date_format">Formato de fecha</string>
+    <string name="time_format">Formato de hora</string>
+    <string name="twelve_hour">12 horas</string>
+    <string name="twenty_four_hour">24 horas</string>
     <string name="battery_charging">Cargando</string>
     <string name="add_to_folder">Añadir a carpeta</string>
     <string name="remove_from_folder">Quitar de la carpeta</string>

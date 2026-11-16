@@ -269,7 +269,7 @@ class HomeViewModel @Inject constructor(
                             autoOpenKeyboardAllApps = prefs.autoOpenKeyboardAllApps,
                             homeClockMode = prefs.homeClockMode,
                             doubleTapToLock = prefs.doubleTapToLock,
-                            twentyFourHourFormat = prefs.twentyFourHourFormat,
+                            timeFormat = prefs.timeFormat,
                             showBatteryLevel = prefs.showBatteryLevel,
                             showHiddenAppsInSearch = prefs.showHiddenAppsInSearch,
                             drawerSearchBarAtBottom = prefs.drawerSearchBarAtBottom,

@@ -24,7 +24,6 @@
 
     <string name="theme">Тема</string>
     <string name="orientation">Ориентация</string>
-    <string name="orientation_large_screen_note">На больших экранах ориентацией управляет Android, и эта настройка может не учитываться.</string>
     <string name="home_apps_alignment_horizontal">Выравнивание приложений на главном экране по горизонтали</string>
     <string name="clock_alignment">Выравнивание виджета</string>
     <string name="clock_mode">Режим часов</string>
@@ -91,7 +90,6 @@
     <string name="enable_accessibility_dialog_title">Включите специальные возможности</string>
     <string name="enable_accessibility_dialog_message">Разрешение специальных возможностей нужно, чтобы выключать экран двойным касанием.\nНикакие данные при этом не собираются.\n\nЧтобы дать разрешение, включите специальные возможности для %s в настройках.</string>
     <string name="open_settings">Открыть настройки</string>
-    <string name="twenty_four_hour_format">24-часовой формат</string>
     <string name="show_battery_level">Показывать уровень заряда</string>
     <string name="favourites_only">Только избранные</string>
     <string name="hidden_only">Только скрытые</string>
@@ -215,6 +213,9 @@
     <string name="time_font">Шрифт времени</string>
     <string name="use_app_font">Шрифт приложения</string>
     <string name="date_format">Формат даты</string>
+    <string name="time_format">Формат времени</string>
+    <string name="twelve_hour">12-часовой</string>
+    <string name="twenty_four_hour">24-часовой</string>
     <string name="battery_charging">Заряжается</string>
     <string name="add_to_folder">Добавить в папку</string>
     <string name="remove_from_folder">Убрать из папки</string>

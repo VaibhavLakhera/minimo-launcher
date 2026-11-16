@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.Dp
 import com.minimo.launcher.R
 import com.minimo.launcher.ui.theme.Dimens
@@ -103,9 +104,12 @@ fun SearchItem(
             disabledPlaceholderColor = textFieldColors.unfocusedPlaceholderColor
         ),
         keyboardOptions = if (onKeyboardDone != null) {
-            KeyboardOptions(imeAction = ImeAction.Done)
+            KeyboardOptions(
+                capitalization = KeyboardCapitalization.Sentences,
+                imeAction = ImeAction.Done
+            )
         } else {
-            KeyboardOptions.Default
+            KeyboardOptions(capitalization = KeyboardCapitalization.Sentences)
         },
         onKeyboardAction = if (onKeyboardDone != null) {
             { _ -> onKeyboardDone() }
