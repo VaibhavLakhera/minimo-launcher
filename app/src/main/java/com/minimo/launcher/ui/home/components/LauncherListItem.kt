@@ -27,6 +27,7 @@ import com.minimo.launcher.ui.home.HomeViewModel
 import com.minimo.launcher.ui.home.LauncherRow
 import com.minimo.launcher.ui.home.PRIVATE_SPACE_ROW_ID
 import com.minimo.launcher.ui.theme.Dimens
+import com.minimo.launcher.utils.canUninstallApp
 import com.minimo.launcher.utils.findActivity
 import com.minimo.launcher.utils.launchAppInfo
 import com.minimo.launcher.utils.uninstallApp
@@ -175,6 +176,7 @@ fun LauncherListItem(
                 onToggleHideClick = { viewModel.onToggleHideClick(app) },
                 onAppInfoClick = { context.launchAppInfo(app) },
                 onLaunchDelayClick = { viewModel.onLaunchDelayClick(app) },
+                canUninstall = { context.canUninstallApp(app) },
                 onUninstallClick = { context.uninstallApp(app) },
                 onDeleteShortcutClick = { onDeleteShortcut(app) },
                 folderId = app.folderId,

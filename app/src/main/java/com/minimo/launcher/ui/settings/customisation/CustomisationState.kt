@@ -29,6 +29,7 @@ data class CustomisationState(
     val homeAppsAlignmentHorizontal: HomeAppsAlignmentHorizontal? = null,
     val drawerAppsAlignmentHorizontal: HomeAppsAlignmentHorizontal? = null,
     val homeAppsAlignmentVertical: HomeAppsAlignmentVertical? = null,
+    val drawerAppsAlignmentVertical: HomeAppsAlignmentVertical? = null,
     val homeClockAlignment: HomeClockAlignment? = null,
     val showHomeClock: Boolean = false,
     val homeTimeTextSize: Int? = null,

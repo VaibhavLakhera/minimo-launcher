@@ -141,6 +141,7 @@
     <string name="bottom">Bottom</string>
     <string name="home_apps_alignment_vertical">Home Apps Alignment Vertical</string>
     <string name="drawer_apps_alignment_horizontal">Drawer Apps Alignment Horizontal</string>
+    <string name="drawer_apps_alignment_vertical">Drawer Apps Alignment Vertical</string>
     <string name="enable_wallpaper">Enable Wallpaper on Home</string>
     <string name="enable_wallpaper_on_drawer">Enable Wallpaper on Drawer</string>
     <string name="dim_wallpaper">Dim Wallpaper</string>

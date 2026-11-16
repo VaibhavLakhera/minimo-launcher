@@ -42,6 +42,7 @@ data class HomeScreenState(
     val appsArrangementHorizontal: Arrangement.Horizontal = Arrangement.Start,
     val drawerAppsArrangementHorizontal: Arrangement.Horizontal = Arrangement.Start,
     val appsArrangementVertical: Arrangement.Vertical = Arrangement.Center,
+    val drawerAppsArrangementVertical: Arrangement.Vertical = Arrangement.Top,
     val showHomeClock: Boolean = false,
     val homeTimeTextSize: Int? = null,
     val homeDateTextSize: Int? = null,

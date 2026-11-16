@@ -12,13 +12,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.minimo.launcher.R
 import com.minimo.launcher.ui.components.DropdownView
 import com.minimo.launcher.ui.theme.Dimens
 import com.minimo.launcher.utils.HomeAppsAlignmentVertical
 
 @Composable
 fun AppsAlignmentVerticalDropdown(
+    titleRes: Int,
     selectedOption: String,
     options: List<Pair<HomeAppsAlignmentVertical, String>>,
     onOptionSelected: (HomeAppsAlignmentVertical) -> Unit
@@ -33,7 +33,7 @@ fun AppsAlignmentVerticalDropdown(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            stringResource(R.string.home_apps_alignment_vertical),
+            stringResource(titleRes),
             modifier = Modifier.weight(1f),
             fontSize = 20.sp
         )

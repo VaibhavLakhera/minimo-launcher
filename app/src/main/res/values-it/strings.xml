@@ -141,6 +141,7 @@
     <string name="bottom">In basso</string>
     <string name="home_apps_alignment_vertical">Allineamento verticale app nella home</string>
     <string name="drawer_apps_alignment_horizontal">Allineamento orizzontale app nel drawer</string>
+    <string name="drawer_apps_alignment_vertical">Allineamento verticale app nel drawer</string>
     <string name="enable_wallpaper">Abilita sfondo nella schermata Home</string>
     <string name="enable_wallpaper_on_drawer">Abilita sfondo nel cassetto delle app</string>
     <string name="dim_wallpaper">Oscura sfondo</string>

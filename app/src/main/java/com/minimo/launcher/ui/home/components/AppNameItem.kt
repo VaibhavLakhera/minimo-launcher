@@ -63,6 +63,8 @@ fun AppNameItem(
     onAppInfoClick: () -> Unit,
     onLaunchDelayClick: () -> Unit,
     onLongClick: () -> Unit = { },
+    // Checked only when the menu opens, so list rows never query the package manager.
+    canUninstall: () -> Boolean = { true },
     onUninstallClick: () -> Unit,
     onDeleteShortcutClick: () -> Unit,
     verticalPadding: Dp = 16.dp,
@@ -213,6 +215,7 @@ fun AppNameItem(
             isFavourite = isFavourite,
             isHidden = isHidden,
             isShortcut = isShortcut,
+            canUninstall = remember { canUninstall() },
             canAddToFavourites = canAddToFavourites,
             statusBarVisible = bottomSheetStatusBarVisible,
             navigationBarVisible = bottomSheetNavigationBarVisible,

@@ -19,6 +19,7 @@ fun AppListBottomSheetDialog(
     isFavourite: Boolean,
     isHidden: Boolean,
     isShortcut: Boolean,
+    canUninstall: Boolean = true,
     canAddToFavourites: Boolean = true,
     onDismiss: () -> Unit,
     statusBarVisible: Boolean = true,
@@ -87,10 +88,12 @@ fun AppListBottomSheetDialog(
                     text = stringResource(R.string.app_info),
                     onClick = onAppInfoClick
                 )
-                AppBottomSheetText(
-                    text = stringResource(R.string.uninstall),
-                    onClick = onUninstallClick
-                )
+                if (canUninstall) {
+                    AppBottomSheetText(
+                        text = stringResource(R.string.uninstall),
+                        onClick = onUninstallClick
+                    )
+                }
             }
         }
     }

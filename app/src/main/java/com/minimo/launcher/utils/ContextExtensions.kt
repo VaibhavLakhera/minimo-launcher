@@ -7,6 +7,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
+import android.content.pm.ApplicationInfo
 import android.content.pm.LauncherApps
 import android.net.Uri
 import android.os.Build
@@ -67,6 +68,22 @@ fun Context.startShortcut(
         Timber.e(exception)
     }
     return false
+}
+
+/** System apps cannot be removed, so Android only answers an uninstall request with a toast. */
+fun Context.canUninstallApp(appInfo: AppInfo): Boolean {
+    return !appInfo.isShortcut && try {
+        val userManager = getSystemService(Context.USER_SERVICE) as UserManager
+        val userHandle = userManager.userProfiles.find { it.hashCode() == appInfo.userHandle }
+            ?: return false
+        val launcherApps = getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
+        val info: ApplicationInfo? =
+            launcherApps.getApplicationInfo(appInfo.packageName, 0, userHandle)
+        info == null || info.flags and ApplicationInfo.FLAG_SYSTEM == 0
+    } catch (exception: Exception) {
+        Timber.e(exception)
+        true
+    }
 }
 
 fun Context.uninstallApp(appInfo: AppInfo) {

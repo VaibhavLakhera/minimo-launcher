@@ -298,6 +298,8 @@ fun AppDrawerScreen(
                 )
             },
         containerColor = Color.Transparent,
+        // Ripples take the content colour, which would stay black over a transparent container.
+        contentColor = textColor,
         contentWindowInsets = if (bottomSearchVisible) {
             ScaffoldDefaults
                 .contentWindowInsets
@@ -345,7 +347,8 @@ fun AppDrawerScreen(
                         bottom = 16.dp,
                         start = startContentPadding,
                         end = endContentPadding
-                    )
+                    ),
+                    verticalArrangement = state.drawerAppsArrangementVertical
                 ) {
                     items(items = drawerRows, key = { it.key }) { row ->
                         if (row is LauncherRow.App && row.app.packageName == Constants.MINIMO_SETTINGS_PACKAGE) {

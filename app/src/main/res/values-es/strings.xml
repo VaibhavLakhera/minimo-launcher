@@ -139,6 +139,7 @@
     <string name="bottom">Abajo</string>
     <string name="home_apps_alignment_vertical">Alineación vertical de apps en inicio</string>
     <string name="drawer_apps_alignment_horizontal">Alineación horizontal de apps en el cajón</string>
+    <string name="drawer_apps_alignment_vertical">Alineación vertical de apps en el cajón</string>
     <string name="enable_wallpaper">Activar fondo de pantalla en la pantalla de inicio</string>
     <string name="enable_wallpaper_on_drawer">Activar fondo de pantalla en el cajón de aplicaciones</string>
     <string name="dim_wallpaper">Atenuar fondo de pantalla</string>

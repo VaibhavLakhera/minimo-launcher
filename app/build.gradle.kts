@@ -18,7 +18,7 @@ android {
         applicationId = "com.minimo.launcher"
         minSdk = 26
         targetSdk = 37
-        versionCode = 157
+        versionCode = 158
         versionName = "1.38.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

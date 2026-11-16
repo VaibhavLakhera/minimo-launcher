@@ -449,6 +449,7 @@ fun CustomisationScreen(
             )
 
             AppsAlignmentVerticalDropdown(
+                titleRes = R.string.home_apps_alignment_vertical,
                 selectedOption = StringUtils.homeAppsAlignmentVerticalText(
                     context = context,
                     alignment = state.homeAppsAlignmentVertical
@@ -491,6 +492,18 @@ fun CustomisationScreen(
                     ),
                 ),
                 onOptionSelected = viewModel::onDrawerAppsAlignmentHorizontalChanged
+            )
+
+            AppsAlignmentVerticalDropdown(
+                titleRes = R.string.drawer_apps_alignment_vertical,
+                selectedOption = StringUtils.homeAppsAlignmentVerticalText(
+                    context = context,
+                    alignment = state.drawerAppsAlignmentVertical
+                ),
+                options = HomeAppsAlignmentVertical.entries.map { alignment ->
+                    alignment to StringUtils.homeAppsAlignmentVerticalText(context, alignment)
+                },
+                onOptionSelected = viewModel::onDrawerAppsAlignmentVerticalChanged
             )
 
             HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))

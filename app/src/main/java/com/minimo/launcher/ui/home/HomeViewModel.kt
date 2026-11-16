@@ -201,11 +201,10 @@ class HomeViewModel @Inject constructor(
                                 HomeAppsAlignmentHorizontal.End -> Arrangement.End
                             }
 
-                        val homeAppsArrangementVertical = when (prefs.homeAppsAlignmentVertical) {
-                            HomeAppsAlignmentVertical.Top -> Arrangement.Top
-                            HomeAppsAlignmentVertical.Center -> Arrangement.Center
-                            HomeAppsAlignmentVertical.Bottom -> Arrangement.Bottom
-                        }
+                        val homeAppsArrangementVertical =
+                            prefs.homeAppsAlignmentVertical.toArrangement()
+                        val drawerAppsArrangementVertical =
+                            prefs.drawerAppsAlignmentVertical.toArrangement()
 
                         val homeClockAlignment = when (prefs.homeClockAlignment) {
                             HomeClockAlignment.Start -> Alignment.Start
@@ -259,6 +258,7 @@ class HomeViewModel @Inject constructor(
                             appsArrangementHorizontal = homeAppsArrangementHorizontal,
                             drawerAppsArrangementHorizontal = drawerAppsArrangementHorizontal,
                             appsArrangementVertical = homeAppsArrangementVertical,
+                            drawerAppsArrangementVertical = drawerAppsArrangementVertical,
                             homeClockAlignment = homeClockAlignment,
                             showHomeClock = prefs.showHomeClock,
                             homeTimeTextSize = prefs.homeTimeTextSize,
@@ -638,6 +638,8 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun launchApp(app: AppInfo) {
+        // Returning from the app should show the launcher with its folders closed.
+        collapseAllFolders()
         when (app.itemType) {
             AppItemType.APP -> {
                 val launched = applicationContext.launchApp(
@@ -748,6 +750,12 @@ class HomeViewModel @Inject constructor(
     fun onDismissWhatsNew() {
         _state.update { it.copy(whatsNewDescription = null) }
     }
+}
+
+private fun HomeAppsAlignmentVertical.toArrangement(): Arrangement.Vertical = when (this) {
+    HomeAppsAlignmentVertical.Top -> Arrangement.Top
+    HomeAppsAlignmentVertical.Center -> Arrangement.Center
+    HomeAppsAlignmentVertical.Bottom -> Arrangement.Bottom
 }
 
 private fun filterDrawerApps(

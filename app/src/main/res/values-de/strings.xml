@@ -141,6 +141,7 @@
     <string name="bottom">Unten</string>
     <string name="home_apps_alignment_vertical">Vertikale Ausrichtung der Start-Apps</string>
     <string name="drawer_apps_alignment_horizontal">Horizontale Ausrichtung der Schubladen-Apps</string>
+    <string name="drawer_apps_alignment_vertical">Vertikale Ausrichtung der Schubladen-Apps</string>
     <string name="enable_wallpaper">Hintergrundbild auf dem Startbildschirm aktivieren</string>
     <string name="enable_wallpaper_on_drawer">Hintergrundbild in der App-Übersicht aktivieren</string>
     <string name="dim_wallpaper">Hintergrundbild abdunkeln</string>

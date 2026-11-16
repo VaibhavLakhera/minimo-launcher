@@ -173,7 +173,10 @@ fun HomeScreen(
                             context.lockScreen()
                         }
                     },
-                    onLongPress = { onSettingsClick() }
+                    onLongPress = {
+                        viewModel.collapseAllFolders()
+                        onSettingsClick()
+                    }
                 )
             }
             .pointerInput(swipeHorizontalThresholdPx) {
@@ -195,6 +198,12 @@ fun HomeScreen(
     ) {
         Scaffold(
             containerColor = Color.Transparent,
+            // Ripples take the content colour, which would stay black over a transparent container.
+            contentColor = when {
+                !state.enableWallpaper -> MaterialTheme.colorScheme.onSurface
+                state.lightTextOnWallpaper -> Color.White
+                else -> Color.Black
+            },
             contentWindowInsets = WindowInsets(0, 0, 0, 0)
         ) { paddingValues ->
             if (state.initialLoaded) {
