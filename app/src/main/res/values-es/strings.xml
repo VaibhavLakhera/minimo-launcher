@@ -205,7 +205,7 @@
 
     <!-- Current release notes. Update for each release, or leave blank to skip the dialog. -->
     <string name="whats_new_title">Novedades</string>
-    <string name="whats_new_description">• Se añadió compatibilidad con paquetes de iconos personalizados.\n• Se añadió compatibilidad con fuentes personalizadas (.ttf).\n• Se añadió el tema Gruvbox, que sigue el modo oscuro del sistema.\n• La búsqueda ahora ignora los acentos; por ejemplo, «skoda» encuentra «Škoda».\n• Las carpetas ahora se cierran automáticamente al abrir o cerrar el cajón de apps.\n• Únete a la comunidad de Reddit en /r/MinimoLauncher</string>
+    <string name="whats_new_description">• Se añadió compatibilidad con el espacio privado.\n• Se añadió la opción Formato de hora.\n• Se añadió la alineación vertical para las apps del cajón.\n• Las carpetas ahora se cierran al abrir una app.\n• «Desinstalar» ahora solo aparece en las apps que se pueden desinstalar.\n• Se corrigió el efecto táctil en el tema oscuro.\n• Se añadió la traducción al ruso.\n• Únete a la comunidad de Reddit en /r/MinimoLauncher</string>
     <string name="time_size">Tamaño de hora</string>
     <string name="date_battery_size">Tamaño de fecha y batería</string>
     <string name="time_font">Fuente de hora</string>

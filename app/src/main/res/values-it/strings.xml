@@ -205,7 +205,7 @@
 
     <!-- Current release notes. Update for each release, or leave blank to skip the dialog. -->
     <string name="whats_new_title">Novità</string>
-    <string name="whats_new_description">• Aggiunto il supporto per i pacchetti di icone personalizzati.\n• Aggiunto il supporto per i caratteri personalizzati (.ttf).\n• Aggiunto il tema Gruvbox, che segue la modalità scura di sistema.\n• La ricerca ora ignora gli accenti, ad esempio «skoda» trova «Škoda».\n• Le cartelle ora si chiudono automaticamente quando il drawer viene aperto o chiuso.\n• Unisciti alla community di Reddit su /r/MinimoLauncher</string>
+    <string name="whats_new_description">• Aggiunto il supporto per lo spazio privato.\n• Aggiunta l\'opzione Formato ora.\n• Aggiunto l\'allineamento verticale per le app nel drawer.\n• Le cartelle ora si chiudono quando avvii un\'app.\n• «Disinstalla» ora appare solo per le app che possono essere disinstallate.\n• Corretto l\'effetto al tocco nel tema scuro.\n• Aggiunta la traduzione in russo.\n• Unisciti alla community di Reddit su /r/MinimoLauncher</string>
     <string name="time_size">Dimensione ora</string>
     <string name="date_battery_size">Dimensione data e batteria</string>
     <string name="time_font">Carattere ora</string>

@@ -205,7 +205,7 @@
 
     <!-- Current release notes. Update for each release, or leave blank to skip the dialog. -->
     <string name="whats_new_title">What\'s New</string>
-    <string name="whats_new_description">• Added support for custom icon packs.\n• Added support for custom fonts (.ttf).\n• Added the Gruvbox theme, which follows the system dark mode.\n• Search now ignores accents, e.g. \"skoda\" finds \"Škoda\".\n• Folders now close automatically when the app drawer opens or closes.\n• Join reddit community at /r/MinimoLauncher</string>
+    <string name="whats_new_description">• Added support for Private Space.\n• Added Time Format option.\n• Added vertical alignment for drawer apps.\n• Folders now close when you launch an app.\n• \"Uninstall\" now only shows for apps that can be uninstalled.\n• Fixed the touch ripple in dark theme.\n• Added Russian translation.\n• Join reddit community at /r/MinimoLauncher</string>
     <string name="time_size">Time Size</string>
     <string name="date_battery_size">Date &amp; Battery Size</string>
     <string name="time_font">Time Font</string>

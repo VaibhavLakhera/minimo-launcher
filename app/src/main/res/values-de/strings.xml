@@ -205,7 +205,7 @@
 
     <!-- Current release notes. Update for each release, or leave blank to skip the dialog. -->
     <string name="whats_new_title">Was ist neu?</string>
-    <string name="whats_new_description">• Unterstützung für eigene Symbolpakete hinzugefügt.\n• Unterstützung für eigene Schriftarten (.ttf) hinzugefügt.\n• Neues Design „Gruvbox“ hinzugefügt, das dem Dunkelmodus des Systems folgt.\n• Die Suche ignoriert jetzt Akzente, z. B. findet „skoda“ auch „Škoda“.\n• Ordner schließen sich jetzt automatisch, wenn die App-Schublade geöffnet oder geschlossen wird.\n• Tritt der Reddit-Community unter /r/MinimoLauncher bei</string>
+    <string name="whats_new_description">• Unterstützung für den privaten Bereich hinzugefügt.\n• Option „Zeitformat“ hinzugefügt.\n• Vertikale Ausrichtung für Apps in der App-Schublade hinzugefügt.\n• Ordner schließen sich jetzt, wenn du eine App startest.\n• „Deinstallieren“ wird jetzt nur bei Apps angezeigt, die deinstalliert werden können.\n• Berührungseffekt im dunklen Design behoben.\n• Russische Übersetzung hinzugefügt.\n• Tritt der Reddit-Community unter /r/MinimoLauncher bei</string>
     <string name="time_size">Uhrzeitgröße</string>
     <string name="date_battery_size">Größe von Datum und Akku</string>
     <string name="time_font">Uhrzeitschrift</string>
