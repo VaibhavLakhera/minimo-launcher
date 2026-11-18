@@ -64,29 +64,22 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.minimo.launcher.R
 import com.minimo.launcher.ui.settings.app_picker.AppPickerDialog
-import com.minimo.launcher.ui.settings.customisation.components.AppIconAlignmentDropdown
 import com.minimo.launcher.ui.settings.customisation.components.AppIconSizeSlider
 import com.minimo.launcher.ui.settings.customisation.components.AppSizeSlider
-import com.minimo.launcher.ui.settings.customisation.components.AppsAlignmentHorizontalDropdown
-import com.minimo.launcher.ui.settings.customisation.components.AppsAlignmentVerticalDropdown
-import com.minimo.launcher.ui.settings.customisation.components.ClockAlignmentDropdown
-import com.minimo.launcher.ui.settings.customisation.components.ClockModeDropdown
 import com.minimo.launcher.ui.settings.customisation.components.DateFormatDropdown
 import com.minimo.launcher.ui.settings.customisation.components.DimPercentageSlider
 import com.minimo.launcher.ui.settings.customisation.components.EnableAccessibilityDialog
 import com.minimo.launcher.ui.settings.customisation.components.EnableAppUsageDialog
 import com.minimo.launcher.ui.settings.customisation.components.EnableNotificationsDialog
 import com.minimo.launcher.ui.settings.customisation.components.EnableSetWallpaperToThemeColorDialog
-import com.minimo.launcher.ui.settings.customisation.components.FastScrollerAlignmentDropdown
 import com.minimo.launcher.ui.settings.customisation.components.FontDropdown
 import com.minimo.launcher.ui.settings.customisation.components.HomeTextSizeSlider
 import com.minimo.launcher.ui.settings.customisation.components.IconPackDropdown
 import com.minimo.launcher.ui.settings.customisation.components.IgnoreSpecialCharacters
-import com.minimo.launcher.ui.settings.customisation.components.MinimoSettingsPositionDropdown
-import com.minimo.launcher.ui.settings.customisation.components.OrientationDropdown
 import com.minimo.launcher.ui.settings.customisation.components.SearchBarBorderSlider
-import com.minimo.launcher.ui.settings.customisation.components.SearchModeDropdown
+import com.minimo.launcher.ui.settings.customisation.components.SettingsDropdownRow
 import com.minimo.launcher.ui.settings.customisation.components.ThemeDropdown
+import com.minimo.launcher.ui.settings.customisation.components.TimeFormatDropdown
 import com.minimo.launcher.ui.settings.customisation.components.ToggleItem
 import com.minimo.launcher.ui.theme.Dimens
 import com.minimo.launcher.ui.theme.ThemeMode
@@ -222,26 +215,12 @@ fun CustomisationScreen(
                 .fillMaxSize()
                 .padding(paddingValues),
         ) {
-            OrientationDropdown(
-                selectedOption = StringUtils.screenOrientationText(
-                    context = context,
-                    orientation = state.screenOrientation
-                ),
-                options = listOf(
-                    ScreenOrientation.Portrait to StringUtils.screenOrientationText(
-                        context,
-                        ScreenOrientation.Portrait
-                    ),
-                    ScreenOrientation.Landscape to StringUtils.screenOrientationText(
-                        context,
-                        ScreenOrientation.Landscape
-                    ),
-                    ScreenOrientation.Auto to StringUtils.screenOrientationText(
-                        context,
-                        ScreenOrientation.Auto
-                    )
-                ),
-                onOptionSelected = viewModel::onScreenOrientationChanged
+            SettingsDropdownRow(
+                title = stringResource(R.string.orientation),
+                selectedOption = state.screenOrientation,
+                options = ScreenOrientation.entries,
+                onOptionSelected = viewModel::onScreenOrientationChanged,
+                optionLabel = { StringUtils.screenOrientationText(context, it) }
             )
 
             IconPackDropdown(
@@ -345,23 +324,12 @@ fun CustomisationScreen(
             )
 
             if (state.showAppIconInHome) {
-                AppIconAlignmentDropdown(
-                    titleRes = R.string.home_icon_alignment,
-                    selectedOption = StringUtils.appIconAlignmentText(
-                        context,
-                        state.homeAppIconAlignment
-                    ),
-                    options = listOf(
-                        AppIconAlignment.Left to StringUtils.appIconAlignmentText(
-                            context,
-                            AppIconAlignment.Left
-                        ),
-                        AppIconAlignment.Right to StringUtils.appIconAlignmentText(
-                            context,
-                            AppIconAlignment.Right
-                        )
-                    ),
-                    onOptionSelected = viewModel::onHomeAppIconAlignmentChanged
+                SettingsDropdownRow(
+                    title = stringResource(R.string.home_icon_alignment),
+                    selectedOption = state.homeAppIconAlignment,
+                    options = AppIconAlignment.entries,
+                    onOptionSelected = viewModel::onHomeAppIconAlignmentChanged,
+                    optionLabel = { StringUtils.appIconAlignmentText(context, it) }
                 )
             }
 
@@ -372,23 +340,12 @@ fun CustomisationScreen(
             )
 
             if (state.showAppIconInDrawer) {
-                AppIconAlignmentDropdown(
-                    titleRes = R.string.drawer_icon_alignment,
-                    selectedOption = StringUtils.appIconAlignmentText(
-                        context,
-                        state.drawerAppIconAlignment
-                    ),
-                    options = listOf(
-                        AppIconAlignment.Left to StringUtils.appIconAlignmentText(
-                            context,
-                            AppIconAlignment.Left
-                        ),
-                        AppIconAlignment.Right to StringUtils.appIconAlignmentText(
-                            context,
-                            AppIconAlignment.Right
-                        )
-                    ),
-                    onOptionSelected = viewModel::onDrawerAppIconAlignmentChanged
+                SettingsDropdownRow(
+                    title = stringResource(R.string.drawer_icon_alignment),
+                    selectedOption = state.drawerAppIconAlignment,
+                    options = AppIconAlignment.entries,
+                    onOptionSelected = viewModel::onDrawerAppIconAlignmentChanged,
+                    optionLabel = { StringUtils.appIconAlignmentText(context, it) }
                 )
             }
 
@@ -426,71 +383,36 @@ fun CustomisationScreen(
 
             HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
 
-            AppsAlignmentHorizontalDropdown(
-                selectedOption = StringUtils.homeAppsAlignmentHorizontalText(
-                    context = context,
-                    alignment = state.homeAppsAlignmentHorizontal
-                ),
-                options = listOf(
-                    HomeAppsAlignmentHorizontal.Start to StringUtils.homeAppsAlignmentHorizontalText(
-                        context,
-                        HomeAppsAlignmentHorizontal.Start
-                    ),
-                    HomeAppsAlignmentHorizontal.Center to StringUtils.homeAppsAlignmentHorizontalText(
-                        context,
-                        HomeAppsAlignmentHorizontal.Center
-                    ),
-                    HomeAppsAlignmentHorizontal.End to StringUtils.homeAppsAlignmentHorizontalText(
-                        context,
-                        HomeAppsAlignmentHorizontal.End
-                    ),
-                ),
-                onOptionSelected = viewModel::onHomeAppsAlignmentHorizontalChanged
+            SettingsDropdownRow(
+                title = stringResource(R.string.home_apps_alignment_horizontal),
+                selectedOption = state.homeAppsAlignmentHorizontal,
+                options = HomeAppsAlignmentHorizontal.entries,
+                onOptionSelected = viewModel::onHomeAppsAlignmentHorizontalChanged,
+                optionLabel = { StringUtils.homeAppsAlignmentHorizontalText(context, it) }
             )
 
-            AppsAlignmentVerticalDropdown(
-                selectedOption = StringUtils.homeAppsAlignmentVerticalText(
-                    context = context,
-                    alignment = state.homeAppsAlignmentVertical
-                ),
-                options = listOf(
-                    HomeAppsAlignmentVertical.Top to StringUtils.homeAppsAlignmentVerticalText(
-                        context,
-                        HomeAppsAlignmentVertical.Top
-                    ),
-                    HomeAppsAlignmentVertical.Center to StringUtils.homeAppsAlignmentVerticalText(
-                        context,
-                        HomeAppsAlignmentVertical.Center
-                    ),
-                    HomeAppsAlignmentVertical.Bottom to StringUtils.homeAppsAlignmentVerticalText(
-                        context,
-                        HomeAppsAlignmentVertical.Bottom
-                    ),
-                ),
-                onOptionSelected = viewModel::onHomeAppsAlignmentVerticalChanged
+            SettingsDropdownRow(
+                title = stringResource(R.string.home_apps_alignment_vertical),
+                selectedOption = state.homeAppsAlignmentVertical,
+                options = HomeAppsAlignmentVertical.entries,
+                onOptionSelected = viewModel::onHomeAppsAlignmentVerticalChanged,
+                optionLabel = { StringUtils.homeAppsAlignmentVerticalText(context, it) }
             )
 
-            AppsAlignmentHorizontalDropdown(
-                titleRes = R.string.drawer_apps_alignment_horizontal,
-                selectedOption = StringUtils.homeAppsAlignmentHorizontalText(
-                    context = context,
-                    alignment = state.drawerAppsAlignmentHorizontal
-                ),
-                options = listOf(
-                    HomeAppsAlignmentHorizontal.Start to StringUtils.homeAppsAlignmentHorizontalText(
-                        context,
-                        HomeAppsAlignmentHorizontal.Start
-                    ),
-                    HomeAppsAlignmentHorizontal.Center to StringUtils.homeAppsAlignmentHorizontalText(
-                        context,
-                        HomeAppsAlignmentHorizontal.Center
-                    ),
-                    HomeAppsAlignmentHorizontal.End to StringUtils.homeAppsAlignmentHorizontalText(
-                        context,
-                        HomeAppsAlignmentHorizontal.End
-                    ),
-                ),
-                onOptionSelected = viewModel::onDrawerAppsAlignmentHorizontalChanged
+            SettingsDropdownRow(
+                title = stringResource(R.string.drawer_apps_alignment_horizontal),
+                selectedOption = state.drawerAppsAlignmentHorizontal,
+                options = HomeAppsAlignmentHorizontal.entries,
+                onOptionSelected = viewModel::onDrawerAppsAlignmentHorizontalChanged,
+                optionLabel = { StringUtils.homeAppsAlignmentHorizontalText(context, it) }
+            )
+
+            SettingsDropdownRow(
+                title = stringResource(R.string.drawer_apps_alignment_vertical),
+                selectedOption = state.drawerAppsAlignmentVertical,
+                options = HomeAppsAlignmentVertical.entries,
+                onOptionSelected = viewModel::onDrawerAppsAlignmentVerticalChanged,
+                optionLabel = { StringUtils.homeAppsAlignmentVerticalText(context, it) }
             )
 
             HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
@@ -503,60 +425,24 @@ fun CustomisationScreen(
             if (state.showHomeClock || state.showBatteryLevel || state.showScreenTimeWidget) {
                 Spacer(modifier = Modifier.height(4.dp))
 
-                ClockAlignmentDropdown(
-                    selectedOption = StringUtils.homeClockAlignmentText(
-                        context = context,
-                        alignment = state.homeClockAlignment
-                    ),
-                    options = listOf(
-                        HomeClockAlignment.Start to StringUtils.homeClockAlignmentText(
-                            context,
-                            HomeClockAlignment.Start
-                        ),
-                        HomeClockAlignment.Center to StringUtils.homeClockAlignmentText(
-                            context,
-                            HomeClockAlignment.Center
-                        ),
-                        HomeClockAlignment.End to StringUtils.homeClockAlignmentText(
-                            context,
-                            HomeClockAlignment.End
-                        ),
-                    ),
-                    onOptionSelected = viewModel::onHomeClockAlignmentChanged
+                SettingsDropdownRow(
+                    title = stringResource(R.string.clock_alignment),
+                    selectedOption = state.homeClockAlignment,
+                    options = HomeClockAlignment.entries,
+                    onOptionSelected = viewModel::onHomeClockAlignmentChanged,
+                    optionLabel = { StringUtils.homeClockAlignmentText(context, it) }
                 )
 
                 Spacer(modifier = Modifier.height(4.dp))
             }
 
             if (state.showHomeClock) {
-                ClockModeDropdown(
-                    selectedOption = StringUtils.homeClockModeText(
-                        context = context,
-                        mode = state.homeClockMode
-                    ),
-                    options = listOf(
-                        HomeClockMode.Full to StringUtils.homeClockModeText(
-                            context,
-                            HomeClockMode.Full
-                        ),
-                        HomeClockMode.TimeOnly to StringUtils.homeClockModeText(
-                            context,
-                            HomeClockMode.TimeOnly
-                        ),
-                        HomeClockMode.DateOnly to StringUtils.homeClockModeText(
-                            context,
-                            HomeClockMode.DateOnly
-                        ),
-                    ),
-                    onOptionSelected = viewModel::onHomeClockModeChanged
-                )
-
-                Spacer(modifier = Modifier.height(4.dp))
-
-                ToggleItem(
-                    title = stringResource(R.string.twenty_four_hour_format),
-                    isChecked = state.twentyFourHourFormat,
-                    onToggleClick = viewModel::onToggleTwentyFourHourFormat
+                SettingsDropdownRow(
+                    title = stringResource(R.string.clock_mode),
+                    selectedOption = state.homeClockMode,
+                    options = HomeClockMode.entries,
+                    onOptionSelected = viewModel::onHomeClockModeChanged,
+                    optionLabel = { StringUtils.homeClockModeText(context, it) }
                 )
 
                 if (state.homeClockMode != HomeClockMode.DateOnly) {
@@ -579,6 +465,11 @@ fun CustomisationScreen(
                         onAddFont = { openFontPicker(true) },
                         onDeleteFont = viewModel::deleteFont,
                         onUseAppFont = { viewModel.onHomeTimeFontChanged(null) }
+                    )
+
+                    TimeFormatDropdown(
+                        selectedFormat = state.timeFormat,
+                        onFormatSelected = viewModel::onHomeTimeFormatChanged
                     )
                 }
 
@@ -782,12 +673,13 @@ fun CustomisationScreen(
                 onToggleClick = viewModel::onToggleSearchBarBackground
             )
 
-            SearchModeDropdown(
-                selectedOption = StringUtils.searchModeText(context, state.searchMode),
-                options = SearchMode.entries.map { mode ->
-                    mode to StringUtils.searchModeText(context, mode)
-                },
-                onOptionSelected = viewModel::onSearchModeChanged
+            SettingsDropdownRow(
+                title = stringResource(R.string.search_mode),
+                description = stringResource(R.string.search_mode_description),
+                selectedOption = state.searchMode,
+                options = SearchMode.entries,
+                onOptionSelected = viewModel::onSearchModeChanged,
+                optionLabel = { StringUtils.searchModeText(context, it) }
             )
 
             HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
@@ -800,26 +692,12 @@ fun CustomisationScreen(
             )
 
             if (state.hideAppDrawerSearch) {
-                MinimoSettingsPositionDropdown(
-                    selectedOption = StringUtils.minimoSettingsPositionText(
-                        context = context,
-                        position = state.minimoSettingsPosition
-                    ),
-                    options = listOf(
-                        MinimoSettingsPosition.Auto to StringUtils.minimoSettingsPositionText(
-                            context,
-                            MinimoSettingsPosition.Auto
-                        ),
-                        MinimoSettingsPosition.Top to StringUtils.minimoSettingsPositionText(
-                            context,
-                            MinimoSettingsPosition.Top
-                        ),
-                        MinimoSettingsPosition.Bottom to StringUtils.minimoSettingsPositionText(
-                            context,
-                            MinimoSettingsPosition.Bottom
-                        )
-                    ),
-                    onOptionSelected = viewModel::onMinimoSettingsPositionChanged
+                SettingsDropdownRow(
+                    title = stringResource(R.string.minimo_settings_position),
+                    selectedOption = state.minimoSettingsPosition,
+                    options = MinimoSettingsPosition.entries,
+                    onOptionSelected = viewModel::onMinimoSettingsPositionChanged,
+                    optionLabel = { StringUtils.minimoSettingsPositionText(context, it) }
                 )
             }
 
@@ -896,22 +774,12 @@ fun CustomisationScreen(
             )
 
             if (state.enableFastScroller) {
-                FastScrollerAlignmentDropdown(
-                    selectedOption = StringUtils.fastScrollerAlignmentText(
-                        context,
-                        state.fastScrollerAlignment
-                    ),
-                    options = listOf(
-                        FastScrollerAlignment.Left to StringUtils.fastScrollerAlignmentText(
-                            context,
-                            FastScrollerAlignment.Left
-                        ),
-                        FastScrollerAlignment.Right to StringUtils.fastScrollerAlignmentText(
-                            context,
-                            FastScrollerAlignment.Right
-                        )
-                    ),
-                    onOptionSelected = viewModel::onFastScrollerAlignmentChanged
+                SettingsDropdownRow(
+                    title = stringResource(R.string.fast_scroller_alignment),
+                    selectedOption = state.fastScrollerAlignment,
+                    options = FastScrollerAlignment.entries,
+                    onOptionSelected = viewModel::onFastScrollerAlignmentChanged,
+                    optionLabel = { StringUtils.fastScrollerAlignmentText(context, it) }
                 )
             }
 

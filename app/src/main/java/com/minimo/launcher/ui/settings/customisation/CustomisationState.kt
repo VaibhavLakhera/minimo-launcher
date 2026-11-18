@@ -10,6 +10,7 @@ import com.minimo.launcher.utils.HomeAppsAlignmentVertical
 import com.minimo.launcher.utils.HomeClockAlignment
 import com.minimo.launcher.utils.HomeClockMode
 import com.minimo.launcher.utils.HomeDateFormat
+import com.minimo.launcher.utils.HomeTimeFormat
 import com.minimo.launcher.utils.IconPackOption
 import com.minimo.launcher.utils.MinimoSettingsPosition
 import com.minimo.launcher.utils.ScreenOrientation
@@ -29,6 +30,7 @@ data class CustomisationState(
     val homeAppsAlignmentHorizontal: HomeAppsAlignmentHorizontal? = null,
     val drawerAppsAlignmentHorizontal: HomeAppsAlignmentHorizontal? = null,
     val homeAppsAlignmentVertical: HomeAppsAlignmentVertical? = null,
+    val drawerAppsAlignmentVertical: HomeAppsAlignmentVertical? = null,
     val homeClockAlignment: HomeClockAlignment? = null,
     val showHomeClock: Boolean = false,
     val homeTimeTextSize: Int? = null,
@@ -46,7 +48,7 @@ data class CustomisationState(
     val enableWallpaperOnDrawer: Boolean = false,
     val homeClockMode: HomeClockMode? = null,
     val doubleTapToLock: Boolean = false,
-    val twentyFourHourFormat: Boolean = false,
+    val timeFormat: HomeTimeFormat = HomeTimeFormat.TwelveHour,
     val showBatteryLevel: Boolean = false,
     val showHiddenAppsInSearch: Boolean = true,
     val drawerSearchBarAtBottom: Boolean = false,

@@ -9,7 +9,9 @@ import com.minimo.launcher.utils.Constants
 import com.minimo.launcher.utils.FastScrollerAlignment
 import com.minimo.launcher.utils.HomeClockMode
 import com.minimo.launcher.utils.HomeDateFormat
+import com.minimo.launcher.utils.HomeTimeFormat
 import com.minimo.launcher.utils.MinimoSettingsPosition
+import com.minimo.launcher.utils.PrivateSpaceState
 import com.minimo.launcher.utils.SearchMode
 
 data class PendingAppLaunch(
@@ -19,6 +21,13 @@ data class PendingAppLaunch(
 
 data class HomeScreenState(
     val folders: List<FolderInfo> = emptyList(),
+    val privateSpace: PrivateSpaceState = PrivateSpaceState(),
+    /** Visible (not hidden) private space apps, sorted like folder members. */
+    val privateSpaceApps: List<AppInfo> = emptyList(),
+    // Session-only, like folder expansion.
+    val privateSpaceExpanded: Boolean = false,
+    /** Settings opened the private space, so the drawer should scroll its row into view once. */
+    val privateSpaceScrollPending: Boolean = false,
     val folderDialog: FolderDialog? = null,
     val folderError: FolderError? = null,
     val folderSaving: Boolean = false,
@@ -34,6 +43,7 @@ data class HomeScreenState(
     val appsArrangementHorizontal: Arrangement.Horizontal = Arrangement.Start,
     val drawerAppsArrangementHorizontal: Arrangement.Horizontal = Arrangement.Start,
     val appsArrangementVertical: Arrangement.Vertical = Arrangement.Center,
+    val drawerAppsArrangementVertical: Arrangement.Vertical = Arrangement.Top,
     val showHomeClock: Boolean = false,
     val homeTimeTextSize: Int? = null,
     val homeDateTextSize: Int? = null,
@@ -44,7 +54,7 @@ data class HomeScreenState(
     val autoOpenKeyboardAllApps: Boolean = false,
     val homeClockMode: HomeClockMode = HomeClockMode.Full,
     val doubleTapToLock: Boolean = false,
-    val twentyFourHourFormat: Boolean = false,
+    val timeFormat: HomeTimeFormat = HomeTimeFormat.TwelveHour,
     val showBatteryLevel: Boolean = false,
     val showHiddenAppsInSearch: Boolean = true,
     val drawerSearchBarAtBottom: Boolean = false,
@@ -91,6 +101,22 @@ data class HomeScreenState(
     val drawerRows: List<LauncherRow>
         get() = launcherRows(
             if (searchText.isBlank()) folders.filterNot { it.folder.isFavourite } else emptyList(),
-            filteredAllApps
+            filteredAllApps,
+            privateSpaceSection
         )
+
+    /** The private space row, or null when it is not shown. Also the drawer's cache key for it. */
+    val privateSpaceSection: PrivateSpaceSection?
+        get() {
+            // Search results list unlocked private apps on their own, so the row stays out of them.
+            if (!privateSpace.isAvailable || searchText.isNotBlank()) return null
+            // "Hide private space when locked" keeps it out of the drawer. Settings opens it instead.
+            if (privateSpace.isLocked && privateSpace.isEntryHidden) return null
+            return PrivateSpaceSection(
+                isLocked = privateSpace.isLocked,
+                isExpanded = privateSpaceExpanded,
+                apps = privateSpaceApps,
+                canAddFiles = privateSpace.canAddFiles
+            )
+        }
 }

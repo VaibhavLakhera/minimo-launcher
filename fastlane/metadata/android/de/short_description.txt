@@ -1,1 +1,1 @@
-Minimalistischer Android-Launcher für mehr Fokus und weniger Bildschirmzeit.
+Minimalistischer Launcher: aufgeräumter Startbildschirm, weniger Bildschirmzeit

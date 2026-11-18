@@ -1,0 +1,7 @@
+• Added support for Private Space.
+• Added Time Format option.
+• Added vertical alignment for drawer apps.
+• Folders now close when you launch an app.
+• "Uninstall" now only shows for apps that can be uninstalled.
+• Fixed the touch ripple in dark theme.
+• Added Russian translation.

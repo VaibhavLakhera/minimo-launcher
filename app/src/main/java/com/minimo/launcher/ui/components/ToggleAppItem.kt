@@ -1,5 +1,6 @@
 package com.minimo.launcher.ui.components
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -18,7 +19,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.minimo.launcher.R
 import com.minimo.launcher.ui.theme.Dimens
 
 @Composable
@@ -26,12 +26,13 @@ fun ToggleAppItem(
     modifier: Modifier,
     appName: String,
     isChecked: Boolean,
-    isWorkProfile: Boolean,
+    // The work or private space badge to show, or null for none.
+    @DrawableRes badgeRes: Int?,
     onToggleClick: () -> Unit,
     onLongClick: (() -> Unit)? = null
 ) {
-    val paddingValues = remember(isWorkProfile) {
-        if (isWorkProfile) {
+    val paddingValues = remember(badgeRes) {
+        if (badgeRes != null) {
             PaddingValues(
                 start = 0.dp,
                 end = Dimens.APP_HORIZONTAL_SPACING,
@@ -52,9 +53,9 @@ fun ToggleAppItem(
             .padding(paddingValues),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        if (isWorkProfile) {
+        if (badgeRes != null) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_work_profile),
+                painter = painterResource(id = badgeRes),
                 modifier = Modifier
                     .padding(horizontal = 8.dp)
                     .size(16.dp),

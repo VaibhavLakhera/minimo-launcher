@@ -6,7 +6,6 @@ import android.content.pm.LauncherActivityInfo
 import android.content.pm.LauncherApps
 import android.database.sqlite.SQLiteDatabase
 import android.os.Process
-import android.os.UserManager
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import timber.log.Timber
@@ -33,19 +32,16 @@ object DatabaseMigrations {
             // Using LauncherApps get all activities. This will be used to get the className of existing apps in DB
             val launcherApps =
                 context.getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
-            val userManager = context.getSystemService(Context.USER_SERVICE) as UserManager
             val mainUserHandle = Process.myUserHandle()
 
             // Build a map of package names to their launcher activities
             val packageToActivities = mutableMapOf<String, LauncherActivityInfo>()
 
             try {
-                for (profile in userManager.userProfiles) {
-                    val activities = launcherApps.getActivityList(null, profile)
-                    for (activity in activities) {
-                        val packageName = activity.componentName.packageName
-                        packageToActivities[packageName] = activity
-                    }
+                // Version 1 only stored main profile apps. Reading other profiles (work, private
+                // space) could replace a package's main activity in this map and drop its row.
+                for (activity in launcherApps.getActivityList(null, mainUserHandle)) {
+                    packageToActivities[activity.componentName.packageName] = activity
                 }
             } catch (exception: Exception) {
                 Timber.e(exception)
@@ -65,30 +61,27 @@ object DatabaseMigrations {
                 // Find the actual launcher activity for this package
                 val activity = packageToActivities[packageName]
 
-                // Insert an entry for each launcher activity found
+                // Insert an entry for each main profile launcher activity found
                 if (activity != null) {
-                    // Only add main profile activities during migration
-                    if (activity.user == mainUserHandle) {
-                        val className = activity.componentName.className
-                        val userHandle = activity.user.hashCode()
+                    val className = activity.componentName.className
+                    val userHandle = activity.user.hashCode()
 
-                        db.execSQL(
-                            """
-                                INSERT OR REPLACE INTO `appInfoEntity_new` 
-                                (`package_name`, `user_handle`, `app_name`, `class_name`, `alternate_app_name`, `is_favourite`, `is_hidden`)
-                                VALUES (?, ?, ?, ?, ?, ?, ?)
-                            """,
-                            arrayOf(
-                                packageName,
-                                userHandle,
-                                appName,
-                                className,
-                                alternateAppName,
-                                isFavourite,
-                                isHidden
-                            )
+                    db.execSQL(
+                        """
+                            INSERT OR REPLACE INTO `appInfoEntity_new` 
+                            (`package_name`, `user_handle`, `app_name`, `class_name`, `alternate_app_name`, `is_favourite`, `is_hidden`)
+                            VALUES (?, ?, ?, ?, ?, ?, ?)
+                        """,
+                        arrayOf(
+                            packageName,
+                            userHandle,
+                            appName,
+                            className,
+                            alternateAppName,
+                            isFavourite,
+                            isHidden
                         )
-                    }
+                    )
                 }
             }
             cursor.close()

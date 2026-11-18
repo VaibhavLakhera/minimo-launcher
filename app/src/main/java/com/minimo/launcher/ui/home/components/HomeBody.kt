@@ -109,7 +109,7 @@ fun HomeBody(
                         dateTextSize = state.homeDateTextSize,
                         timeFont = state.homeTimeFont,
                         dateFormat = state.homeDateFormat,
-                        twentyFourHourFormat = state.twentyFourHourFormat,
+                        timeFormat = state.timeFormat,
                         showBatteryLevel = state.showBatteryLevel,
                         textColor = textColor,
                         textShadow = textShadow,

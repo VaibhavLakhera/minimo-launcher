@@ -5,7 +5,9 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.LauncherApps
+import android.content.pm.LauncherUserInfo
 import android.content.pm.ShortcutInfo
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.os.Process
@@ -22,6 +24,10 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
@@ -33,7 +39,8 @@ class AppsManager @Inject constructor(
     private val removeAppsUseCase: RemoveAppsUseCase,
     private val updateAllAppsUseCase: UpdateAllAppsUseCase,
     private val updateAllShortcutsUseCase: UpdateAllShortcutsUseCase,
-    private val appIconRepository: AppIconRepository
+    private val appIconRepository: AppIconRepository,
+    private val privateSpaceManager: PrivateSpaceManager
 ) : LauncherApps.Callback() {
     private val launcherApps = context.getSystemService(LauncherApps::class.java)
     private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
@@ -43,17 +50,22 @@ class AppsManager @Inject constructor(
     private val packageChangeJobs = mutableMapOf<PackageProfile, Job>()
     private val packageChangeJobsLock = Any()
 
+    // Only touched on the main thread, where the profile receiver runs.
+    private var profileSyncJob: Job? = null
+
     private val managedProfileReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             when (intent?.action) {
                 Intent.ACTION_MANAGED_PROFILE_ADDED,
-                Intent.ACTION_MANAGED_PROFILE_REMOVED -> {
-                    appIconRepository.clear()
-                    coroutineScope.launch {
-                        updateAllAppsUseCase.invoke()
-                        updateAllShortcutsUseCase.invoke()
-                    }
+                Intent.ACTION_MANAGED_PROFILE_REMOVED,
+                Intent.ACTION_PROFILE_ADDED,
+                Intent.ACTION_PROFILE_REMOVED -> {
+                    refreshPrivateSpace()
+                    scheduleProfileSync()
                 }
+
+                Intent.ACTION_PROFILE_AVAILABLE,
+                Intent.ACTION_PROFILE_UNAVAILABLE -> refreshPrivateSpace()
             }
         }
     }
@@ -64,8 +76,59 @@ class AppsManager @Inject constructor(
         val intentFilter = IntentFilter().apply {
             addAction(Intent.ACTION_MANAGED_PROFILE_ADDED)
             addAction(Intent.ACTION_MANAGED_PROFILE_REMOVED)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                addAction(Intent.ACTION_PROFILE_ADDED)
+                addAction(Intent.ACTION_PROFILE_REMOVED)
+            }
+            // Sent when the private space is unlocked or locked.
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+                addAction(Intent.ACTION_PROFILE_AVAILABLE)
+                addAction(Intent.ACTION_PROFILE_UNAVAILABLE)
+            }
         }
         context.registerReceiver(managedProfileReceiver, intentFilter)
+
+        // Minimo cannot list private space apps while it is locked or inaccessible (for example
+        // while another launcher is the default), so sync whenever it becomes listable. Any refresh
+        // can notice that first, so watch the state rather than comparing in one place.
+        coroutineScope.launch {
+            privateSpaceManager.loadedState
+                .map { it.isUnlocked }
+                .distinctUntilChanged()
+                .drop(1) // Opening Minimo already syncs everything.
+                .filter { it }
+                .collect { syncAllApps() }
+        }
+    }
+
+    // Called on every resume and from main-thread callbacks, so the system calls run in the
+    // background. Sync paths refresh again themselves, so nothing needs this to finish first.
+    fun refreshPrivateSpace() {
+        coroutineScope.launch { privateSpaceManager.refresh() }
+    }
+
+    // Android 14+ announces a work profile change with both the MANAGED_PROFILE and the PROFILE
+    // broadcast, back to back on removal. Waiting briefly turns them into one icon reload and sync.
+    private fun scheduleProfileSync() {
+        profileSyncJob?.cancel()
+        profileSyncJob = coroutineScope.launch {
+            delay(PROFILE_CHANGE_DEBOUNCE_MILLIS.milliseconds)
+            appIconRepository.clear()
+            // Launched on its own, so a later broadcast cannot cancel a sync that has started.
+            syncAllApps()
+        }
+    }
+
+    private fun syncAllApps() {
+        coroutineScope.launch {
+            updateAllAppsUseCase.invoke()
+            updateAllShortcutsUseCase.invoke()
+        }
+    }
+
+    override fun onUserConfigChanged(launcherUserInfo: LauncherUserInfo) {
+        // Android 16+ reports "Hide private space when locked" changes here.
+        refreshPrivateSpace()
     }
 
     override fun onPackageRemoved(packageName: String?, user: UserHandle?) {
@@ -142,6 +205,9 @@ class AppsManager @Inject constructor(
         if (replacing) return
 
         coroutineScope.launch {
+            // Apps in a locked private space are not uninstalled; keep their saved state.
+            val privateSpace = privateSpaceManager.stateFor(userHandle)
+            if (userHandle in privateSpace.unlistableProfiles) return@launch
             packageNames.forEach { packageName ->
                 removeAppsUseCase.invoke(
                     packageName = packageName,
@@ -230,5 +296,6 @@ class AppsManager @Inject constructor(
 
     companion object {
         private const val PACKAGE_CHANGE_DEBOUNCE_MILLIS = 500L
+        private const val PROFILE_CHANGE_DEBOUNCE_MILLIS = 500L
     }
 }

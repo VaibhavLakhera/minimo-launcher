@@ -11,7 +11,9 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -169,10 +171,29 @@ fun AppNavGraph(
             )
         }
         composable(route = Routes.SETTINGS) {
+            val homeState by homeViewModel.state.collectAsStateWithLifecycle()
             SettingsScreen(
                 onBackClick = onBackPressed,
                 onHiddenAppsClick = {
                     navController.navigate(Routes.HIDDEN_APPS)
+                },
+                // Only needed while "Hide private space when locked" keeps the drawer row out of
+                // sight, which is only while it is locked. Unlocked, the drawer row shows anyway.
+                showPrivateSpace = homeState.privateSpace.isAvailable &&
+                        homeState.privateSpace.isEntryHidden &&
+                        homeState.privateSpace.isLocked,
+                onPrivateSpaceClick = {
+                    homeViewModel.openPrivateSpace()
+                    // Return to the drawer Settings was opened from, as Back would, so it does not
+                    // play its opening animation again. From Home there is no drawer to return to.
+                    val returnedToDrawer =
+                        navController.popBackStack(Routes.APP_DRAWER, inclusive = false)
+                    if (!returnedToDrawer) {
+                        navController.navigate(Routes.APP_DRAWER) {
+                            popUpTo(Routes.HOME)
+                            launchSingleTop = true
+                        }
+                    }
                 },
                 onCustomisationClick = {
                     navController.navigate(Routes.SETTINGS_CUSTOMISATION)

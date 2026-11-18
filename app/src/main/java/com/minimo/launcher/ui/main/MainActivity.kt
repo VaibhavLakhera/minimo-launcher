@@ -131,6 +131,13 @@ class MainActivity : ComponentActivity() {
         billingManager.checkUnconsumedPurchases()
     }
 
+    override fun onResume() {
+        super.onResume()
+        // Private space access depends on Minimo being the default launcher, which can change
+        // while it is in the background.
+        appsManager.refreshPrivateSpace()
+    }
+
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         if (intent.action == Intent.ACTION_MAIN && intent.hasCategory(Intent.CATEGORY_HOME)) {

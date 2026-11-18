@@ -13,7 +13,9 @@ import androidx.room.Room
 import com.minimo.launcher.data.AppDatabase
 import com.minimo.launcher.data.DatabaseMigrations
 import com.minimo.launcher.data.PreferenceHelper
+import com.minimo.launcher.data.TimeFormatMigration
 import com.minimo.launcher.utils.AppUtils
+import com.minimo.launcher.utils.PrivateSpaceManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -53,7 +55,7 @@ class DataModule {
             corruptionHandler = ReplaceFileCorruptionHandler(
                 produceNewData = { emptyPreferences() }
             ),
-            migrations = listOf(drawerAlignmentMigration),
+            migrations = listOf(drawerAlignmentMigration, TimeFormatMigration),
             produceFile = {
                 context.preferencesDataStoreFile(
                     "minimo-launcher-preferences"
@@ -84,5 +86,8 @@ class DataModule {
 
     @Singleton
     @Provides
-    fun provideAppUtils(@ApplicationContext context: Context) = AppUtils(context)
+    fun provideAppUtils(
+        @ApplicationContext context: Context,
+        privateSpaceManager: PrivateSpaceManager
+    ) = AppUtils(context, privateSpaceManager)
 }

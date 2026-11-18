@@ -24,7 +24,6 @@
 
     <string name="theme">Theme</string>
     <string name="orientation">Orientation</string>
-    <string name="orientation_large_screen_note">Android controls orientation on large screens and may ignore this preference.</string>
     <string name="home_apps_alignment_horizontal">Home Apps Alignment Horizontal</string>
     <string name="clock_alignment">Widget Alignment</string>
     <string name="clock_mode">Clock Mode</string>
@@ -89,7 +88,6 @@
     <string name="enable_accessibility_dialog_title">Enable Accessibility</string>
     <string name="enable_accessibility_dialog_message">Accessibility permission is required for double tap to turn off the screen.\nNo data is being collected during the process.\n\nTo allow the permission, enable accessibility for %s in the settings.</string>
     <string name="open_settings">Open Settings</string>
-    <string name="twenty_four_hour_format">24 Hour Format</string>
     <string name="show_battery_level">Show Battery Level</string>
     <string name="favourites_only">Favourites only</string>
     <string name="hidden_only">Hidden only</string>
@@ -139,6 +137,7 @@
     <string name="bottom">Bottom</string>
     <string name="home_apps_alignment_vertical">Home Apps Alignment Vertical</string>
     <string name="drawer_apps_alignment_horizontal">Drawer Apps Alignment Horizontal</string>
+    <string name="drawer_apps_alignment_vertical">Drawer Apps Alignment Vertical</string>
     <string name="enable_wallpaper">Enable Wallpaper on Home</string>
     <string name="enable_wallpaper_on_drawer">Enable Wallpaper on Drawer</string>
     <string name="dim_wallpaper">Dim Wallpaper</string>
@@ -206,12 +205,15 @@
 
     <!-- Current release notes. Update for each release, or leave blank to skip the dialog. -->
     <string name="whats_new_title">What\'s New</string>
-    <string name="whats_new_description">• Added support for custom icon packs.\n• Added support for custom fonts (.ttf).\n• Added the Gruvbox theme, which follows the system dark mode.\n• Search now ignores accents, e.g. \"skoda\" finds \"Škoda\".\n• Folders now close automatically when the app drawer opens or closes.\n• Join reddit community at /r/MinimoLauncher</string>
+    <string name="whats_new_description">• Added support for Private Space.\n• Added Time Format option.\n• Added vertical alignment for drawer apps.\n• Folders now close when you launch an app.\n• \"Uninstall\" now only shows for apps that can be uninstalled.\n• Fixed the touch ripple in dark theme.\n• Added Russian translation.\n• Join reddit community at /r/MinimoLauncher</string>
     <string name="time_size">Time Size</string>
     <string name="date_battery_size">Date &amp; Battery Size</string>
     <string name="time_font">Time Font</string>
     <string name="use_app_font">App Font</string>
     <string name="date_format">Date Format</string>
+    <string name="time_format">Time Format</string>
+    <string name="twelve_hour">12-Hour</string>
+    <string name="twenty_four_hour">24-Hour</string>
     <string name="battery_charging">Charging</string>
     <string name="add_to_folder">Add To Folder</string>
     <string name="remove_from_folder">Remove From Folder</string>
@@ -232,4 +234,13 @@
     <string name="delete_folder_confirmation">Delete “%1$s”? Apps and their favourite settings will be kept.</string>
     <string name="icon_pack">Icon Pack</string>
     <string name="icon_pack_description">Install an icon pack app to select it here. Apps without matching icons keep their default icons.</string>
+    <string name="private_space">Private Space</string>
+    <string name="lock_private_space">Lock</string>
+    <string name="unlock_private_space">Unlock</string>
+    <string name="private_space_install_apps">Install Apps</string>
+    <string name="private_space_add_files">Add Files</string>
+    <string name="private_space_settings">Private Space Settings</string>
+    <string name="private_space_locked">Locked</string>
+    <string name="private_space_no_app_store">No app store found.</string>
+    <string name="app_launch_failed">Couldn\'t open this app.</string>
 </resources>

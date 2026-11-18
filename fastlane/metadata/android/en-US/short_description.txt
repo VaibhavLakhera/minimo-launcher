@@ -1,1 +1,1 @@
-Minimalist Android launcher for focus, less clutter and less screen time.
+Minimalist launcher for focus: clean home screen, less clutter, less screen time

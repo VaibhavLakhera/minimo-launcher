@@ -20,6 +20,7 @@ import com.minimo.launcher.utils.HomeAppsAlignmentVertical
 import com.minimo.launcher.utils.HomeClockAlignment
 import com.minimo.launcher.utils.HomeClockMode
 import com.minimo.launcher.utils.HomeDateFormat
+import com.minimo.launcher.utils.HomeTimeFormat
 import com.minimo.launcher.utils.IconPackRepository
 import com.minimo.launcher.utils.ScreenOrientation
 import com.minimo.launcher.utils.SearchMode
@@ -101,6 +102,7 @@ class CustomisationViewModel @Inject constructor(
                             homeAppsAlignmentHorizontal = prefs.homeAppsAlignmentHorizontal,
                             drawerAppsAlignmentHorizontal = prefs.drawerAppsAlignmentHorizontal,
                             homeAppsAlignmentVertical = prefs.homeAppsAlignmentVertical,
+                            drawerAppsAlignmentVertical = prefs.drawerAppsAlignmentVertical,
                             homeClockAlignment = prefs.homeClockAlignment,
                             showHomeClock = prefs.showHomeClock,
                             homeTimeTextSize = prefs.homeTimeTextSize,
@@ -114,7 +116,7 @@ class CustomisationViewModel @Inject constructor(
                             dynamicTheme = prefs.dynamicTheme,
                             homeClockMode = prefs.homeClockMode,
                             doubleTapToLock = prefs.doubleTapToLock,
-                            twentyFourHourFormat = prefs.twentyFourHourFormat,
+                            timeFormat = prefs.timeFormat,
                             showBatteryLevel = prefs.showBatteryLevel,
                             showHiddenAppsInSearch = prefs.showHiddenAppsInSearch,
                             drawerSearchBarAtBottom = prefs.drawerSearchBarAtBottom,
@@ -243,6 +245,12 @@ class CustomisationViewModel @Inject constructor(
         }
     }
 
+    fun onDrawerAppsAlignmentVerticalChanged(alignment: HomeAppsAlignmentVertical) {
+        viewModelScope.launch {
+            preferenceHelper.setDrawerAppsAlignmentVertical(alignment)
+        }
+    }
+
     fun onHomeClockAlignmentChanged(alignment: HomeClockAlignment) {
         viewModelScope.launch {
             preferenceHelper.setHomeClockAlignment(alignment)
@@ -322,6 +330,10 @@ class CustomisationViewModel @Inject constructor(
         viewModelScope.launch { preferenceHelper.setHomeTimeFont(font) }
     }
 
+    fun onHomeTimeFormatChanged(format: HomeTimeFormat) {
+        viewModelScope.launch { preferenceHelper.setTimeFormat(format) }
+    }
+
     fun onHomeDateFormatChanged(format: HomeDateFormat) {
         viewModelScope.launch { preferenceHelper.setHomeDateFormat(format) }
     }
@@ -329,12 +341,6 @@ class CustomisationViewModel @Inject constructor(
     fun onToggleShowHomeClock() {
         viewModelScope.launch {
             preferenceHelper.setShowHomeClock(_state.value.showHomeClock.not())
-        }
-    }
-
-    fun onToggleTwentyFourHourFormat() {
-        viewModelScope.launch {
-            preferenceHelper.setTwentyFourHourFormat(_state.value.twentyFourHourFormat.not())
         }
     }
 

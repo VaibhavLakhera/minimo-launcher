@@ -10,6 +10,9 @@
     <uses-permission android:name="android.permission.REQUEST_DELETE_PACKAGES" />
     <uses-permission android:name="android.permission.EXPAND_STATUS_BAR" />
 
+    <!-- To show the private space (Android 15+). Only granted access while Minimo is the default launcher -->
+    <uses-permission android:name="android.permission.ACCESS_HIDDEN_PROFILES" />
+
     <!-- To open the alarm app upon click of time in Clock widget -->
     <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
 

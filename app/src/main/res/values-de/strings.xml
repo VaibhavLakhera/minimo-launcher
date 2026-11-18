@@ -26,7 +26,6 @@
 
     <string name="theme">Design</string>
     <string name="orientation">Ausrichtung</string>
-    <string name="orientation_large_screen_note">Android steuert die Ausrichtung auf großen Bildschirmen und ignoriert möglicherweise diese Einstellung.</string>
     <string name="home_apps_alignment_horizontal">Horizontale Ausrichtung der Start-Apps</string>
     <string name="clock_alignment">Widget-Ausrichtung</string>
     <string name="clock_mode">Uhrmodus</string>
@@ -91,7 +90,6 @@
     <string name="enable_accessibility_dialog_title">Bedienungshilfe aktivieren</string>
     <string name="enable_accessibility_dialog_message">Die Bedienungshilfe-Berechtigung ist erforderlich, um den Bildschirm durch Doppeltippen auszuschalten.\nEs werden dabei keine Daten gesammelt.\n\nUm die Berechtigung zu erteilen, aktivieren Sie die Bedienungshilfe für %s in den Einstellungen.</string>
     <string name="open_settings">Einstellungen öffnen</string>
-    <string name="twenty_four_hour_format">24-Stunden-Format</string>
     <string name="show_battery_level">Akkustand anzeigen</string>
     <string name="favourites_only">Nur Favoriten</string>
     <string name="hidden_only">Nur ausgeblendete</string>
@@ -141,6 +139,7 @@
     <string name="bottom">Unten</string>
     <string name="home_apps_alignment_vertical">Vertikale Ausrichtung der Start-Apps</string>
     <string name="drawer_apps_alignment_horizontal">Horizontale Ausrichtung der Schubladen-Apps</string>
+    <string name="drawer_apps_alignment_vertical">Vertikale Ausrichtung der Schubladen-Apps</string>
     <string name="enable_wallpaper">Hintergrundbild auf dem Startbildschirm aktivieren</string>
     <string name="enable_wallpaper_on_drawer">Hintergrundbild in der App-Übersicht aktivieren</string>
     <string name="dim_wallpaper">Hintergrundbild abdunkeln</string>
@@ -206,12 +205,15 @@
 
     <!-- Current release notes. Update for each release, or leave blank to skip the dialog. -->
     <string name="whats_new_title">Was ist neu?</string>
-    <string name="whats_new_description">• Unterstützung für eigene Symbolpakete hinzugefügt.\n• Unterstützung für eigene Schriftarten (.ttf) hinzugefügt.\n• Neues Design „Gruvbox“ hinzugefügt, das dem Dunkelmodus des Systems folgt.\n• Die Suche ignoriert jetzt Akzente, z. B. findet „skoda“ auch „Škoda“.\n• Ordner schließen sich jetzt automatisch, wenn die App-Schublade geöffnet oder geschlossen wird.\n• Tritt der Reddit-Community unter /r/MinimoLauncher bei</string>
+    <string name="whats_new_description">• Unterstützung für den privaten Bereich hinzugefügt.\n• Option „Zeitformat“ hinzugefügt.\n• Vertikale Ausrichtung für Apps in der App-Schublade hinzugefügt.\n• Ordner schließen sich jetzt, wenn du eine App startest.\n• „Deinstallieren“ wird jetzt nur bei Apps angezeigt, die deinstalliert werden können.\n• Berührungseffekt im dunklen Design behoben.\n• Russische Übersetzung hinzugefügt.\n• Tritt der Reddit-Community unter /r/MinimoLauncher bei</string>
     <string name="time_size">Uhrzeitgröße</string>
     <string name="date_battery_size">Größe von Datum und Akku</string>
     <string name="time_font">Uhrzeitschrift</string>
     <string name="use_app_font">App-Schrift</string>
     <string name="date_format">Datumsformat</string>
+    <string name="time_format">Zeitformat</string>
+    <string name="twelve_hour">12-Stunden</string>
+    <string name="twenty_four_hour">24-Stunden</string>
     <string name="battery_charging">Wird geladen</string>
     <string name="add_to_folder">Zum Ordner hinzufügen</string>
     <string name="remove_from_folder">Aus Ordner entfernen</string>
@@ -232,4 +234,13 @@
     <string name="delete_folder_confirmation">„%1$s“ löschen? Apps und ihre Favoriteneinstellungen bleiben erhalten.</string>
     <string name="icon_pack">Symbolpaket</string>
     <string name="icon_pack_description">Installiere eine Symbolpaket-App, um sie hier auszuwählen. Apps ohne passendes Symbol behalten ihre Standardsymbole.</string>
+    <string name="private_space">Privater Bereich</string>
+    <string name="lock_private_space">Sperren</string>
+    <string name="unlock_private_space">Entsperren</string>
+    <string name="private_space_install_apps">Apps installieren</string>
+    <string name="private_space_add_files">Dateien hinzufügen</string>
+    <string name="private_space_settings">Einstellungen für privaten Bereich</string>
+    <string name="private_space_locked">Gesperrt</string>
+    <string name="private_space_no_app_store">Kein App-Store gefunden.</string>
+    <string name="app_launch_failed">App konnte nicht geöffnet werden.</string>
 </resources>

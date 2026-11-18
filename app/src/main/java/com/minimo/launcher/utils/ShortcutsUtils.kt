@@ -12,7 +12,8 @@ import javax.inject.Inject
 
 class ShortcutsUtils @Inject constructor(
     @ApplicationContext
-    private val context: Context
+    private val context: Context,
+    private val privateSpaceManager: PrivateSpaceManager
 ) {
     private val launcherApps by lazy {
         context.getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
@@ -37,11 +38,16 @@ class ShortcutsUtils @Inject constructor(
             return@withContext null
         }
         if (profiles.isEmpty()) return@withContext null
-        val currentProfiles = profiles.mapTo(mutableSetOf()) { it.hashCode() }
+        val unlistableProfiles = privateSpaceManager.refresh().unlistableProfiles
+        // LauncherApps leaves out a hidden profile Minimo cannot access, but it still exists, so
+        // its rows must not be removed as if the profile had been deleted.
+        val currentProfiles = profiles.mapTo(mutableSetOf()) { it.hashCode() } + unlistableProfiles
         val successfulProfiles = mutableSetOf<Int>()
         val shortcuts = mutableListOf<InstalledShortcut>()
 
         for (profile in profiles) {
+            // A locked private space keeps its rows, like a profile whose query failed.
+            if (profile.hashCode() in unlistableProfiles) continue
             val query = LauncherApps.ShortcutQuery().apply {
                 setQueryFlags(LauncherApps.ShortcutQuery.FLAG_MATCH_PINNED)
             }
@@ -79,9 +85,7 @@ class ShortcutsUtils @Inject constructor(
     }
 
     fun deleteShortcut(packageName: String, shortcutId: String, userHandle: Int): Boolean {
-        if (!hasShortcutHostPermission()) return false
-
-        return try {
+        return hasShortcutHostPermission() && try {
             val targetUser = launcherApps.profiles.find { it.hashCode() == userHandle }
                 ?: return false
             val query = LauncherApps.ShortcutQuery().apply {

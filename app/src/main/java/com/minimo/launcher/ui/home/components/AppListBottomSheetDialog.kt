@@ -19,6 +19,8 @@ fun AppListBottomSheetDialog(
     isFavourite: Boolean,
     isHidden: Boolean,
     isShortcut: Boolean,
+    canUninstall: Boolean = true,
+    canAddToFavourites: Boolean = true,
     onDismiss: () -> Unit,
     statusBarVisible: Boolean = true,
     navigationBarVisible: Boolean = true,
@@ -44,7 +46,7 @@ fun AppListBottomSheetDialog(
             .weight(1f, fill = false)
             .verticalScroll(rememberScrollState())) {
             // Only the apps outside the folder can be added/removed as favourite independently
-            if (!isHidden && folderId == null) {
+            if (canAddToFavourites && !isHidden && folderId == null) {
                 AppBottomSheetText(
                     text = if (isFavourite) stringResource(R.string.remove_favourite) else stringResource(
                         R.string.add_favourite
@@ -86,10 +88,12 @@ fun AppListBottomSheetDialog(
                     text = stringResource(R.string.app_info),
                     onClick = onAppInfoClick
                 )
-                AppBottomSheetText(
-                    text = stringResource(R.string.uninstall),
-                    onClick = onUninstallClick
-                )
+                if (canUninstall) {
+                    AppBottomSheetText(
+                        text = stringResource(R.string.uninstall),
+                        onClick = onUninstallClick
+                    )
+                }
             }
         }
     }

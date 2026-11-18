@@ -1,6 +1,5 @@
 package com.minimo.launcher.ui.components
 
-import android.text.format.DateFormat
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,16 +23,15 @@ import com.minimo.launcher.ui.theme.rememberFontFamily
 import com.minimo.launcher.utils.Constants
 import com.minimo.launcher.utils.HomeClockMode
 import com.minimo.launcher.utils.HomeDateFormat
+import com.minimo.launcher.utils.HomeTimeFormat
 import com.minimo.launcher.utils.defaultHomeDateTextSize
-import java.time.format.DateTimeFormatter
-import java.time.format.DecimalStyle
 
 @Composable
 fun TimeAndDateView(
     horizontalAlignment: Alignment.Horizontal,
     showHomeClock: Boolean,
     clockMode: HomeClockMode,
-    twentyFourHourFormat: Boolean,
+    timeFormat: HomeTimeFormat,
     showBatteryLevel: Boolean,
     timeTextSize: Int?,
     dateTextSize: Int?,
@@ -53,13 +51,7 @@ fun TimeAndDateView(
     )
     val locale = LocalConfiguration.current.locales[0]
     val timeText = if (showTime) {
-        val formatter = remember(twentyFourHourFormat, locale) {
-            val pattern = DateFormat.getBestDateTimePattern(
-                locale,
-                if (twentyFourHourFormat) "HHmm" else "hhmm"
-            )
-            DateTimeFormatter.ofPattern(pattern, locale).withDecimalStyle(DecimalStyle.of(locale))
-        }
+        val formatter = remember(timeFormat, locale) { timeFormat.createFormatter(locale) }
         remember(currentDateTime, formatter) { currentDateTime.format(formatter) }
     } else {
         ""

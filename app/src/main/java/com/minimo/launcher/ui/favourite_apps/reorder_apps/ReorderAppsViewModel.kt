@@ -27,7 +27,7 @@ class ReorderAppsViewModel @Inject constructor(
         viewModelScope.launch {
             appInfoDao.getFavouriteAppsFlow()
                 .collect { appList ->
-                    val apps = appUtils.mapToAppInfo(appList)
+                    val apps = appUtils.mapToMainAppInfo(appList)
                     _state.update {
                         _state.value.copy(
                             apps = apps

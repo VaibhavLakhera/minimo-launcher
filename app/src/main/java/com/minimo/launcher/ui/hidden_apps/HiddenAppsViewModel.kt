@@ -1,25 +1,35 @@
 package com.minimo.launcher.ui.hidden_apps
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.minimo.launcher.R
 import com.minimo.launcher.data.AppInfoDao
 import com.minimo.launcher.data.PreferenceHelper
+import com.minimo.launcher.data.usecase.AddUpdateAppsUseCase
 import com.minimo.launcher.ui.entities.AppInfo
 import com.minimo.launcher.utils.AppUtils
+import com.minimo.launcher.utils.PrivateSpaceManager
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class HiddenAppsViewModel @Inject constructor(
+    @ApplicationContext private val applicationContext: Context,
     private val appInfoDao: AppInfoDao,
     private val appUtils: AppUtils,
-    private val preferenceHelper: PreferenceHelper
+    private val preferenceHelper: PreferenceHelper,
+    private val privateSpaceManager: PrivateSpaceManager,
+    private val addUpdateAppsUseCase: AddUpdateAppsUseCase
 ) : ViewModel() {
     private val _state = MutableStateFlow(HiddenAppsState())
     val state: StateFlow<HiddenAppsState> = _state
@@ -50,9 +60,15 @@ class HiddenAppsViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
-            appInfoDao.getAllNonFavouriteAppsFlow()
-                .collect { appInfoList ->
-                    val allApps = appUtils.mapToAppInfo(appInfoList)
+            combine(
+                appInfoDao.getAllNonFavouriteAppsFlow(),
+                privateSpaceManager.loadedState
+            ) { appInfoList, privateSpace -> appInfoList to privateSpace }
+                .collect { (appInfoList, privateSpace) ->
+                    // Private space apps can only be hidden or unhidden while it is unlocked.
+                    val allApps =
+                        appUtils.mapToAppInfo(appInfoList, privateSpaceState = privateSpace)
+                            .filter { !it.isPrivateSpace || privateSpace.isUnlocked }
                     val hiddenApps = allApps.filter { it.isHidden }
                     val currentAllApps = if (_state.value.showHiddenOnly) {
                         hiddenApps
@@ -138,6 +154,13 @@ class HiddenAppsViewModel @Inject constructor(
                     searchMode = it.searchMode
                 )
             )
+        }
+    }
+
+    fun onAppLaunchFailed(app: AppInfo) {
+        Toast.makeText(applicationContext, R.string.app_launch_failed, Toast.LENGTH_SHORT).show()
+        viewModelScope.launch {
+            addUpdateAppsUseCase.resyncAfterFailedLaunch(app.packageName, app.userHandle)
         }
     }
 }

@@ -1,10 +1,13 @@
 package com.minimo.launcher.utils
 
+import android.app.Activity
 import android.app.AppOpsManager
 import android.app.admin.DevicePolicyManager
 import android.content.ComponentName
 import android.content.Context
+import android.content.ContextWrapper
 import android.content.Intent
+import android.content.pm.ApplicationInfo
 import android.content.pm.LauncherApps
 import android.net.Uri
 import android.os.Build
@@ -22,26 +25,27 @@ import com.minimo.launcher.R
 import com.minimo.launcher.ui.entities.AppInfo
 import timber.log.Timber
 
-fun Context.launchApp(packageName: String, className: String, userHandleHashCode: Int) {
-    val userManager = getSystemService(Context.USER_SERVICE) as UserManager
-    val userHandle = userManager.userProfiles.find { it.hashCode() == userHandleHashCode }
+tailrec fun Context.findActivity(): Activity? = when (this) {
+    is Activity -> this
+    is ContextWrapper -> baseContext.findActivity()
+    else -> null
+}
 
-    if (packageName.isBlank() || className.isBlank() || userHandle == null) return
-
-    val launcher = getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
-    val component = ComponentName(packageName, className)
-
-    try {
-        launcher.startMainActivity(component, userHandle, null, null)
-    } catch (exception: SecurityException) {
-        Timber.e(exception)
-        try {
-            launcher.startMainActivity(component, Process.myUserHandle(), null, null)
-        } catch (exception: Exception) {
-            Timber.e(exception)
-        }
+/**
+ * Starts the app in its own profile and returns false when it could not be started. A failed work
+ * or private space app is never retried in the main profile, which would open the personal copy.
+ */
+fun Context.launchApp(packageName: String, className: String, userHandleHashCode: Int): Boolean {
+    return !(packageName.isBlank() || className.isBlank()) && try {
+        val userManager = getSystemService(Context.USER_SERVICE) as UserManager
+        val userHandle = userManager.userProfiles.find { it.hashCode() == userHandleHashCode }
+            ?: return false
+        val launcher = getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
+        launcher.startMainActivity(ComponentName(packageName, className), userHandle, null, null)
+        true
     } catch (exception: Exception) {
         Timber.e(exception)
+        false
     }
 }
 
@@ -64,6 +68,22 @@ fun Context.startShortcut(
         Timber.e(exception)
     }
     return false
+}
+
+/** System apps cannot be removed, so Android only answers an uninstall request with a toast. */
+fun Context.canUninstallApp(appInfo: AppInfo): Boolean {
+    return !appInfo.isShortcut && try {
+        val userManager = getSystemService(Context.USER_SERVICE) as UserManager
+        val userHandle = userManager.userProfiles.find { it.hashCode() == appInfo.userHandle }
+            ?: return false
+        val launcherApps = getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
+        val info: ApplicationInfo? =
+            launcherApps.getApplicationInfo(appInfo.packageName, 0, userHandle)
+        info == null || info.flags and ApplicationInfo.FLAG_SYSTEM == 0
+    } catch (exception: Exception) {
+        Timber.e(exception)
+        true
+    }
 }
 
 fun Context.uninstallApp(appInfo: AppInfo) {
@@ -91,9 +111,10 @@ fun Context.launchAppInfo(appInfo: AppInfo) {
         val targetUserHandle =
             userManager.userProfiles.find { it.hashCode() == appInfo.userHandle } ?: return
 
-        val intent = packageManager.getLaunchIntentForPackage(appInfo.packageName) ?: return
-
-        launcherApps.startAppDetailsActivity(intent.component, targetUserHandle, null, null)
+        // The saved launcher activity belongs to the app's own profile, unlike a launch intent
+        // looked up in this one.
+        val component = ComponentName(appInfo.packageName, appInfo.targetId)
+        launcherApps.startAppDetailsActivity(component, targetUserHandle, null, null)
     } catch (exception: Exception) {
         Timber.e(exception)
     }

@@ -1,5 +1,6 @@
 package com.minimo.launcher.ui.home.components
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
@@ -13,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -29,12 +29,10 @@ import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import com.minimo.launcher.R
 import com.minimo.launcher.ui.theme.Dimens
 import com.minimo.launcher.utils.AppIconAlignment
 import com.minimo.launcher.utils.Constants
@@ -47,7 +45,9 @@ fun AppNameItem(
     isFavourite: Boolean,
     isHidden: Boolean,
     isShortcut: Boolean,
-    isWorkProfile: Boolean,
+    // The work or private space badge to show, or null for none.
+    @DrawableRes badgeRes: Int?,
+    canAddToFavourites: Boolean = true,
     appsArrangement: Arrangement.Horizontal,
     textSize: TextUnit,
     showNotificationDot: Boolean,
@@ -63,6 +63,8 @@ fun AppNameItem(
     onAppInfoClick: () -> Unit,
     onLaunchDelayClick: () -> Unit,
     onLongClick: () -> Unit = { },
+    // Checked only when the menu opens, so list rows never query the package manager.
+    canUninstall: () -> Boolean = { true },
     onUninstallClick: () -> Unit,
     onDeleteShortcutClick: () -> Unit,
     verticalPadding: Dp = 16.dp,
@@ -79,16 +81,17 @@ fun AppNameItem(
 ) {
     var appBottomSheetVisible by remember { mutableStateOf(false) }
     val lineHeight by remember { derivedStateOf { textSize * 1.2 } }
+    val hasBadge = badgeRes != null
 
     val paddingValues = remember(
-        isWorkProfile,
+        hasBadge,
         showNotificationDot,
         showAppIcon,
         verticalPadding
     ) {
-        if (!showAppIcon && (isWorkProfile || showNotificationDot)) {
+        if (!showAppIcon && (hasBadge || showNotificationDot)) {
             PaddingValues(
-                start = if (isWorkProfile) 0.dp else Dimens.APP_HORIZONTAL_SPACING,
+                start = if (hasBadge) 0.dp else Dimens.APP_HORIZONTAL_SPACING,
                 end = if (showNotificationDot) 0.dp else Dimens.APP_HORIZONTAL_SPACING,
                 top = verticalPadding,
                 bottom = verticalPadding
@@ -126,33 +129,18 @@ fun AppNameItem(
                 AppIcon(
                     image = appIcon,
                     size = appIconSizeFor(textSize, appIconSizeScale),
-                    isWorkProfile = isWorkProfile,
+                    badgeRes = badgeRes,
                     showNotificationDot = showNotificationDot
                 )
                 Spacer(modifier = Modifier.width(Dimens.APP_ICON_LABEL_SPACING))
-            } else if (!showAppIcon && isWorkProfile) {
-                Box(modifier = Modifier.padding(horizontal = 8.dp)) {
-                    if (shadow != null) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_work_profile),
-                            modifier = Modifier
-                                .size(16.dp)
-                                .offset(
-                                    x = with(LocalDensity.current) { shadow.offset.x.toDp() },
-                                    y = with(LocalDensity.current) { shadow.offset.y.toDp() }
-                                )
-                                .blur(with(LocalDensity.current) { shadow.blurRadius.toDp() }),
-                            tint = shadow.color,
-                            contentDescription = null
-                        )
-                    }
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_work_profile),
-                        modifier = Modifier.size(16.dp),
-                        tint = textColor,
-                        contentDescription = null
-                    )
-                }
+            } else if (!showAppIcon && badgeRes != null) {
+                ShadowedIcon(
+                    iconRes = badgeRes,
+                    size = 16.dp,
+                    tint = textColor,
+                    shadow = shadow,
+                    modifier = Modifier.padding(horizontal = 8.dp)
+                )
             }
 
             Text(
@@ -175,7 +163,7 @@ fun AppNameItem(
                 AppIcon(
                     image = appIcon,
                     size = appIconSizeFor(textSize, appIconSizeScale),
-                    isWorkProfile = isWorkProfile,
+                    badgeRes = badgeRes,
                     showNotificationDot = showNotificationDot
                 )
             }
@@ -227,6 +215,8 @@ fun AppNameItem(
             isFavourite = isFavourite,
             isHidden = isHidden,
             isShortcut = isShortcut,
+            canUninstall = remember { canUninstall() },
+            canAddToFavourites = canAddToFavourites,
             statusBarVisible = bottomSheetStatusBarVisible,
             navigationBarVisible = bottomSheetNavigationBarVisible,
             useDarkStatusBarIcons = useDarkBottomSheetStatusBarIcons,

@@ -39,6 +39,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.minimo.launcher.R
 import com.minimo.launcher.ui.components.ToggleAppItem
 import com.minimo.launcher.ui.home.components.SearchItem
+import com.minimo.launcher.ui.home.components.badgeRes
 import com.minimo.launcher.utils.launchApp
 import com.minimo.launcher.utils.startShortcut
 
@@ -137,7 +138,7 @@ fun HiddenAppsScreen(
                         modifier = Modifier.animateItem(),
                         appName = appInfo.name,
                         isChecked = appInfo.isHidden,
-                        isWorkProfile = appInfo.isWorkProfile,
+                        badgeRes = appInfo.profileType.badgeRes,
                         onToggleClick = { viewModel.onToggleHiddenAppClick(appInfo) },
                         onLongClick = {
                             if (appInfo.isShortcut) {
@@ -147,11 +148,12 @@ fun HiddenAppsScreen(
                                     appInfo.userHandle
                                 )
                             } else {
-                                context.launchApp(
+                                val launched = context.launchApp(
                                     appInfo.packageName,
                                     appInfo.targetId,
                                     appInfo.userHandle
                                 )
+                                if (!launched) viewModel.onAppLaunchFailed(appInfo)
                             }
                         }
                     )

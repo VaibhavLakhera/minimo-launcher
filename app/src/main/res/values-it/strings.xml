@@ -26,7 +26,6 @@
 
     <string name="theme">Tema</string>
     <string name="orientation">Orientamento</string>
-    <string name="orientation_large_screen_note">Android controlla l\'orientamento sugli schermi grandi e potrebbe ignorare questa preferenza.</string>
     <string name="home_apps_alignment_horizontal">Allineamento orizzontale app nella home</string>
     <string name="clock_alignment">Allineamento widget</string>
     <string name="clock_mode">Modalità orologio</string>
@@ -91,7 +90,6 @@
     <string name="enable_accessibility_dialog_title">Abilita accessibilità</string>
     <string name="enable_accessibility_dialog_message">Il permesso di accessibilità è necessario per il doppio tocco per spegnere lo schermo.\nNessun dato viene raccolto durante il processo.\n\nPer concedere il permesso, abilita l\'accessibilità per %s nelle impostazioni.</string>
     <string name="open_settings">Apri impostazioni</string>
-    <string name="twenty_four_hour_format">Formato 24 ore</string>
     <string name="show_battery_level">Mostra livello batteria</string>
     <string name="favourites_only">Solo preferiti</string>
     <string name="hidden_only">Solo nascoste</string>
@@ -141,6 +139,7 @@
     <string name="bottom">In basso</string>
     <string name="home_apps_alignment_vertical">Allineamento verticale app nella home</string>
     <string name="drawer_apps_alignment_horizontal">Allineamento orizzontale app nel drawer</string>
+    <string name="drawer_apps_alignment_vertical">Allineamento verticale app nel drawer</string>
     <string name="enable_wallpaper">Abilita sfondo nella schermata Home</string>
     <string name="enable_wallpaper_on_drawer">Abilita sfondo nel cassetto delle app</string>
     <string name="dim_wallpaper">Oscura sfondo</string>
@@ -206,12 +205,15 @@
 
     <!-- Current release notes. Update for each release, or leave blank to skip the dialog. -->
     <string name="whats_new_title">Novità</string>
-    <string name="whats_new_description">• Aggiunto il supporto per i pacchetti di icone personalizzati.\n• Aggiunto il supporto per i caratteri personalizzati (.ttf).\n• Aggiunto il tema Gruvbox, che segue la modalità scura di sistema.\n• La ricerca ora ignora gli accenti, ad esempio «skoda» trova «Škoda».\n• Le cartelle ora si chiudono automaticamente quando il drawer viene aperto o chiuso.\n• Unisciti alla community di Reddit su /r/MinimoLauncher</string>
+    <string name="whats_new_description">• Aggiunto il supporto per lo spazio privato.\n• Aggiunta l\'opzione Formato ora.\n• Aggiunto l\'allineamento verticale per le app nel drawer.\n• Le cartelle ora si chiudono quando avvii un\'app.\n• «Disinstalla» ora appare solo per le app che possono essere disinstallate.\n• Corretto l\'effetto al tocco nel tema scuro.\n• Aggiunta la traduzione in russo.\n• Unisciti alla community di Reddit su /r/MinimoLauncher</string>
     <string name="time_size">Dimensione ora</string>
     <string name="date_battery_size">Dimensione data e batteria</string>
     <string name="time_font">Carattere ora</string>
     <string name="use_app_font">Carattere dell’app</string>
     <string name="date_format">Formato data</string>
+    <string name="time_format">Formato ora</string>
+    <string name="twelve_hour">12 ore</string>
+    <string name="twenty_four_hour">24 ore</string>
     <string name="battery_charging">In carica</string>
     <string name="add_to_folder">Aggiungi a cartella</string>
     <string name="remove_from_folder">Rimuovi dalla cartella</string>
@@ -232,4 +234,13 @@
     <string name="delete_folder_confirmation">Eliminare «%1$s»? Le app e le relative impostazioni dei preferiti saranno mantenute.</string>
     <string name="icon_pack">Pacchetto di icone</string>
     <string name="icon_pack_description">Installa un’app di icone per selezionarla qui. Le app senza un’icona corrispondente mantengono le icone predefinite.</string>
+    <string name="private_space">Spazio privato</string>
+    <string name="lock_private_space">Blocca</string>
+    <string name="unlock_private_space">Sblocca</string>
+    <string name="private_space_install_apps">Installa app</string>
+    <string name="private_space_add_files">Aggiungi file</string>
+    <string name="private_space_settings">Impostazioni spazio privato</string>
+    <string name="private_space_locked">Bloccato</string>
+    <string name="private_space_no_app_store">Nessuno store di app trovato.</string>
+    <string name="app_launch_failed">Impossibile aprire questa app.</string>
 </resources>

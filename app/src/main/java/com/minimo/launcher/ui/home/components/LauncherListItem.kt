@@ -25,7 +25,10 @@ import com.minimo.launcher.ui.entities.AppInfo
 import com.minimo.launcher.ui.home.HomeScreenState
 import com.minimo.launcher.ui.home.HomeViewModel
 import com.minimo.launcher.ui.home.LauncherRow
+import com.minimo.launcher.ui.home.PRIVATE_SPACE_ROW_ID
 import com.minimo.launcher.ui.theme.Dimens
+import com.minimo.launcher.utils.canUninstallApp
+import com.minimo.launcher.utils.findActivity
 import com.minimo.launcher.utils.launchAppInfo
 import com.minimo.launcher.utils.uninstallApp
 
@@ -76,6 +79,33 @@ fun LauncherListItem(
             onDelete = { viewModel.showDeleteFolder(row.info.folder) }
         )
 
+        is LauncherRow.PrivateSpace -> {
+            val activity = LocalContext.current.findActivity()
+            PrivateSpaceItem(
+                modifier = modifier,
+                section = row.section,
+                appsArrangement = arrangement,
+                textSize = textSize,
+                verticalPadding = state.homeAppVerticalPadding.dp,
+                compactTouchArea = state.compactAppTouchArea,
+                showIcon = showIcon,
+                iconAlignment = iconAlignment,
+                iconSizeScale = iconScale,
+                textColor = textColor,
+                textShadow = textShadow,
+                statusBarVisible = statusBarVisible,
+                navigationBarVisible = navigationBarVisible,
+                useDarkStatusBarIcons = useDarkStatusBarIcons,
+                useDarkNavigationBarIcons = useDarkNavigationBarIcons,
+                onClick = { onBeforeInteraction(); viewModel.onPrivateSpaceClick() },
+                onLongClick = onBeforeInteraction,
+                onLock = viewModel::onLockPrivateSpaceClick,
+                onInstallApps = { activity?.let(viewModel::onPrivateSpaceInstallAppsClick) },
+                onAddFiles = viewModel::onPrivateSpaceAddFilesClick,
+                onSettings = { activity?.let(viewModel::onPrivateSpaceSettingsClick) }
+            )
+        }
+
         is LauncherRow.Empty -> Text(
             stringResource(R.string.folder_no_apps),
             modifier = modifier
@@ -116,7 +146,14 @@ fun LauncherListItem(
                 isFavourite = app.isFavourite,
                 isHidden = app.isHidden,
                 isShortcut = app.isShortcut,
-                isWorkProfile = app.isWorkProfile,
+                // Inside the expanded private space every app is private, so the badge adds nothing.
+                badgeRes = if (row.parentFolderId == PRIVATE_SPACE_ROW_ID) {
+                    null
+                } else {
+                    app.profileType.badgeRes
+                },
+                // Home and folders stay visible while private space is locked.
+                canAddToFavourites = !app.isPrivateSpace,
                 appsArrangement = arrangement,
                 textSize = textSize,
                 showNotificationDot = app.showNotificationDot,
@@ -139,10 +176,15 @@ fun LauncherListItem(
                 onToggleHideClick = { viewModel.onToggleHideClick(app) },
                 onAppInfoClick = { context.launchAppInfo(app) },
                 onLaunchDelayClick = { viewModel.onLaunchDelayClick(app) },
+                canUninstall = { context.canUninstallApp(app) },
                 onUninstallClick = { context.uninstallApp(app) },
                 onDeleteShortcutClick = { onDeleteShortcut(app) },
                 folderId = app.folderId,
-                onFolderClick = { viewModel.showFolderPicker(app, fromHome = home) },
+                onFolderClick = if (app.isPrivateSpace) {
+                    null
+                } else {
+                    { viewModel.showFolderPicker(app, fromHome = home) }
+                },
                 onRemoveFromFolderClick = { viewModel.removeFromFolder(app) }
             )
         }

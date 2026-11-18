@@ -21,6 +21,7 @@ import com.minimo.launcher.R
 import com.minimo.launcher.ui.components.AppButton
 import com.minimo.launcher.ui.components.ToggleAppItem
 import com.minimo.launcher.ui.home.components.SearchItem
+import com.minimo.launcher.ui.home.components.badgeRes
 import com.minimo.launcher.ui.theme.Dimens
 import com.minimo.launcher.utils.Constants.INTRO_MINIMUM_FAVOURITE_COUNT
 
@@ -56,7 +57,7 @@ internal fun IntroPage2(
                     modifier = Modifier.animateItem(),
                     appName = appInfo.name,
                     isChecked = appInfo.isFavourite,
-                    isWorkProfile = appInfo.isWorkProfile,
+                    badgeRes = appInfo.profileType.badgeRes,
                     onToggleClick = { viewModel.onToggleFavouriteAppClick(appInfo) }
                 )
             }

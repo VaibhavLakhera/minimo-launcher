@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.sp
 import com.minimo.launcher.R
 import com.minimo.launcher.ui.entities.AppInfo
 import com.minimo.launcher.ui.home.components.AppNameItem
+import com.minimo.launcher.ui.home.components.badgeRes
 import com.minimo.launcher.ui.theme.Dimens
 import com.minimo.launcher.utils.Constants
 
@@ -36,7 +37,7 @@ fun ReorderAppItem(
             isFavourite = appInfo.isFavourite,
             isHidden = appInfo.isHidden,
             isShortcut = appInfo.isShortcut,
-            isWorkProfile = appInfo.isWorkProfile,
+            badgeRes = appInfo.profileType.badgeRes,
             onClick = { },
             onToggleFavouriteClick = { },
             onRenameClick = { },

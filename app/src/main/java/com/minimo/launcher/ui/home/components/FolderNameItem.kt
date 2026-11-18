@@ -1,5 +1,6 @@
 package com.minimo.launcher.ui.home.components
 
+import androidx.annotation.DrawableRes
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
@@ -78,81 +79,26 @@ fun FolderNameItem(
     val rotation by animateFloatAsState(if (info.isExpanded) 180f else 0f, label = "folder_chevron")
     val expandedDescription =
         stringResource(if (info.isExpanded) R.string.folder_expanded else R.string.folder_collapsed)
-    val alignment = when (appsArrangement) {
-        Arrangement.Center -> Alignment.Center
-        Arrangement.End -> Alignment.CenterEnd
-        else -> Alignment.CenterStart
-    }
-    val iconSize = appIconSizeFor(textSize, iconSizeScale)
 
-    Box(modifier.fillMaxWidth(), contentAlignment = alignment) {
-        Row(
-            modifier = (if (compactTouchArea) Modifier else Modifier.fillMaxWidth())
-                .semantics { stateDescription = expandedDescription }
-                .combinedClickable(
-                    role = Role.Button,
-                    onClick = onToggleExpanded,
-                    onLongClick = { onLongClick(); showMenu = true }
-                )
-                .padding(horizontal = Dimens.APP_HORIZONTAL_SPACING, vertical = verticalPadding),
-            horizontalArrangement = if (compactTouchArea) Arrangement.Start else appsArrangement,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Row(
-                modifier = Modifier.weight(1f, fill = !compactTouchArea),
-                horizontalArrangement = appsArrangement,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                if (showIcon && iconAlignment == AppIconAlignment.Left) {
-                    FolderIcon(iconSize, info.showNotificationDot)
-                    Spacer(Modifier.width(Dimens.APP_ICON_LABEL_SPACING))
-                }
-                Text(
-                    text = info.folder.name,
-                    modifier = Modifier.weight(1f, fill = false),
-                    color = textColor,
-                    fontSize = textSize,
-                    lineHeight = textSize * 1.2,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    style = LocalTextStyle.current.copy(shadow = textShadow)
-                )
-                if (showIcon && iconAlignment == AppIconAlignment.Right) {
-                    Spacer(Modifier.width(Dimens.APP_ICON_LABEL_SPACING))
-                    FolderIcon(iconSize, info.showNotificationDot)
-                }
-                if (!showIcon && info.showNotificationDot) {
-                    Spacer(Modifier.width(11.dp))
-                    Box(Modifier
-                        .size(10.dp)
-                        .background(textColor, CircleShape))
-                }
-            }
-            Spacer(Modifier.width(8.dp))
-            val density = LocalDensity.current
-            val chevronShadow = if (textShadow == null) Modifier else Modifier.dropShadow(
-                shape = ChevronShape,
-                shadow = DropShadow(
-                    radius = with(density) { textShadow.blurRadius.toDp() },
-                    color = textShadow.color,
-                    offset = with(density) {
-                        DpOffset(textShadow.offset.x.toDp(), textShadow.offset.y.toDp())
-                    }
-                )
-            )
-            val chevronModifier = Modifier
-                .size(24.dp)
-                .graphicsLayer { rotationZ = rotation }
-                .then(chevronShadow)
-            Box(modifier = chevronModifier, contentAlignment = Alignment.Center) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_keyboard_arrow_down),
-                    contentDescription = null,
-                    tint = textColor,
-                    modifier = Modifier.fillMaxSize()
-                )
-            }
-        }
+    FolderStyleRow(
+        modifier = modifier,
+        label = info.folder.name,
+        stateDescriptionText = expandedDescription,
+        iconRes = R.drawable.folder_24px,
+        showNotificationDot = info.showNotificationDot,
+        appsArrangement = appsArrangement,
+        textSize = textSize,
+        verticalPadding = verticalPadding,
+        compactTouchArea = compactTouchArea,
+        showIcon = showIcon,
+        iconAlignment = iconAlignment,
+        iconSizeScale = iconSizeScale,
+        textColor = textColor,
+        textShadow = textShadow,
+        onClick = onToggleExpanded,
+        onLongClick = { onLongClick(); showMenu = true }
+    ) {
+        FolderChevron(rotation, textColor, textShadow)
     }
 
     if (showMenu) {
@@ -178,6 +124,86 @@ fun FolderNameItem(
     }
 }
 
+/**
+ * The row layout shared by folders and the private space, so text size, padding, alignment, icons,
+ * compact touch area and wallpaper text colours always match. [trailing] fills the 24dp end slot.
+ */
+@Composable
+internal fun FolderStyleRow(
+    modifier: Modifier,
+    label: String,
+    stateDescriptionText: String,
+    @DrawableRes iconRes: Int,
+    showNotificationDot: Boolean,
+    appsArrangement: Arrangement.Horizontal,
+    textSize: TextUnit,
+    verticalPadding: Dp,
+    compactTouchArea: Boolean,
+    showIcon: Boolean,
+    iconAlignment: AppIconAlignment,
+    iconSizeScale: Float,
+    textColor: Color,
+    textShadow: Shadow?,
+    onClick: () -> Unit,
+    onLongClick: () -> Unit,
+    trailing: @Composable () -> Unit
+) {
+    val alignment = when (appsArrangement) {
+        Arrangement.Center -> Alignment.Center
+        Arrangement.End -> Alignment.CenterEnd
+        else -> Alignment.CenterStart
+    }
+    val iconSize = appIconSizeFor(textSize, iconSizeScale)
+
+    Box(modifier.fillMaxWidth(), contentAlignment = alignment) {
+        Row(
+            modifier = (if (compactTouchArea) Modifier else Modifier.fillMaxWidth())
+                .semantics { stateDescription = stateDescriptionText }
+                .combinedClickable(
+                    role = Role.Button,
+                    onClick = onClick,
+                    onLongClick = onLongClick
+                )
+                .padding(horizontal = Dimens.APP_HORIZONTAL_SPACING, vertical = verticalPadding),
+            horizontalArrangement = if (compactTouchArea) Arrangement.Start else appsArrangement,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Row(
+                modifier = Modifier.weight(1f, fill = !compactTouchArea),
+                horizontalArrangement = appsArrangement,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                if (showIcon && iconAlignment == AppIconAlignment.Left) {
+                    FolderStyleIcon(iconSize, iconRes, showNotificationDot)
+                    Spacer(Modifier.width(Dimens.APP_ICON_LABEL_SPACING))
+                }
+                Text(
+                    text = label,
+                    modifier = Modifier.weight(1f, fill = false),
+                    color = textColor,
+                    fontSize = textSize,
+                    lineHeight = textSize * 1.2,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    style = LocalTextStyle.current.copy(shadow = textShadow)
+                )
+                if (showIcon && iconAlignment == AppIconAlignment.Right) {
+                    Spacer(Modifier.width(Dimens.APP_ICON_LABEL_SPACING))
+                    FolderStyleIcon(iconSize, iconRes, showNotificationDot)
+                }
+                if (!showIcon && showNotificationDot) {
+                    Spacer(Modifier.width(11.dp))
+                    Box(Modifier
+                        .size(10.dp)
+                        .background(textColor, CircleShape))
+                }
+            }
+            Spacer(Modifier.width(8.dp))
+            trailing()
+        }
+    }
+}
+
 // Match the path in ic_keyboard_arrow_down.xml so the shadow follows the chevron itself.
 private const val CHEVRON_PATH_DATA =
     "M465,596.5Q458,594 452,588L268,404Q257,393 257,376Q257,359 268,348Q279,337 296,337Q313,337 324,348L480,504L636,348Q647,337 664,337Q681,337 692,348Q703,359 703,376Q703,393 692,404L508,588Q502,594 495,596.5Q488,599 480,599Q472,599 465,596.5Z"
@@ -189,7 +215,35 @@ private val ChevronShape = GenericShape { size, _ ->
 }
 
 @Composable
-private fun FolderIcon(size: Dp, showDot: Boolean) {
+internal fun FolderChevron(rotation: Float, textColor: Color, textShadow: Shadow?) {
+    val density = LocalDensity.current
+    val chevronShadow = if (textShadow == null) Modifier else Modifier.dropShadow(
+        shape = ChevronShape,
+        shadow = DropShadow(
+            radius = with(density) { textShadow.blurRadius.toDp() },
+            color = textShadow.color,
+            offset = with(density) {
+                DpOffset(textShadow.offset.x.toDp(), textShadow.offset.y.toDp())
+            }
+        )
+    )
+    val chevronModifier = Modifier
+        .size(24.dp)
+        .graphicsLayer { rotationZ = rotation }
+        .then(chevronShadow)
+    Box(modifier = chevronModifier, contentAlignment = Alignment.Center) {
+        Icon(
+            painter = painterResource(R.drawable.ic_keyboard_arrow_down),
+            contentDescription = null,
+            tint = textColor,
+            modifier = Modifier.fillMaxSize()
+        )
+    }
+}
+
+/** A white circle with a dark glyph, matching app icons when drawer icons are on. */
+@Composable
+private fun FolderStyleIcon(size: Dp, @DrawableRes iconRes: Int, showDot: Boolean) {
     Box(Modifier.size(size)) {
         Box(
             modifier = Modifier
@@ -200,7 +254,7 @@ private fun FolderIcon(size: Dp, showDot: Boolean) {
             contentAlignment = Alignment.Center
         ) {
             Icon(
-                painter = painterResource(R.drawable.folder_24px),
+                painter = painterResource(iconRes),
                 contentDescription = null,
                 tint = Color(0xFF202124),
                 modifier = Modifier

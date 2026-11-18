@@ -19,6 +19,7 @@ import com.minimo.launcher.utils.HomeAppsAlignmentVertical
 import com.minimo.launcher.utils.HomeClockAlignment
 import com.minimo.launcher.utils.HomeClockMode
 import com.minimo.launcher.utils.HomeDateFormat
+import com.minimo.launcher.utils.HomeTimeFormat
 import com.minimo.launcher.utils.MinimoSettingsPosition
 import com.minimo.launcher.utils.ScreenOrientation
 import com.minimo.launcher.utils.SearchMode
@@ -51,6 +52,8 @@ class PreferenceHelper @Inject constructor(
             stringPreferencesKey("KEY_DRAWER_APPS_ALIGN_HORIZONTAL")
         private val KEY_HOME_APPS_ALIGN_VERTICAL =
             stringPreferencesKey("KEY_HOME_APPS_ALIGN_VERTICAL")
+        private val KEY_DRAWER_APPS_ALIGN_VERTICAL =
+            stringPreferencesKey("KEY_DRAWER_APPS_ALIGN_VERTICAL")
         private val KEY_HOME_CLOCK_ALIGNMENT = stringPreferencesKey("KEY_HOME_CLOCK_ALIGNMENT")
         private val KEY_HOME_CLOCK_MODE = stringPreferencesKey("KEY_HOME_CLOCK_MODE")
         private val KEY_HOME_TIME_TEXT_SIZE = intPreferencesKey("KEY_HOME_TIME_TEXT_SIZE")
@@ -65,8 +68,7 @@ class PreferenceHelper @Inject constructor(
             booleanPreferencesKey("KEY_AUTO_OPEN_KEYBOARD_ALL_APPS")
         private val KEY_DYNAMIC_THEME = booleanPreferencesKey("KEY_DYNAMIC_THEME")
         private val KEY_DOUBLE_TAP_TO_LOCK = booleanPreferencesKey("KEY_DOUBLE_TAP_TO_LOCK")
-        private val KEY_TWENTY_FOUR_HOUR_FORMAT =
-            booleanPreferencesKey("KEY_TWENTY_FOUR_HOUR_FORMAT")
+        internal val KEY_TIME_FORMAT = stringPreferencesKey("KEY_TIME_FORMAT")
         private val KEY_SHOW_BATTERY_LEVEL = booleanPreferencesKey("KEY_SHOW_BATTERY_LEVEL")
         private val KEY_SHOW_HIDDEN_APPS_IN_SEARCH =
             booleanPreferencesKey("KEY_SHOW_HIDDEN_APPS_IN_SEARCH")
@@ -181,6 +183,12 @@ class PreferenceHelper @Inject constructor(
         }
     }
 
+    suspend fun setDrawerAppsAlignmentVertical(alignment: HomeAppsAlignmentVertical) {
+        preferences.edit {
+            it[KEY_DRAWER_APPS_ALIGN_VERTICAL] = alignment.name
+        }
+    }
+
     suspend fun setHomeAppsAlignmentVertical(alignment: HomeAppsAlignmentVertical) {
         preferences.edit {
             it[KEY_HOME_APPS_ALIGN_VERTICAL] = alignment.name
@@ -266,10 +274,8 @@ class PreferenceHelper @Inject constructor(
         }
     }
 
-    suspend fun setTwentyFourHourFormat(enable: Boolean) {
-        preferences.edit {
-            it[KEY_TWENTY_FOUR_HOUR_FORMAT] = enable
-        }
+    suspend fun setTimeFormat(format: HomeTimeFormat) {
+        preferences.edit { it[KEY_TIME_FORMAT] = format.name }
     }
 
     suspend fun setShowBatteryLevel(enable: Boolean) {
@@ -599,6 +605,7 @@ class PreferenceHelper @Inject constructor(
                 homeAppsAlignmentHorizontal = getHomeAppsAlignmentHorizontalFromPref(prefs[KEY_HOME_APPS_ALIGN_HORIZONTAL]),
                 drawerAppsAlignmentHorizontal = getDrawerAppsAlignmentHorizontalFromPref(prefs[KEY_DRAWER_APPS_ALIGN_HORIZONTAL]),
                 homeAppsAlignmentVertical = getHomeAppsAlignmentVerticalFromPref(prefs[KEY_HOME_APPS_ALIGN_VERTICAL]),
+                drawerAppsAlignmentVertical = getDrawerAppsAlignmentVerticalFromPref(prefs[KEY_DRAWER_APPS_ALIGN_VERTICAL]),
                 homeClockAlignment = getHomeClockAlignmentFromPref(prefs[KEY_HOME_CLOCK_ALIGNMENT]),
                 showHomeClock = prefs[KEY_SHOW_HOME_CLOCK] ?: false,
                 homeTimeTextSize = prefs[KEY_HOME_TIME_TEXT_SIZE],
@@ -609,7 +616,7 @@ class PreferenceHelper @Inject constructor(
                 autoOpenKeyboardAllApps = prefs[KEY_AUTO_OPEN_KEYBOARD_ALL_APPS] ?: false,
                 homeClockMode = getHomeClockModeFromPref(prefs[KEY_HOME_CLOCK_MODE]),
                 doubleTapToLock = prefs[KEY_DOUBLE_TAP_TO_LOCK] ?: false,
-                twentyFourHourFormat = prefs[KEY_TWENTY_FOUR_HOUR_FORMAT] ?: false,
+                timeFormat = HomeTimeFormat.fromPreference(prefs[KEY_TIME_FORMAT]),
                 showBatteryLevel = prefs[KEY_SHOW_BATTERY_LEVEL] ?: false,
                 showHiddenAppsInSearch = prefs[KEY_SHOW_HIDDEN_APPS_IN_SEARCH] ?: true,
                 drawerSearchBarAtBottom = prefs[KEY_DRAWER_SEARCH_BAR_AT_BOTTOM] ?: false,
@@ -668,6 +675,7 @@ class PreferenceHelper @Inject constructor(
                 homeAppsAlignmentHorizontal = getHomeAppsAlignmentHorizontalFromPref(prefs[KEY_HOME_APPS_ALIGN_HORIZONTAL]),
                 drawerAppsAlignmentHorizontal = getDrawerAppsAlignmentHorizontalFromPref(prefs[KEY_DRAWER_APPS_ALIGN_HORIZONTAL]),
                 homeAppsAlignmentVertical = getHomeAppsAlignmentVerticalFromPref(prefs[KEY_HOME_APPS_ALIGN_VERTICAL]),
+                drawerAppsAlignmentVertical = getDrawerAppsAlignmentVerticalFromPref(prefs[KEY_DRAWER_APPS_ALIGN_VERTICAL]),
                 homeClockAlignment = getHomeClockAlignmentFromPref(prefs[KEY_HOME_CLOCK_ALIGNMENT]),
                 showHomeClock = prefs[KEY_SHOW_HOME_CLOCK] ?: false,
                 homeTimeTextSize = prefs[KEY_HOME_TIME_TEXT_SIZE],
@@ -681,7 +689,7 @@ class PreferenceHelper @Inject constructor(
                 dynamicTheme = prefs[KEY_DYNAMIC_THEME] ?: false,
                 homeClockMode = getHomeClockModeFromPref(prefs[KEY_HOME_CLOCK_MODE]),
                 doubleTapToLock = prefs[KEY_DOUBLE_TAP_TO_LOCK] ?: false,
-                twentyFourHourFormat = prefs[KEY_TWENTY_FOUR_HOUR_FORMAT] ?: false,
+                timeFormat = HomeTimeFormat.fromPreference(prefs[KEY_TIME_FORMAT]),
                 showBatteryLevel = prefs[KEY_SHOW_BATTERY_LEVEL] ?: false,
                 showHiddenAppsInSearch = prefs[KEY_SHOW_HIDDEN_APPS_IN_SEARCH] ?: true,
                 drawerSearchBarAtBottom = prefs[KEY_DRAWER_SEARCH_BAR_AT_BOTTOM] ?: false,
@@ -750,8 +758,7 @@ class PreferenceHelper @Inject constructor(
     }
 
     private fun getBlackThemeFromPref(blackTheme: Boolean?, themeMode: String?): Boolean {
-        if (themeMode == "Black") return true
-        return blackTheme ?: false
+        return themeMode == "Black" || blackTheme ?: false
     }
 
     private fun getScreenOrientationFromPref(orientation: String?): ScreenOrientation {
@@ -780,6 +787,11 @@ class PreferenceHelper @Inject constructor(
     private fun getFastScrollerAlignmentFromPref(alignment: String?): FastScrollerAlignment {
         return FastScrollerAlignment.entries.find { it.name == alignment }
             ?: FastScrollerAlignment.Right
+    }
+
+    private fun getDrawerAppsAlignmentVerticalFromPref(alignment: String?): HomeAppsAlignmentVertical {
+        return HomeAppsAlignmentVertical.entries.find { it.name == alignment }
+            ?: HomeAppsAlignmentVertical.Top
     }
 
     private fun getHomeAppsAlignmentVerticalFromPref(alignment: String?): HomeAppsAlignmentVertical {

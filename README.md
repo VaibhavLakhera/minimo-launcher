@@ -1,7 +1,8 @@
 # Minimo
 
-Minimo is a minimalist Android launcher that clears the clutter from your home screen. Find the
-apps you need quickly, stay focused, and use your phone more intentionally.
+Minimo is a free, open-source minimalist launcher for Android. It replaces cluttered icon grids with
+a clean, text-first home screen and a fast app drawer, helping you cut down screen time, avoid
+distractions, and use your phone with intention.
 
 ## Screenshots:
 
@@ -19,18 +20,26 @@ apps you need quickly, stay focused, and use your phone more intentionally.
 
 ## Key Features:
 
-- **Minimalist Home Screen**: Use a text-first layout with optional app icons. Keep a few favourite
-  apps visible or leave your home screen empty.
-- **Fast App Search**: Find apps in a searchable drawer with A-Z fast scrolling and optional
-  automatic opening of the only matching result.
-- **Simple App Management**: Reorder favourites, rename or hide apps, and access app info or
-  uninstall apps from the launcher.
-- **Personalisation**: Adjust fonts, text size, spacing, alignment, themes, wallpaper, and icon
-  placement to suit your style.
-- **Useful Extras**: Add an optional clock, battery level, notification dots, and daily screen-time
-  widget. Use swipe gestures, web shortcuts, and double-tap to lock.
-- **Privacy and Open Source**: Minimo does not track you or collect personal information. Its source
-  code is available to review and contribute to.
+- **Focus and Digital Wellbeing**: Keep a few favourite apps on the home screen or none at all. Hide
+  distracting apps, add a Launch Delay before an app opens, and track usage with the daily
+  screen-time widget.
+- **Fast App Drawer and Search**: Instant search with "contains" or "starts with" matching,
+  auto-open
+  for a single result, Done to open the first result, A-Z fast scroller, auto-opening keyboard, and
+  a search bar you can move to the bottom or hide.
+- **Folders and App Management**: Group apps into folders, rename or hide apps, reorder favourites,
+  and open app info or uninstall right from the launcher.
+- **Gestures and Shortcuts**: Swipe left or right to open apps, double-tap to lock, Back to open the
+  drawer, long-press to open settings, tap widgets to open apps of your choice, and pin shortcuts
+  and
+  web shortcuts.
+- **Personalisation**: Text-only or icons with icon pack support, custom fonts (.ttf), size, spacing
+  and alignment controls, light, dark, AMOLED black, and Material You dynamic themes, wallpaper
+  dimming, 12/24-hour clock, date format, battery level, notification dots, and hideable status and
+  navigation bars.
+- **Private Space**: Lock, unlock, and open apps from Android Private Space in the app drawer.
+- **Privacy and Open Source**: No ads, no tracking, and no personal data collection. The source code
+  is available to review and contribute to.
 
 ## Download:
 
