@@ -139,6 +139,7 @@ class HomeViewModel @Inject constructor(
                     val allApps = getCombinedAllApps(
                         dbApps = dbApps,
                         hideAppDrawerSearch = state.hideAppDrawerSearch,
+                        hideSettingsIcon = state.hideSettingsIcon,
                         minimoSettingsPosition = state.minimoSettingsPosition
                     )
                     state.copy(
@@ -216,12 +217,13 @@ class HomeViewModel @Inject constructor(
                         var newFilteredApps = state.filteredAllApps
                         var clearSearchText = state.searchText
 
-                        if (state.hideAppDrawerSearch != prefs.hideAppDrawerSearch || state.minimoSettingsPosition != prefs.minimoSettingsPosition) {
+                        if (state.hideAppDrawerSearch != prefs.hideAppDrawerSearch || state.hideSettingsIcon != prefs.hideSettingsIcon || state.minimoSettingsPosition != prefs.minimoSettingsPosition) {
                             val dbApps =
                                 state.allApps.filterNot { it.packageName == Constants.MINIMO_SETTINGS_PACKAGE }
                             newAllApps = getCombinedAllApps(
                                 dbApps = dbApps,
                                 hideAppDrawerSearch = prefs.hideAppDrawerSearch,
+                                hideSettingsIcon = prefs.hideSettingsIcon,
                                 minimoSettingsPosition = prefs.minimoSettingsPosition
                             )
                             if (prefs.hideAppDrawerSearch) {
@@ -477,9 +479,10 @@ class HomeViewModel @Inject constructor(
     private fun getCombinedAllApps(
         dbApps: List<AppInfo>,
         hideAppDrawerSearch: Boolean,
+        hideSettingsIcon: Boolean,
         minimoSettingsPosition: MinimoSettingsPosition
     ): List<AppInfo> {
-        return if (hideAppDrawerSearch) {
+        return if (hideAppDrawerSearch && !hideSettingsIcon) {
             val settingsAppInfo = AppInfo(
                 packageName = Constants.MINIMO_SETTINGS_PACKAGE,
                 itemType = AppItemType.APP,
